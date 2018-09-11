@@ -1,5 +1,5 @@
 {
-  "name": "serverless-ses-template",
+  "name": "@haftahave/serverless-ses-template",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "version": "1.0.0",
   "main": "index.js",
@@ -48,5 +48,9 @@
       "coverage/*"
     ],
     "report-dir": "./coverage"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {}
 }
