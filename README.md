@@ -21,13 +21,13 @@ A serverless plugin that allows automatically creating, updating and removing AW
 
 #### Configuration
 
-* All **serverless-ses-template** configuration parameters are optional
+* All **@haftahave/serverless-ses-template** configuration parameters are optional
 
 ```yaml
 # add to your serverless.yml
 
 plugins:
-  - serverless-ses-template
+  - '@haftahave/serverless-ses-template'
 
 custom:
   sesTemplatesAddStageAlias: true                          # Specifies whether to add stage and alias to template name
