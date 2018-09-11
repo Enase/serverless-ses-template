@@ -14,6 +14,11 @@ A serverless plugin that allows automatically creating, updating and removing AW
 - Allows you to add stage and alias to template names while sync (supports [serverless-aws-alias](https://github.com/HyperBrain/serverless-aws-alias) plugin)
 - Allows you to delete SES template by specified name
 ---
+
+#### Installation
+
+`npm install @haftahave/serverless-ses-template`
+
 #### Configuration
 
 * All **serverless-ses-template** configuration parameters are optional
