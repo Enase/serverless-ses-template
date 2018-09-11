@@ -35,14 +35,14 @@ custom:
 Template configuration file should be an array of objects:
 ```javascript
 module.exports = [{
-    name: 'test_name_new',
+    name: 'example_name',
     subject: 'Your subject',
     html: '<h1>Hello world!</h1>',
     text: 'Hello world!',
 }];
 ```
 
-Real example see [here](ses-email-templates/index.js):
+Real world example see [here](ses-email-templates/index.js):
 
 ### Usage and command line options
 
