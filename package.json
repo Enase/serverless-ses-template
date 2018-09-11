@@ -1,7 +1,7 @@
 {
   "name": "@haftahave/serverless-ses-template",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "index.js",
   "scripts": {
     "test": "nyc ./node_modules/mocha/bin/_mocha tests -R spec --recursive",
