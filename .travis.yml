@@ -1,0 +1,23 @@
+sudo: required
+dist: trusty
+language: node_js
+node_js:
+- '8.10'
+cache:
+  directories:
+  - node_modules
+branches:
+  only:
+  - master
+before_script:
+- travis_retry npm install --global npm@latest
+- travis_retry npm install --global nyc
+- travis_retry npm install
+script:
+- node node_modules/eslint/bin/eslint.js --config ./.eslintrc.js .
+- npm test
+- npm run coverage_test
+notifications:
+  slack:
+    rooms:
+      secure: i73PRnMIBd2AlZ+Ud/uUbGVq/afHhNrICQoWE/HKtddwlr7AzDB2OO5K4rk4P+tDhYoO81NMtrePuTpfh34BYLXNUkTv3sDEZ0u0ZCm39lXt8LsgOPeHVVmlo7pPt2Fo+OIBpjMv+CqLuFD690J/3XMZFuzzMdRFz5W5udzEc7KrxitCi0Zsp8H0PuMEOAp5LtMnSGViUzXXm/RFECHfQdBHEGS1ov2hMupKPaXEZtE/E9v/mZAVhTXjVZB94C4+/8sR0c/uv1+8HyGfmv0XlFQIz228Bhpn/lXrO6nhxqMbBt/7iKGOa9roz0ORjl6IxSmCd8iO3vXFQlAA8qWnffX+ZSzR40jVIG6on+tTB3VqPJs13T60rhSQJk+Yoe+7dcbFt/m25AZwiX3BEN5Ms1lh1gffaZObMvP5bNXUhgRQDzKjAx7LMGmXFOnuNvyB+Vydu2Ej75TYYJTweVN/hqIwKfYzofUnfnI8IoTnJJMZvJKEalQyaJpXAu8O5vOvAXbk3kCtiROcRNJ3T+XBxNQEy4KB+neJTEYvcb1KBJJ2B9pV3aI6mPNGElAPfXI8vg4CqBlJgBj97+/KYhj5VYbdbg7P2ntvZ5FV1Rd/NPfeTOZA7epTbZbIXA8zwPN9CSdIZutk5QHAwdm/QkZEJZaZYJQfhpRPgBncASoS6vQ=
