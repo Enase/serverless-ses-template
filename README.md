@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/haftahave/serverless-ses-template.svg?branch=master)](https://travis-ci.org/haftahave/serverless-ses-template)
+
 Template sync plugin for Amazon Simple Email Service
 ===
 
