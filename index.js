@@ -38,7 +38,6 @@ class ServerlessSesTemplate {
                         options: {
                             'remove-missed': {
                                 usage: 'Set this flag in order to remove missed templates. (e.g. "--remove-missed")',
-                                shortcut: 'r',
                                 required: false,
                             },
                         },
@@ -51,7 +50,6 @@ class ServerlessSesTemplate {
                         options: {
                             template: {
                                 usage: 'The template name you are going to delete (e.g. "--template name")',
-                                shortcut: 't',
                                 required: true,
                             },
                         },
@@ -60,17 +58,14 @@ class ServerlessSesTemplate {
                 options: {
                     stage: {
                         usage: 'Specify the stage you want to sync templates (e.g. "--stage dev")',
-                        shortcut: 's',
                         required: false,
                     },
                     alias: {
                         usage: 'Specify the alias you want to sync templates (e.g. "--alias production")',
-                        shortcut: 'a',
                         required: false,
                     },
                     region: {
                         usage: 'Specify the region you want to sync templates (e.g. "--region us-west-2")',
-                        shortcut: 'r',
                         required: false,
                     },
                 },
