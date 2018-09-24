@@ -55,7 +55,7 @@ Run `sls ses-template deploy` in order to sync your email templates.
 
 Optional CLI options:
 ```
---remove-missed -r  Set this flag in order to remove templates thouse are not present in your configuration file. [OPTIONAL]
+--remove-missed -r  Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
 --stage         -s  The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
 --region        -r  The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
 --alias         -a  Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
