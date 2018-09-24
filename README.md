@@ -55,10 +55,10 @@ Run `sls ses-template deploy` in order to sync your email templates.
 
 Optional CLI options:
 ```
---remove-missed -r  Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
---stage         -s  The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---region        -r  The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
---alias         -a  Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
+--remove-missed   Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
+--stage           The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
+--region          The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
+--alias           Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
 ```
 ---
 
@@ -67,10 +67,10 @@ Run `sls ses-template delete --template template_name_goes_here` in order to del
 CLI options:
 
 ```
---template      -t  The template name you are going to delete [REQUIRED]
---stage         -s  The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---region        -r  The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
---alias         -a  Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
+--template      The template name you are going to delete [REQUIRED]
+--stage         The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
+--region        The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
+--alias         Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
 ```
 
 ## Links
