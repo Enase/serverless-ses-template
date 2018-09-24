@@ -36,9 +36,9 @@ class ServerlessSesTemplate {
                             'syncTemplates',
                         ],
                         options: {
-                            'keep-missed': {
-                                usage: 'Set this flag in order to keep missed templates (e.g. "--keep-missed")',
-                                shortcut: 's',
+                            'remove-missed': {
+                                usage: 'Set this flag in order to remove missed templates. (e.g. "--remove-missed")',
+                                shortcut: 'r',
                                 required: false,
                             },
                         },
@@ -89,8 +89,7 @@ class ServerlessSesTemplate {
      */
     initOptions() {
         this.region = this.options.region || this.serverless.service.provider.region;
-
-        this.keepMissed = this.options['keep-missed'] !== undefined;
+        this.removeMissed = this.options['remove-missed'] !== undefined;
         this.stage = this.options.stage || this.serverless.service.provider.stage;
         this.alias = this.options.alias || this.serverless.service.provider.alias || 'production';
     }
@@ -145,7 +144,7 @@ class ServerlessSesTemplate {
             templateConfig => this.addStageAliasToTemplateName(templateConfig.name),
         );
 
-        const templatesToRemove = !this.keepMissed
+        const templatesToRemove = this.removeMissed
             ? currentTemplates.filter(templateName => !templatesToSync.includes(templateName)
                 && this.isTemplateFromCurrentStageAlias(templateName))
             : [];
