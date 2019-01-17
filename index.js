@@ -154,8 +154,8 @@ class ServerlessSesTemplate {
         const deleteTemplatePromises = templatesToRemove.map(templateName => this.deleteTemplate(templateName));
 
         await Promise.all([
-          ...syncTemplatePromises,
-          ...deleteTemplatePromises,
+            ...syncTemplatePromises,
+            ...deleteTemplatePromises,
         ]);
         this.serverless.cli.log('AWS SES template synchronization complete');
     }
