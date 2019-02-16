@@ -1,4 +1,5 @@
 const path = require('path');
+const Table = require('cli-table');
 
 const defaultSesTemplatesConfigFilePath = './ses-email-templates/index.js';
 
@@ -28,6 +29,7 @@ class ServerlessSesTemplate {
                 lifecycleEvents: [
                     'deploy',
                     'delete',
+                    'list',
                 ],
                 commands: {
                     deploy: {
@@ -54,6 +56,12 @@ class ServerlessSesTemplate {
                             },
                         },
                     },
+                    list: {
+                        usage: 'List email templates from AWS SES',
+                        lifecycleEvents: [
+                            'list',
+                        ],
+                    },
                 },
                 options: {
                     stage: {
@@ -75,6 +83,7 @@ class ServerlessSesTemplate {
         this.hooks = {
             'ses-template:deploy:syncTemplates': this.syncTemplates.bind(this),
             'ses-template:delete:deleteGiven': this.deleteGiven.bind(this),
+            'ses-template:list:list': this.list.bind(this),
             'before:package:initialize': this.syncTemplates.bind(this),
         };
     }
@@ -200,10 +209,6 @@ class ServerlessSesTemplate {
             ...templateNames,
         ];
 
-        if (allTemplates.length > 100) {
-            throw new this.serverless.classes.Error('Too many SES email templates');
-        }
-
         if (nextToken) {
             return this.getTemplates({
                 ...options,
@@ -297,6 +302,52 @@ class ServerlessSesTemplate {
 
         this.serverless.cli.log(`Going to update template "${templateName}"`);
         return this.provider.request('SES', 'updateTemplate', params);
+    }
+
+    /**
+     * @returns {Promise}
+     */
+    async list() {
+        this.initOptions();
+
+        if (!this.isRegionSupported()) {
+            this.serverless.cli.log(
+                `WARNING: Cannot list AWS SES templates for ${this.region} region. It's not supported yet.`,
+            );
+            return;
+        }
+
+        this.serverless.cli.log(`AWS SES template list for ${this.region} region started`);
+
+        await this.listTemplates();
+
+        this.serverless.cli.log('AWS SES template list finished');
+    }
+
+    /**
+     * @param {string} token
+     * @returns {Promise}
+     */
+    async listTemplates(token = undefined) {
+        const { TemplatesMetadata: templates = [], NextToken: nextToken } = await this.provider.request(
+            'SES',
+            'listTemplates',
+            { MaxItems: 10, NextToken: token },
+            this.stage,
+            this.region,
+        );
+
+        const table = new Table();
+        if (templates && templates.length) {
+            table.push(...templates);
+            this.serverless.cli.log(`\n${table.toString()}`);
+
+            if (nextToken) {
+                await this.listTemplates(nextToken);
+            }
+        } else {
+            this.serverless.cli.log(`Templates not found in ${this.region} region`);
+        }
     }
 }
 

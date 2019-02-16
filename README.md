@@ -12,7 +12,7 @@ A serverless plugin that allows automatically creating, updating and removing AW
 
 - Allows declaring email templates that will be synced in pre-deploy phase
 - Allows you to add stage and alias to template names while sync (supports [serverless-aws-alias](https://github.com/HyperBrain/serverless-aws-alias) plugin)
-- Allows you to delete SES template by specified name
+- Allows you to list and delete SES template by specified name
 ---
 
 #### Installation
@@ -71,6 +71,14 @@ CLI options:
 --stage         The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
 --region        The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
 --alias         Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
+```
+
+Run `sls ses-template list` in order to list your email templates.
+
+CLI options:
+
+```
+--region        The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
 ```
 
 ## Links
