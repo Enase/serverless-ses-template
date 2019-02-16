@@ -8,3 +8,9 @@ CHANGELOG
 # 1.0.5 (24.09.2018)
 - [Remove command shortcuts](https://github.com/haftahave/serverless-ses-template/pull/4) \
    Shortcuts deleted for all the commands.
+
+# 1.0.6 (17.01.2018)
+- [Fixed Promise.all not actually waiting on the array of arrays](https://github.com/haftahave/serverless-ses-template/pull/6) 
+
+# 1.0.7 (16.02.2018)
+- [Ability to list email templates](https://github.com/haftahave/serverless-ses-template/pull/7) 

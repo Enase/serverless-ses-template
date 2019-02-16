@@ -95,9 +95,10 @@ describe('The `ses-template` plugin', () => {
         });
         it('Exposes correct list of hooks', () => {
             expect(pluginInstance.hooks).to.be.an('object');
-            expect(Object.keys(pluginInstance.hooks)).to.be.lengthOf(3);
+            expect(Object.keys(pluginInstance.hooks)).to.be.lengthOf(4);
             expect(pluginInstance.hooks['ses-template:deploy:syncTemplates']).to.be.a('function');
             expect(pluginInstance.hooks['ses-template:delete:deleteGiven']).to.be.a('function');
+            expect(pluginInstance.hooks['ses-template:list:list']).to.be.a('function');
             expect(pluginInstance.hooks['before:package:initialize']).to.be.a('function');
         });
         it('Exposes correct list of commands', () => {
@@ -110,6 +111,7 @@ describe('The `ses-template` plugin', () => {
             expect(pluginInstance.commands['ses-template']).deep.property('commands');
             expect(pluginInstance.commands['ses-template'].commands).deep.property('deploy');
             expect(pluginInstance.commands['ses-template'].commands).deep.property('delete');
+            expect(pluginInstance.commands['ses-template'].commands).deep.property('list');
             expect(pluginInstance.commands['ses-template']).deep.property('options');
         });
     });
@@ -356,6 +358,99 @@ describe('The `ses-template` plugin', () => {
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(2);
+            });
+        });
+    });
+
+    describe('List templates with correct result', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'example' }], NextToken: 'NextToken' });
+        requestStub.onCall(1).resolves({ TemplatesMetadata: [{ Name: 'example2' }] });
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless(defaultService, providerSpy);
+            pluginInstance = new ServerlessSesTemplate(serverless, {});
+        });
+        describe('When the `ses-template:list:list` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['ses-template:list:list']();
+            });
+            it('Provider does requests to AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(2);
+            });
+            it('List templates from SES', () => {
+                expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+                    MaxItems: 10, NextToken: undefined,
+                });
+                expect(requestStub.getCall(0).args[3]).to.be.equal('dev');
+                expect(requestStub.getCall(0).args[4]).to.be.equal('us-west-2');
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(4);
+            });
+        });
+    });
+
+    describe('List templates with empty result', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        requestStub.onCall(0).resolves({ TemplatesMetadata: [] });
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless(defaultService, providerSpy);
+            pluginInstance = new ServerlessSesTemplate(serverless, {});
+        });
+        describe('When the `ses-template:list:list` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['ses-template:list:list']();
+            });
+            it('Provider does requests to AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(1);
+            });
+            it('List templates from SES', () => {
+                expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+                    MaxItems: 10, NextToken: undefined,
+                });
+                expect(requestStub.getCall(0).args[3]).to.be.equal('dev');
+                expect(requestStub.getCall(0).args[4]).to.be.equal('us-west-2');
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(3);
+            });
+        });
+    });
+
+    describe('List templates with invalid region', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless(defaultService, providerSpy);
+            pluginInstance = new ServerlessSesTemplate(serverless, { region: 'invalid' });
+        });
+        describe('When the `ses-template:list:list` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['ses-template:list:list']();
+            });
+            it('Provider does not request AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(0);
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(1);
             });
         });
     });
