@@ -78,7 +78,7 @@ Run `sls ses-template list` in order to list your email templates.
 CLI options:
 
 ```
---region        The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
+--region        The region used to list your templates. Default: the first region for the first stage found. [OPTIONAL]
 ```
 
 ## Links
