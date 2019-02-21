@@ -38,8 +38,8 @@ class ServerlessSesTemplate {
                             'syncTemplates',
                         ],
                         options: {
-                            'remove-missed': {
-                                usage: 'Set this flag in order to remove missed templates. (e.g. "--remove-missed")',
+                            removeMissed: {
+                                usage: 'Set this flag in order to remove missed templates. (e.g. "--removeMissed")',
                                 required: false,
                             },
                         },
@@ -61,6 +61,12 @@ class ServerlessSesTemplate {
                         lifecycleEvents: [
                             'list',
                         ],
+                        options: {
+                            filter: {
+                                usage: 'String to filter templates by name. (e.g. "--filter")',
+                                required: false,
+                            },
+                        },
                     },
                 },
                 options: {
@@ -92,10 +98,20 @@ class ServerlessSesTemplate {
      * @returns void
      */
     initOptions() {
-        this.region = this.options.region || this.serverless.service.provider.region;
-        this.removeMissed = this.options['remove-missed'] !== undefined;
-        this.stage = this.options.stage || this.serverless.service.provider.stage;
-        this.alias = this.options.alias || this.serverless.service.provider.alias || 'production';
+        const {
+            processedInput: { commands },
+            service: {
+                custom: { sesTemplatesRegion },
+                provider: { region, stage, alias },
+            },
+        } = this.serverless;
+
+        this.region = this.options.sesTemplatesRegion || sesTemplatesRegion || this.options.region || region;
+        this.stage = this.options.stage || stage;
+        this.alias = this.options.alias || alias || 'production';
+
+        this.removeMissed = commands.includes('deploy') ? this.options.removeMissed !== undefined : false;
+        this.filter = commands.includes('list') ? (this.options.filter || '') : '';
     }
 
     /**
@@ -143,7 +159,9 @@ class ServerlessSesTemplate {
             return;
         }
 
-        const currentTemplates = await this.getTemplates();
+        const templateList = await this.loadTemplates();
+        const currentTemplates = templateList.map(templateObject => templateObject.Name);
+
         const templatesToSync = this.configuration.map(
             templateConfig => this.addStageAliasToTemplateName(templateConfig.name),
         );
@@ -186,40 +204,6 @@ class ServerlessSesTemplate {
     }
 
     /**
-     * @param {Object} options
-     * @param {Array} accumulator
-     * @returns {Promise<Array<string>>}
-     */
-    async getTemplates(options = {}, accumulator = []) {
-        const defaultOptions = {
-            MaxItems: 50,
-        };
-
-        const response = await this.provider.request('SES', 'listTemplates', {
-            ...defaultOptions,
-            ...options,
-        });
-
-        const { TemplatesMetadata: templateList, NextToken: nextToken } = response;
-
-        const templateNames = templateList.map(templateObject => templateObject.Name);
-
-        const allTemplates = [
-            ...accumulator,
-            ...templateNames,
-        ];
-
-        if (nextToken) {
-            return this.getTemplates({
-                ...options,
-                NextToken: nextToken,
-            }, allTemplates);
-        }
-
-        return allTemplates;
-    }
-
-    /**
      * @returns {Promise}
      */
     async deleteGiven() {
@@ -247,7 +231,10 @@ class ServerlessSesTemplate {
             TemplateName: templateName,
         };
         this.serverless.cli.log(`WARNING: Going to delete template "${templateName}"`);
-        return this.provider.request('SES', 'deleteTemplate', deleteParams);
+        return this.provider.request('SES', 'deleteTemplate', deleteParams, {
+            stage: this.stage,
+            region: this.region,
+        });
     }
 
     /**
@@ -274,7 +261,10 @@ class ServerlessSesTemplate {
         };
 
         this.serverless.cli.log(`Going to create template "${templateName}"`);
-        return this.provider.request('SES', 'createTemplate', params);
+        return this.provider.request('SES', 'createTemplate', params, {
+            stage: this.stage,
+            region: this.region,
+        });
     }
 
     /**
@@ -301,7 +291,10 @@ class ServerlessSesTemplate {
         };
 
         this.serverless.cli.log(`Going to update template "${templateName}"`);
-        return this.provider.request('SES', 'updateTemplate', params);
+        return this.provider.request('SES', 'updateTemplate', params, {
+            stage: this.stage,
+            region: this.region,
+        });
     }
 
     /**
@@ -319,35 +312,59 @@ class ServerlessSesTemplate {
 
         this.serverless.cli.log(`AWS SES template list for ${this.region} region started`);
 
-        await this.listTemplates();
+
+        const templates = await this.loadTemplates();
+        if (templates.length) {
+            const table = new Table({});
+            table.push(...templates);
+
+            this.serverless.cli.log(`\n${table.toString()}`);
+        } else {
+            this.serverless.cli.log(`Templates not found in ${this.region} region`);
+        }
 
         this.serverless.cli.log('AWS SES template list finished');
     }
 
     /**
-     * @param {string} token
-     * @returns {Promise}
+     * requestOptions.maxItems - 10 max, see https://docs.aws.amazon.com/ses/latest/APIReference/API_ListTemplates.html
+     * @param {Object} requestOptions
+     * @param {number} [requestOptions.maxItems]
+     * @param {string} [requestOptions.token]
+     * @param {Object} [requestOptions.options]
+     * @param {string} filter
+     * @returns {Promise<Array>}
      */
-    async listTemplates(token = undefined) {
+    async loadTemplates({ maxItems = 10, token = undefined, ...options } = {}, filter = this.filter) {
         const { TemplatesMetadata: templates = [], NextToken: nextToken } = await this.provider.request(
             'SES',
             'listTemplates',
-            { MaxItems: 10, NextToken: token },
-            this.stage,
-            this.region,
+            {
+                ...options,
+                MaxItems: maxItems,
+                NextToken: token,
+            },
+            {
+                stage: this.stage,
+                region: this.region,
+            },
         );
 
-        const table = new Table();
-        if (templates && templates.length) {
-            table.push(...templates);
-            this.serverless.cli.log(`\n${table.toString()}`);
+        const templatesToReturn = filter
+            ? templates.filter(templateObject => String(templateObject.Name).includes(filter))
+            : templates;
 
+        if (templates && templates.length) {
             if (nextToken) {
-                await this.listTemplates(nextToken);
+                const nextTemplates = await this.loadTemplates({ maxItems, token: nextToken, ...options });
+                return [
+                    ...templatesToReturn,
+                    ...nextTemplates,
+                ];
             }
-        } else {
-            this.serverless.cli.log(`Templates not found in ${this.region} region`);
+            return templatesToReturn;
         }
+        return [];
     }
 }
 
