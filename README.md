@@ -30,8 +30,9 @@ plugins:
   - '@haftahave/serverless-ses-template'
 
 custom:
-  sesTemplatesAddStageAlias: true                          # Specifies whether to add stage and alias to template name
+  sesTemplatesAddStageAlias: true                          # Specifies whether to add stage and alias to template name (default false)
   sesTemplatesConfigFile: './custom-config-file/path.js'   # Config file path (default './ses-email-templates/index.js')
+  sesTemplatesRegion: 'us-west-2'                          # Specifies AWS region for SES templates
 ```
 ---
 
@@ -47,38 +48,49 @@ module.exports = [{
 }];
 ```
 
-Real world example see [here](ses-email-templates/index.js):
+Real world example see [here](ses-email-templates/index.js).
 
-### Usage and command line options
+## Plugin resolves region in the following order:
 
+- CLI argument named `sesTemplatesRegion`  - top priotity
+- `serverless.yml` custom key named `sesTemplatesRegion`
+- CLI argument named `region`
+- fallback to default region resolving (first region in first stage defined in serverless.yml)
+
+## Usage and command line options
+
+### Deploy
 Run `sls ses-template deploy` in order to sync your email templates.
 
 Optional CLI options:
 ```
---remove-missed   Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
+--sesTemplatesRegion The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
 --stage           The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---region          The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
 --alias           Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
+--removeMissed    Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
 ```
 ---
 
+### List templates
+Run `sls ses-template list` in order to list your email templates.
+
+CLI options:
+
+```
+--sesTemplatesRegion The region used to list your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
+--filter <string>    Display templates that contain <string>. [OPTIONAL]
+```
+
+### Delete template
 Run `sls ses-template delete --template template_name_goes_here` in order to delete your email template.
 
 CLI options:
 
 ```
 --template      The template name you are going to delete [REQUIRED]
+--sesTemplatesRegion        The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
 --stage         The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---region        The region used to populate your templates. Default: the first region for the first stage found. [OPTIONAL]
 --alias         Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
-```
-
-Run `sls ses-template list` in order to list your email templates.
-
-CLI options:
-
-```
---region        The region used to list your templates. Default: the first region for the first stage found. [OPTIONAL]
 ```
 
 ## Links

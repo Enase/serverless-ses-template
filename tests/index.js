@@ -12,10 +12,11 @@ const defaultService = {
         stage: 'dev',
         alias: 'production',
     },
-    custom: { sesTemplatesConfigFile: null, sesTemplatesAddStageAlias: null },
+    custom: { sesTemplatesConfigFile: null, sesTemplatesAddStageAlias: null, sesTemplatesRegion: null },
 };
-const mockServerless = (service = defaultService, providerMock = () => {}) => ({
+const mockServerless = (command, service = defaultService, providerMock = () => {}) => ({
     service,
+    processedInput: { commands: ['ses-template', command] },
     config: { servicePath: path.join(__dirname, '..') },
     getProvider: name => providerMock(name),
     utils: {
@@ -37,7 +38,7 @@ describe('The `ses-template` plugin', () => {
     });
 
     it('Validates service provider', () => {
-        const slsMock = mockServerless({ provider: { name: 'unknown' } });
+        const slsMock = mockServerless('deploy', { provider: { name: 'unknown' } });
         try {
             new ServerlessSesTemplate(slsMock); // eslint-disable-line no-new
             expect.fail(
@@ -61,6 +62,7 @@ describe('The `ses-template` plugin', () => {
         };
         const slsMock = {
             service: serviceConfig,
+            processedInput: { commands: ['ses-template', 'deploy'] },
             config: { servicePath: path.join(__dirname, '..') },
             getProvider: () => {},
             utils: {
@@ -91,7 +93,7 @@ describe('The `ses-template` plugin', () => {
     describe('The constructed object', () => {
         let pluginInstance;
         beforeEach(() => {
-            pluginInstance = new ServerlessSesTemplate(mockServerless());
+            pluginInstance = new ServerlessSesTemplate(mockServerless('list'));
         });
         it('Exposes correct list of hooks', () => {
             expect(pluginInstance.hooks).to.be.an('object');
@@ -126,7 +128,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('deploy', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless);
         });
         describe('When the `ses-template:deploy:syncTemplates` hook is executed', () => {
@@ -140,8 +142,10 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
                 expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
                 expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-                    MaxItems: 50,
+                    MaxItems: 10,
+                    NextToken: undefined,
                 });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Creates template resource', () => {
                 expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
@@ -154,6 +158,7 @@ describe('The `ses-template` plugin', () => {
                         TextPart: 'Hello world!\n',
                     },
                 });
+                expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(3);
@@ -161,7 +166,7 @@ describe('The `ses-template` plugin', () => {
         });
     });
 
-    describe('Fresh deploy with --remove-missed', () => {
+    describe('Fresh deploy with --removeMissed and --sesTemplatesRegion', () => {
         let serverless;
         let pluginInstance;
         const requestStub = sinon.stub();
@@ -172,8 +177,11 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
-            pluginInstance = new ServerlessSesTemplate(serverless, { 'remove-missed': true });
+            serverless = mockServerless('deploy', defaultService, providerSpy);
+            pluginInstance = new ServerlessSesTemplate(serverless, {
+                removeMissed: true,
+                sesTemplatesRegion: 'us-east-1',
+            });
         });
         describe('When the `ses-template:deploy:syncTemplates` hook is executed', () => {
             before(() => {
@@ -186,8 +194,10 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
                 expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
                 expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-                    MaxItems: 50,
+                    MaxItems: 10,
+                    NextToken: undefined,
                 });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
             });
             it('Creates template resource', () => {
                 expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
@@ -200,6 +210,7 @@ describe('The `ses-template` plugin', () => {
                         TextPart: 'Hello world!\n',
                     },
                 });
+                expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
             });
             it('Removes missed template resource', () => {
                 expect(requestStub.getCall(2).args[0]).to.be.equal('SES');
@@ -207,6 +218,7 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(2).args[2]).to.be.deep.equal({
                     TemplateName: 'template-id',
                 });
+                expect(requestStub.getCall(2).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(4);
@@ -224,7 +236,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('deploy', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless);
         });
         describe('When the `ses-template:deploy:syncTemplates` hook is executed', () => {
@@ -238,8 +250,10 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
                 expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
                 expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-                    MaxItems: 50,
+                    MaxItems: 10,
+                    NextToken: undefined,
                 });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Updates template resource', () => {
                 expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
@@ -252,9 +266,34 @@ describe('The `ses-template` plugin', () => {
                         TextPart: 'Hello world!\n',
                     },
                 });
+                expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(3);
+            });
+        });
+    });
+
+    describe('Deploy templates with invalid region', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless('deploy', defaultService, providerSpy);
+            pluginInstance = new ServerlessSesTemplate(serverless, { region: 'invalid' });
+        });
+        describe('When the `ses-template:deploy:syncTemplates` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['ses-template:deploy:syncTemplates']();
+            });
+            it('Provider does not request AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(0);
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(2);
             });
         });
     });
@@ -269,7 +308,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('deploy', defaultService, providerSpy);
             serverless.service.custom.sesTemplatesAddStageAlias = true;
             pluginInstance = new ServerlessSesTemplate(serverless);
         });
@@ -284,8 +323,10 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
                 expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
                 expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-                    MaxItems: 50,
+                    MaxItems: 10,
+                    NextToken: undefined,
                 });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Creates template resource', () => {
                 expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
@@ -298,6 +339,7 @@ describe('The `ses-template` plugin', () => {
                         TextPart: 'Hello world!\n',
                     },
                 });
+                expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(3);
@@ -315,7 +357,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('delete', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless, { template: 'template-name' });
         });
         describe('When the `ses-template:delete:deleteGiven` hook is executed', () => {
@@ -328,9 +370,8 @@ describe('The `ses-template` plugin', () => {
             it('Delete template from SES', () => {
                 expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
                 expect(requestStub.getCall(0).args[1]).to.be.equal('deleteTemplate');
-                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-                    TemplateName: 'template-name',
-                });
+                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({ TemplateName: 'template-name' });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(3);
@@ -346,7 +387,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('delete', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless, { template: 'template-name', region: 'invalid' });
         });
         describe('When the `ses-template:delete:deleteGiven` hook is executed', () => {
@@ -364,6 +405,7 @@ describe('The `ses-template` plugin', () => {
 
     describe('List templates with correct result', () => {
         let serverless;
+        let loadTemplatesSpy;
         let pluginInstance;
         const requestStub = sinon.stub();
         requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'example' }], NextToken: 'NextToken' });
@@ -372,7 +414,8 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('list', defaultService, providerSpy);
+            loadTemplatesSpy = sinon.spy(ServerlessSesTemplate.prototype, 'loadTemplates');
             pluginInstance = new ServerlessSesTemplate(serverless, {});
         });
         describe('When the `ses-template:list:list` hook is executed', () => {
@@ -388,12 +431,69 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
                     MaxItems: 10, NextToken: undefined,
                 });
-                expect(requestStub.getCall(0).args[3]).to.be.equal('dev');
-                expect(requestStub.getCall(0).args[4]).to.be.equal('us-west-2');
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+            });
+            it('Template list returns correct result', (done) => {
+                loadTemplatesSpy.returnValues[0].then((result) => {
+                    expect(result).to.be.deep.equal([{ Name: 'example' }, { Name: 'example2' }]);
+                    done();
+                }).catch((error) => {
+                    done(error);
+                });
             });
             it('Logs messages', () => {
-                expect(serverless.cli.log.callCount).to.equal(4);
+                expect(serverless.cli.log.callCount).to.equal(3);
             });
+        });
+        after(() => {
+            loadTemplatesSpy.restore();
+        });
+    });
+
+    describe('List templates with --filter parameter', () => {
+        let serverless;
+        let loadTemplatesSpy;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template name' }], NextToken: 'NextToken' });
+        requestStub.onCall(1).resolves({ TemplatesMetadata: [{ Name: 'template to filter' }] });
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless('list', defaultService, providerSpy);
+            loadTemplatesSpy = sinon.spy(ServerlessSesTemplate.prototype, 'loadTemplates');
+            pluginInstance = new ServerlessSesTemplate(serverless, { filter: 'filter' });
+        });
+        describe('When the `ses-template:list:list` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['ses-template:list:list']();
+            });
+            it('Provider does requests to AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(2);
+            });
+            it('List templates from SES', () => {
+                expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+                    MaxItems: 10, NextToken: undefined,
+                });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+            });
+            it('Template list uses filter', (done) => {
+                loadTemplatesSpy.returnValues[0].then((result) => {
+                    expect(result).to.be.deep.equal([{ Name: 'template to filter' }]);
+                    done();
+                }).catch((error) => {
+                    done(error);
+                });
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(3);
+            });
+        });
+        after(() => {
+            loadTemplatesSpy.restore();
         });
     });
 
@@ -406,7 +506,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('list', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless, {});
         });
         describe('When the `ses-template:list:list` hook is executed', () => {
@@ -422,8 +522,7 @@ describe('The `ses-template` plugin', () => {
                 expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
                     MaxItems: 10, NextToken: undefined,
                 });
-                expect(requestStub.getCall(0).args[3]).to.be.equal('dev');
-                expect(requestStub.getCall(0).args[4]).to.be.equal('us-west-2');
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(3);
@@ -439,7 +538,7 @@ describe('The `ses-template` plugin', () => {
             request: requestStub,
         }));
         before(() => {
-            serverless = mockServerless(defaultService, providerSpy);
+            serverless = mockServerless('list', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless, { region: 'invalid' });
         });
         describe('When the `ses-template:list:list` hook is executed', () => {
