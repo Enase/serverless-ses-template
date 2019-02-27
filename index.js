@@ -108,7 +108,7 @@ class ServerlessSesTemplate {
 
         this.region = this.options.sesTemplatesRegion || sesTemplatesRegion || this.options.region || region;
         this.stage = this.options.stage || stage;
-        this.alias = this.options.alias || alias || 'production';
+        this.alias = this.options.alias || alias;
 
         this.removeMissed = commands.includes('deploy') ? this.options.removeMissed !== undefined : false;
         this.filter = commands.includes('list') ? (this.options.filter || '') : '';
@@ -192,7 +192,8 @@ class ServerlessSesTemplate {
      * @returns {string}
      */
     addStageAliasToTemplateName(templateName) {
-        return this.addStageAlias ? `${templateName}_${this.stage}_${this.alias}` : templateName;
+        const aliasSuffix = this.alias ? `_${this.alias}` : '';
+        return this.addStageAlias ? `${templateName}_${this.stage}${aliasSuffix}` : templateName;
     }
 
     /**
@@ -200,7 +201,8 @@ class ServerlessSesTemplate {
      * @returns {boolean}
      */
     isTemplateFromCurrentStageAlias(templateName) {
-        return this.addStageAlias ? String(templateName).endsWith(`_${this.stage}_${this.alias}`) : true;
+        const aliasSuffix = this.alias ? `_${this.alias}` : '';
+        return this.addStageAlias ? String(templateName).endsWith(`_${this.stage}${aliasSuffix}`) : true;
     }
 
     /**

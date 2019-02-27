@@ -347,6 +347,56 @@ describe('The `ses-template` plugin', () => {
         });
     });
 
+    describe('Fresh deploy with stage but no alias', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+        requestStub.onCall(1).resolves();
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless('deploy', defaultService, providerSpy);
+            serverless.service.provider.alias = undefined;
+            serverless.service.custom.sesTemplatesAddStageAlias = true;
+            pluginInstance = new ServerlessSesTemplate(serverless);
+        });
+        describe('When the `ses-template:deploy:syncTemplates` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['ses-template:deploy:syncTemplates']();
+            });
+            it('Provider does requests to AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(2);
+            });
+            it('Loads templates from SES executes', () => {
+                expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+                    MaxItems: 10,
+                    NextToken: undefined,
+                });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+            });
+            it('Creates template resource', () => {
+                expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(1).args[1]).to.be.equal('createTemplate');
+                expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+                    Template: {
+                        TemplateName: 'example_dev',
+                        SubjectPart: 'example',
+                        HtmlPart: '<div>Hello world!</div>\n',
+                        TextPart: 'Hello world!\n',
+                    },
+                });
+                expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(3);
+            });
+        });
+    });
+
     describe('Delete template with correct values', () => {
         let serverless;
         let pluginInstance;

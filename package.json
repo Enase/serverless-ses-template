@@ -28,7 +28,8 @@
     "Sergii Kovalev <enasik@gmail.com> (https://github.com/Enase)"
   ],
   "contributors": [
-    "Arseny Yankovsky (https://github.com/ArsenyYankovsky)"
+    "Arseny Yankovsky (https://github.com/ArsenyYankovsky)",
+    "Mike Cousins <mike@cousins.io> (https://mike.cousins.io)"
   ],
   "dependencies": {
     "cli-table": "^0.3.1"
