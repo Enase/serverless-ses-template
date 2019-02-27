@@ -11,7 +11,8 @@ A serverless plugin that allows automatically creating, updating and removing AW
 **:zap: Features**
 
 - Allows declaring email templates that will be synced in pre-deploy phase
-- Allows you to add stage and alias to template names while sync (supports [serverless-aws-alias](https://github.com/HyperBrain/serverless-aws-alias) plugin)
+- Allows you to optionally add stage to template names while syncing
+  - Will also add alias, if specified (supports [serverless-aws-alias](https://github.com/HyperBrain/serverless-aws-alias) plugin)
 - Allows you to list and delete SES template by specified name
 ---
 
@@ -30,7 +31,7 @@ plugins:
   - '@haftahave/serverless-ses-template'
 
 custom:
-  sesTemplatesAddStageAlias: true                          # Specifies whether to add stage and alias to template name (default false)
+  sesTemplatesAddStageAlias: true                          # Specifies whether to add stage and alias (if present) to template name (default false)
   sesTemplatesConfigFile: './custom-config-file/path.js'   # Config file path (default './ses-email-templates/index.js')
   sesTemplatesRegion: 'us-west-2'                          # Specifies AWS region for SES templates
 ```
