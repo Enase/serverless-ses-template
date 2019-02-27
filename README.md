@@ -31,9 +31,9 @@ plugins:
   - '@haftahave/serverless-ses-template'
 
 custom:
-  sesTemplatesAddStageAlias: true                          # Specifies whether to add stage and alias (if present) to template name (default false)
-  sesTemplatesConfigFile: './custom-config-file/path.js'   # Config file path (default './ses-email-templates/index.js')
-  sesTemplatesRegion: 'us-west-2'                          # Specifies AWS region for SES templates
+  sesTemplatesAddStageAlias: true                        # Specifies whether to add stage and alias (if present) to template name (default false)
+  sesTemplatesConfigFile: './custom-config-file/path.js' # Config file path (default './ses-email-templates/index.js')
+  sesTemplatesRegion: 'us-west-2'                        # Specifies AWS region for SES templates
 ```
 ---
 
@@ -66,9 +66,9 @@ Run `sls ses-template deploy` in order to sync your email templates.
 Optional CLI options:
 ```
 --sesTemplatesRegion The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
---stage           The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---alias           Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
---removeMissed    Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
+--stage        The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
+--alias        Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
+--removeMissed Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
 ```
 ---
 
@@ -88,10 +88,10 @@ Run `sls ses-template delete --template template_name_goes_here` in order to del
 CLI options:
 
 ```
---template      The template name you are going to delete [REQUIRED]
---sesTemplatesRegion        The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
---stage         The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---alias         Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
+--template    The template name you are going to delete [REQUIRED]
+--sesTemplatesRegion The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
+--stage       The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
+--alias       Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
 ```
 
 ## Links
