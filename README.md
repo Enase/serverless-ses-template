@@ -53,7 +53,7 @@ Real world example see [here](ses-email-templates/index.js).
 
 ## Plugin resolves region in the following order:
 
-- CLI argument named `sesTemplatesRegion`  - top priotity
+- CLI argument named `sesTemplatesRegion`  - top priority
 - `serverless.yml` custom key named `sesTemplatesRegion`
 - CLI argument named `region`
 - fallback to default region resolving (first region in first stage defined in serverless.yml)
