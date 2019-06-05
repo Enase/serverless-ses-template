@@ -1,6 +1,10 @@
 CHANGELOG
 ========
 
+# 1.2.1 (05.06.2019)
+- Dependencies updated in order to get rid of npm security vulnerability warning
+- License added + readme updated
+
 # 1.2.0 (27.02.2019)
 - [Do not add alias to template names if alias plugin isn't used](https://github.com/haftahave/serverless-ses-template/pull/11)
 

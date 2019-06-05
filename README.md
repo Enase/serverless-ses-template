@@ -1,9 +1,14 @@
-[![Build Status](https://travis-ci.org/haftahave/serverless-ses-template.svg?branch=master)](https://travis-ci.org/haftahave/serverless-ses-template)
+[![Serverless][ico-serverless]][link-serverless]
+[![NPM][ico-npm]][link-npm]
+[![npm][ico-npm-downloads]][link-npm]
+[![Build Status][ico-build]][link-build]
 
 Template sync plugin for Amazon Simple Email Service
 ===
 
-A serverless plugin that allows automatically creating, updating and removing AWS SES Templates using a configuration file and keeps your AWS SES Templates synced with your configuration file.
+A serverless plugin that allows automatically creating, updating and removing
+AWS SES Templates using a configuration file and keeps your AWS SES Templates
+synced with your configuration file.
 
 **REQUIRES** nodejs 8.10+
 
@@ -12,7 +17,7 @@ A serverless plugin that allows automatically creating, updating and removing AW
 
 - Allows declaring email templates that will be synced in pre-deploy phase
 - Allows you to optionally add stage to template names while syncing
-  - Will also add alias, if specified (supports [serverless-aws-alias](https://github.com/HyperBrain/serverless-aws-alias) plugin)
+  - Will also add alias, if specified (supports [serverless-aws-alias][link-aws-alias] plugin)
 - Allows you to list and delete SES template by specified name
 ---
 
@@ -96,9 +101,21 @@ CLI options:
 
 ## Links
 
-- [Sending Personalized Email Using the Amazon SES API](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html)
-- [Amazon SES API sendTemplatedEmail](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SES.html#sendTemplatedEmail-property)
+- [Sending Personalized Email Using the Amazon SES API][link-ses-guide]
+- [Amazon SES API sendTemplatedEmail][link-ses-sdk]
 
 ## License
 
 MIT
+
+
+[ico-serverless]: http://public.serverless.com/badges/v3.svg
+[ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
+[ico-npm-downloads]: https://img.shields.io/npm/dt/@haftahave/serverless-ses-template.svg
+[ico-build]: https://travis-ci.org/haftahave/serverless-ses-template.svg?branch=master
+
+[link-serverless]: http://www.serverless.com/
+[link-npm]: https://www.npmjs.com/package/@haftahave/serverless-ses-template
+[link-build]: https://travis-ci.org/haftahave/serverless-ses-template
+[link-ses-guide]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html
+[link-aws-alias]: https://github.com/HyperBrain/serverless-aws-alias
