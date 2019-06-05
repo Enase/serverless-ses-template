@@ -118,4 +118,5 @@ MIT
 [link-npm]: https://www.npmjs.com/package/@haftahave/serverless-ses-template
 [link-build]: https://travis-ci.org/haftahave/serverless-ses-template
 [link-ses-guide]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html
+[link-ses-sdk]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SES.html#sendTemplatedEmail-property
 [link-aws-alias]: https://github.com/HyperBrain/serverless-aws-alias
