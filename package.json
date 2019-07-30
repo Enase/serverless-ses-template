@@ -55,6 +55,7 @@
   "nyc": {
     "all": true,
     "exclude": [
+      ".eslintrc.js",
       "tests/*",
       "coverage/*"
     ],
