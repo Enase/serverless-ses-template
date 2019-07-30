@@ -2,7 +2,7 @@ CHANGELOG
 ========
 
 # 1.2.3 (30.07.2019)
-- Dependencies updated (severity vulnerabilities)
+- Dependencies updated (security vulnerabilities)
 
 # 1.2.2 (05.06.2019)
 - Readme.md link fixed
