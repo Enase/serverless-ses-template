@@ -18,7 +18,7 @@ const mockServerless = (command, service = defaultService, providerMock = () => 
     service,
     processedInput: { commands: ['ses-template', command] },
     config: { servicePath: path.join(__dirname, '..') },
-    getProvider: name => providerMock(name),
+    getProvider: (name) => providerMock(name),
     utils: {
         fileExistsSync: sinon.spy(() => true),
     },

@@ -18,17 +18,17 @@ module.exports = {
         "filenames/match-exported": [ ERROR, "kebab" ],
         "max-len": ["error", 120],
         "indent": ["error", 4, {"SwitchCase": 1}],
-        "linebreak-style": "off",
-        "no-console": "off",
+        "linebreak-style": OFF,
+        "no-console": OFF,
         "prefer-rest-params": "error",
-        "import/no-extraneous-dependencies": ["aws-sdk"],
+        "import/no-extraneous-dependencies": [ERROR, { "devDependencies": true }],
         "no-cond-assign" : [ERROR, "except-parens"],
-        "no-unused-expressions" : "off",
+        "no-unused-expressions" : OFF,
         "no-unused-vars" : ["error", { "argsIgnorePattern": "^_" }],
-        "no-useless-escape" : "off",
-        "no-underscore-dangle" : "off",
-        "function-paren-newline" : "off",
-        "class-methods-use-this" : "off",
+        "no-useless-escape" : OFF,
+        "no-underscore-dangle" : OFF,
+        "function-paren-newline" : OFF,
+        "class-methods-use-this" : OFF,
         // JSDoc Requirements
         "require-jsdoc": [ WARN, {
             "require": {
@@ -50,6 +50,12 @@ module.exports = {
                 // <property name="javascript.return.tag" value="returns" />
                 "return": "returns"
             }
-        }]
+        }],
+    },
+    "settings": {
+        "import/core-modules": ["aws-sdk"],
+        "react": {
+            "version": "999.999.999", // @see https://github.com/yannickcr/eslint-plugin-react/issues/1955
+        },
     },
 };

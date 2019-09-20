@@ -160,14 +160,14 @@ class ServerlessSesTemplate {
         }
 
         const templateList = await this.loadTemplates();
-        const currentTemplates = templateList.map(templateObject => templateObject.Name);
+        const currentTemplates = templateList.map((templateObject) => templateObject.Name);
 
         const templatesToSync = this.configuration.map(
-            templateConfig => this.addStageAliasToTemplateName(templateConfig.name),
+            (templateConfig) => this.addStageAliasToTemplateName(templateConfig.name),
         );
 
         const templatesToRemove = this.removeMissed
-            ? currentTemplates.filter(templateName => !templatesToSync.includes(templateName)
+            ? currentTemplates.filter((templateName) => !templatesToSync.includes(templateName)
                 && this.isTemplateFromCurrentStageAlias(templateName))
             : [];
 
@@ -178,7 +178,7 @@ class ServerlessSesTemplate {
             return this.createTemplate(templateConfig);
         });
 
-        const deleteTemplatePromises = templatesToRemove.map(templateName => this.deleteTemplate(templateName));
+        const deleteTemplatePromises = templatesToRemove.map((templateName) => this.deleteTemplate(templateName));
 
         await Promise.all([
             ...syncTemplatePromises,
@@ -353,7 +353,7 @@ class ServerlessSesTemplate {
         );
 
         const templatesToReturn = filter
-            ? templates.filter(templateObject => String(templateObject.Name).includes(filter))
+            ? templates.filter((templateObject) => String(templateObject.Name).includes(filter))
             : templates;
 
         if (templates && templates.length) {

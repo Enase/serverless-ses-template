@@ -1,6 +1,9 @@
 CHANGELOG
 ========
 
+# 1.2.4 (20.09.2019)
+- Dependencies updated (security vulnerabilities)
+
 # 1.2.3 (30.07.2019)
 - Dependencies updated (security vulnerabilities)
 
