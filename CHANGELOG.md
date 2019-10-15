@@ -1,6 +1,9 @@
 CHANGELOG
 ========
 
+# 1.2.5 (15.10.2019)
+- FIX: [Variable refs aren't resolved](https://github.com/haftahave/serverless-ses-template/issues/12)
+
 # 1.2.4 (20.09.2019)
 - Dependencies updated (security vulnerabilities)
 

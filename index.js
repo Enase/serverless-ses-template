@@ -19,9 +19,6 @@ class ServerlessSesTemplate {
 
         /** @type AwsProvider */
         this.provider = this.serverless.getProvider(this.serverless.service.provider.name);
-        this.sesTemplatesConfigFile = this.serverless.service.custom.sesTemplatesConfigFile
-            || defaultSesTemplatesConfigFilePath;
-        this.addStageAlias = this.serverless.service.custom.sesTemplatesAddStageAlias;
 
         this.commands = {
             'ses-template': {
@@ -115,10 +112,25 @@ class ServerlessSesTemplate {
     }
 
     /**
+     * @returns {string}
+     */
+    getTemplateConfigFile() {
+        return this.serverless.service.custom.sesTemplatesConfigFile
+            || defaultSesTemplatesConfigFilePath;
+    }
+
+    /**
+     * @returns {boolean}
+     */
+    canAddStageAlias() {
+        return Boolean(this.serverless.service.custom.sesTemplatesAddStageAlias);
+    }
+
+    /**
      * @returns void
      */
     checkConfigurationFile() {
-        const fileFullPath = path.join(this.serverless.config.servicePath, this.sesTemplatesConfigFile);
+        const fileFullPath = path.join(this.serverless.config.servicePath, this.getTemplateConfigFile());
         if (!this.serverless.utils.fileExistsSync(fileFullPath)) {
             throw new this.serverless.classes.Error(
                 `SES email templates configuration file not found by path "${fileFullPath}"`,
@@ -193,7 +205,7 @@ class ServerlessSesTemplate {
      */
     addStageAliasToTemplateName(templateName) {
         const aliasSuffix = this.alias ? `_${this.alias}` : '';
-        return this.addStageAlias ? `${templateName}_${this.stage}${aliasSuffix}` : templateName;
+        return this.canAddStageAlias() ? `${templateName}_${this.stage}${aliasSuffix}` : templateName;
     }
 
     /**
@@ -202,7 +214,7 @@ class ServerlessSesTemplate {
      */
     isTemplateFromCurrentStageAlias(templateName) {
         const aliasSuffix = this.alias ? `_${this.alias}` : '';
-        return this.addStageAlias ? String(templateName).endsWith(`_${this.stage}${aliasSuffix}`) : true;
+        return this.canAddStageAlias() ? String(templateName).endsWith(`_${this.stage}${aliasSuffix}`) : true;
     }
 
     /**
