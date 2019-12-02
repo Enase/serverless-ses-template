@@ -9,7 +9,7 @@
     "coverage_report": "nyc report --reporter=html",
     "lint": "eslint ."
   },
-  "author": "Hafta Have Inc <apps@haftahave.com>",
+  "author": "Hafta Have Inc <hello@haftahave.com>",
   "license": "MIT",
   "keywords": [
     "serverless",
