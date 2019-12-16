@@ -152,7 +152,7 @@ class ServerlessSesTemplate {
      * @returns {boolean}
      */
     isRegionSupported() {
-        return ['us-west-2', 'us-east-1', 'eu-west-1'].includes(this.region);
+        return ['us-west-2', 'us-east-1', 'eu-west-1', 'ap-southeast-2'].includes(this.region);
     }
 
     /**
