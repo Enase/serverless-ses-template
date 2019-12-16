@@ -79,6 +79,10 @@ class ServerlessSesTemplate {
                         usage: 'Specify the region you want to sync templates (e.g. "--region us-west-2")',
                         required: false,
                     },
+                    sesTemplateConfig: {
+                        usage: 'Specify the configuration file location (e.g. "--sesTemplateConfig ./folder/file.js")',
+                        required: false,
+                    },
                 },
             },
         };
@@ -115,7 +119,7 @@ class ServerlessSesTemplate {
      * @returns {string}
      */
     getTemplateConfigFile() {
-        return this.serverless.service.custom.sesTemplatesConfigFile
+        return this.options.sesTemplateConfig || this.serverless.service.custom.sesTemplatesConfigFile
             || defaultSesTemplatesConfigFilePath;
     }
 

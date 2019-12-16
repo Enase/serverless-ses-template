@@ -63,6 +63,12 @@ Real world example see [here](ses-email-templates/index.js).
 - CLI argument named `region`
 - fallback to default region resolving (first region in first stage defined in serverless.yml)
 
+## Plugin resolves template configuration file path in the following order:
+
+- CLI argument named `sesTemplateConfig`  - top priority
+- `serverless.yml` custom key named `sesTemplatesConfigFile`
+- fallback to default `./ses-email-templates/index.js`
+
 ## Usage and command line options
 
 ### Deploy
@@ -71,6 +77,7 @@ Run `sls ses-template deploy` in order to sync your email templates.
 Optional CLI options:
 ```
 --sesTemplatesRegion The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
+--sesTemplateConfig  Template configuration file path. Default: see "Template configuration file sequence" in readme.md. [OPTIONAL]
 --stage        The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
 --alias        Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
 --removeMissed Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]

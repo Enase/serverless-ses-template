@@ -3,6 +3,7 @@ CHANGELOG
 
 # 1.2.6 (16.12.2019)
 - List of supported regions updated according to [AWS RPS](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)
+- Added ability to pass template configuration file path as CLI argument named `sesTemplateConfig`.
 
 # 1.2.5 (15.10.2019)
 - FIX: [Variable refs aren't resolved](https://github.com/haftahave/serverless-ses-template/issues/12)
