@@ -1,6 +1,9 @@
 CHANGELOG
 ========
 
+# 1.2.6 (16.12.2019)
+- List of supported regions updated according to [AWS RPS](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)
+
 # 1.2.5 (15.10.2019)
 - FIX: [Variable refs aren't resolved](https://github.com/haftahave/serverless-ses-template/issues/12)
 

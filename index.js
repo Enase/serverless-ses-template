@@ -149,10 +149,18 @@ class ServerlessSesTemplate {
     }
 
     /**
+     * @link https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/
      * @returns {boolean}
      */
     isRegionSupported() {
-        return ['us-west-2', 'us-east-1', 'eu-west-1'].includes(this.region);
+        return [
+            'us-east-1', // US East (N. Virginia)
+            'us-west-2', // US West (Oregon)
+            'eu-west-1', // EU (Ireland)
+            'eu-central-1', // EU (Frankfurt)
+            'ap-southeast-2', // Asia Pacific (Sydney)
+            'ap-east-1', // Asia Pacific (Hong Kong)
+        ].includes(this.region);
     }
 
     /**
