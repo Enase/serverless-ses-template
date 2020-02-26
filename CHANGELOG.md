@@ -3,7 +3,7 @@ CHANGELOG
 
 # 1.3.0 (26.02.2020)
 - **BREAKING CHANGE:** Added ability to load template [configuration in any async way](https://github.com/haftahave/serverless-ses-template/issues/15) (eg. from DB or API). \
-Template configuration file must return an async function now. Example see [here](ses-email-templates/index.js). \
+Template configuration file must return an async function now. Example see [here](ses-email-templates/index.js).
 
 # 1.2.6 (16.12.2019)
 - List of supported regions updated according to [AWS RPS](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)
