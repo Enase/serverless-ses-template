@@ -1,3 +1,4 @@
+const fs = require('fs');
 const path = require('path');
 const sinon = require('sinon');
 const chai = require('chai');
@@ -21,6 +22,7 @@ const mockServerless = (command, service = defaultService, providerMock = () => 
     getProvider: (name) => providerMock(name),
     utils: {
         fileExistsSync: sinon.spy(() => true),
+        readFileSync: (filePath) => fs.readFileSync(filePath).toString().trim(),
     },
     classes: {
         Error: sinon.spy((message) => {
@@ -154,8 +156,8 @@ describe('The `ses-template` plugin', () => {
                     Template: {
                         TemplateName: 'example',
                         SubjectPart: 'example',
-                        HtmlPart: '<div>Hello world!</div>\n',
-                        TextPart: 'Hello world!\n',
+                        HtmlPart: '<div>Hello world!</div>',
+                        TextPart: 'Hello world!',
                     },
                 });
                 expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
@@ -206,8 +208,8 @@ describe('The `ses-template` plugin', () => {
                     Template: {
                         TemplateName: 'example',
                         SubjectPart: 'example',
-                        HtmlPart: '<div>Hello world!</div>\n',
-                        TextPart: 'Hello world!\n',
+                        HtmlPart: '<div>Hello world!</div>',
+                        TextPart: 'Hello world!',
                     },
                 });
                 expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
@@ -262,8 +264,8 @@ describe('The `ses-template` plugin', () => {
                     Template: {
                         TemplateName: 'example',
                         SubjectPart: 'example',
-                        HtmlPart: '<div>Hello world!</div>\n',
-                        TextPart: 'Hello world!\n',
+                        HtmlPart: '<div>Hello world!</div>',
+                        TextPart: 'Hello world!',
                     },
                 });
                 expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
@@ -335,8 +337,8 @@ describe('The `ses-template` plugin', () => {
                     Template: {
                         TemplateName: 'example_dev_production',
                         SubjectPart: 'example',
-                        HtmlPart: '<div>Hello world!</div>\n',
-                        TextPart: 'Hello world!\n',
+                        HtmlPart: '<div>Hello world!</div>',
+                        TextPart: 'Hello world!',
                     },
                 });
                 expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
@@ -385,8 +387,8 @@ describe('The `ses-template` plugin', () => {
                     Template: {
                         TemplateName: 'example_dev',
                         SubjectPart: 'example',
-                        HtmlPart: '<div>Hello world!</div>\n',
-                        TextPart: 'Hello world!\n',
+                        HtmlPart: '<div>Hello world!</div>',
+                        TextPart: 'Hello world!',
                     },
                 });
                 expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });

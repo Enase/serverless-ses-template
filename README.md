@@ -44,9 +44,14 @@ custom:
 
 ### Template configuration file
 
-Template configuration file should be an array of objects:
+Template configuration file should be an async function that returns array of objects (all keys are required):
 ```javascript
-module.exports = [{
+/**
+ * @param {Object} serverless - Serverless instance
+ * @param {Object} options - runtime options
+ * @returns {Promise<{name: string, subject: string, html: string, text}[]>}
+ */
+module.exports = async (serverless, options) => [{
     name: 'example_name',
     subject: 'Your subject',
     html: '<h1>Hello world!</h1>',

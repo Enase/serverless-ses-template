@@ -131,9 +131,9 @@ class ServerlessSesTemplate {
     }
 
     /**
-     * @returns void
+     * @returns {Promise<void>}
      */
-    checkConfigurationFile() {
+    async checkConfigurationFile() {
         const fileFullPath = path.join(this.serverless.config.servicePath, this.getTemplateConfigFile());
         if (!this.serverless.utils.fileExistsSync(fileFullPath)) {
             throw new this.serverless.classes.Error(
@@ -144,11 +144,18 @@ class ServerlessSesTemplate {
         try {
             /* eslint-disable import/no-dynamic-require */
             /* eslint-disable global-require */
-            this.configuration = require(fileFullPath);
+            const configFunction = require(fileFullPath);
+            this.configuration = await configFunction(this.serverless, this.options);
             /* eslint-enable global-require */
             /* eslint-enable import/no-dynamic-require */
         } catch (e) {
-            throw new this.serverless.classes.Error(e.message);
+            if (e.message === 'configFunction is not a function') {
+                const message = 'Breaking change in version 1.3.0 read here: '
+                    + 'https://github.com/haftahave/serverless-ses-template/releases/tag/1.3.0';
+                throw new this.serverless.classes.Error(message);
+            } else {
+                throw new this.serverless.classes.Error(e.message);
+            }
         }
     }
 
@@ -163,7 +170,7 @@ class ServerlessSesTemplate {
             'eu-west-1', // EU (Ireland)
             'eu-central-1', // EU (Frankfurt)
             'ap-southeast-2', // Asia Pacific (Sydney)
-            'ap-east-1', // Asia Pacific (Hong Kong)
+            'ap-south-1', // Asia Pacific (Mumbai)
         ].includes(this.region);
     }
 
@@ -174,7 +181,7 @@ class ServerlessSesTemplate {
         this.serverless.cli.log('AWS SES template synchronization start');
 
         this.initOptions();
-        this.checkConfigurationFile();
+        await this.checkConfigurationFile();
 
         if (!this.isRegionSupported()) {
             this.serverless.cli.log(
