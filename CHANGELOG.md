@@ -2,7 +2,7 @@ CHANGELOG
 ========
 
 # 1.3.2 (12.03.2020)
-- Changed: SES template deploy process moved "before deploy" stage.
+- Changed: SES template deploy process moved to "before deploy" stage.
 
 # 1.3.1 (12.03.2020)
 - Changed: SES template deploy process moved from "packaging" to "after deploy" stage.
