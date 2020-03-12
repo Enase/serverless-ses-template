@@ -1,6 +1,10 @@
 CHANGELOG
 ========
 
+# 1.3.1 (12.03.2020)
+- Changed: SES template deploy process moved from "packaging" to "after deploy" stage.
+- Added: Ability to disable auto deploy with `sesTemplatesDisableAutoDeploy` configuration flag.
+
 # 1.3.0 (26.02.2020)
 - **BREAKING CHANGE:** Added ability to load template [configuration in any async way](https://github.com/haftahave/serverless-ses-template/issues/15) (eg. from DB or API). \
 Template configuration file must return an async function now. Example see [here](ses-email-templates/index.js).

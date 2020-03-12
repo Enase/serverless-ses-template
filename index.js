@@ -91,7 +91,7 @@ class ServerlessSesTemplate {
             'ses-template:deploy:syncTemplates': this.syncTemplates.bind(this),
             'ses-template:delete:deleteGiven': this.deleteGiven.bind(this),
             'ses-template:list:list': this.list.bind(this),
-            'before:package:initialize': this.syncTemplates.bind(this),
+            'after:deploy:deploy': this.syncTemplatesOnDeploy.bind(this),
         };
     }
 
@@ -172,6 +172,16 @@ class ServerlessSesTemplate {
             'ap-southeast-2', // Asia Pacific (Sydney)
             'ap-south-1', // Asia Pacific (Mumbai)
         ].includes(this.region);
+    }
+
+    /**
+     * @returns {Promise}
+     */
+    async syncTemplatesOnDeploy() {
+        if (this.serverless.service.custom.sesTemplatesDisableAutoDeploy) {
+            return Promise.resolve();
+        }
+        return this.syncTemplates();
     }
 
     /**

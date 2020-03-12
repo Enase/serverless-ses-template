@@ -36,9 +36,10 @@ plugins:
   - '@haftahave/serverless-ses-template'
 
 custom:
+  sesTemplatesDisableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy (default false)
   sesTemplatesAddStageAlias: true                        # Specifies whether to add stage and alias (if present) to template name (default false)
   sesTemplatesConfigFile: './custom-config-file/path.js' # Config file path (default './ses-email-templates/index.js')
-  sesTemplatesRegion: 'us-west-2'                        # Specifies AWS region for SES templates
+  sesTemplatesRegion: 'us-west-2'                        # Specifies AWS region for SES templates (not required)
 ```
 ---
 

@@ -13,7 +13,12 @@ const defaultService = {
         stage: 'dev',
         alias: 'production',
     },
-    custom: { sesTemplatesConfigFile: null, sesTemplatesAddStageAlias: null, sesTemplatesRegion: null },
+    custom: {
+        sesTemplatesDisableAutoDeploy: null,
+        sesTemplatesConfigFile: null,
+        sesTemplatesAddStageAlias: null,
+        sesTemplatesRegion: null,
+    },
 };
 const mockServerless = (command, service = defaultService, providerMock = () => {}) => ({
     service,
@@ -103,7 +108,7 @@ describe('The `ses-template` plugin', () => {
             expect(pluginInstance.hooks['ses-template:deploy:syncTemplates']).to.be.a('function');
             expect(pluginInstance.hooks['ses-template:delete:deleteGiven']).to.be.a('function');
             expect(pluginInstance.hooks['ses-template:list:list']).to.be.a('function');
-            expect(pluginInstance.hooks['before:package:initialize']).to.be.a('function');
+            expect(pluginInstance.hooks['after:deploy:deploy']).to.be.a('function');
         });
         it('Exposes correct list of commands', () => {
             expect(pluginInstance.commands).to.be.an('object');
@@ -120,7 +125,7 @@ describe('The `ses-template` plugin', () => {
         });
     });
 
-    describe('Fresh deploy with no custom properties', () => {
+    describe('Fresh deploy command with no custom properties', () => {
         let serverless;
         let pluginInstance;
         const requestStub = sinon.stub();
@@ -164,6 +169,90 @@ describe('The `ses-template` plugin', () => {
             });
             it('Logs messages', () => {
                 expect(serverless.cli.log.callCount).to.equal(3);
+            });
+        });
+    });
+
+    describe('Auto deploy with no custom properties', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+        requestStub.onCall(1).resolves();
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless('deploy', defaultService, providerSpy);
+            pluginInstance = new ServerlessSesTemplate(serverless);
+        });
+        describe('When the `after:deploy:deploy` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['after:deploy:deploy']();
+            });
+            it('Provider does requests to AWS SES', () => {
+                expect(requestStub.callCount).to.be.equal(2);
+            });
+            it('Loads templates from SES executes', () => {
+                expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+                expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+                    MaxItems: 10,
+                    NextToken: undefined,
+                });
+                expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+            });
+            it('Creates template resource', () => {
+                expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
+                expect(requestStub.getCall(1).args[1]).to.be.equal('createTemplate');
+                expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+                    Template: {
+                        TemplateName: 'example',
+                        SubjectPart: 'example',
+                        HtmlPart: '<div>Hello world!</div>',
+                        TextPart: 'Hello world!',
+                    },
+                });
+                expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+            });
+            it('Logs messages', () => {
+                expect(serverless.cli.log.callCount).to.equal(3);
+            });
+        });
+    });
+
+    describe('Auto deploy with auto deploy disabled', () => {
+        let serverless;
+        let pluginInstance;
+        const requestStub = sinon.stub();
+        requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+        requestStub.onCall(1).resolves();
+        const providerSpy = sinon.spy(() => ({
+            request: requestStub,
+        }));
+        before(() => {
+            serverless = mockServerless(
+                'deploy',
+                {
+                    ...defaultService,
+                    custom: {
+                        ...defaultService.custom,
+                        sesTemplatesDisableAutoDeploy: true,
+                    },
+                },
+                providerSpy,
+            );
+            pluginInstance = new ServerlessSesTemplate(serverless);
+        });
+        describe('When the `after:deploy:deploy` hook is executed', () => {
+            before(() => {
+                pluginInstance.hooks['after:deploy:deploy']();
+            });
+            it('Provider doesn\'t execute any requests to AWS SES', () => {
+                expect(requestStub.notCalled).to.be.true;
+            });
+            it('Logs do not log any messages', () => {
+                expect(serverless.cli.log.notCalled).to.be.true;
             });
         });
     });
