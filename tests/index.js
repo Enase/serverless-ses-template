@@ -108,7 +108,7 @@ describe('The `ses-template` plugin', () => {
             expect(pluginInstance.hooks['ses-template:deploy:syncTemplates']).to.be.a('function');
             expect(pluginInstance.hooks['ses-template:delete:deleteGiven']).to.be.a('function');
             expect(pluginInstance.hooks['ses-template:list:list']).to.be.a('function');
-            expect(pluginInstance.hooks['after:deploy:deploy']).to.be.a('function');
+            expect(pluginInstance.hooks['before:deploy:deploy']).to.be.a('function');
         });
         it('Exposes correct list of commands', () => {
             expect(pluginInstance.commands).to.be.an('object');
@@ -186,9 +186,9 @@ describe('The `ses-template` plugin', () => {
             serverless = mockServerless('deploy', defaultService, providerSpy);
             pluginInstance = new ServerlessSesTemplate(serverless);
         });
-        describe('When the `after:deploy:deploy` hook is executed', () => {
+        describe('When the `before:deploy:deploy` hook is executed', () => {
             before(() => {
-                pluginInstance.hooks['after:deploy:deploy']();
+                pluginInstance.hooks['before:deploy:deploy']();
             });
             it('Provider does requests to AWS SES', () => {
                 expect(requestStub.callCount).to.be.equal(2);
@@ -244,9 +244,9 @@ describe('The `ses-template` plugin', () => {
             );
             pluginInstance = new ServerlessSesTemplate(serverless);
         });
-        describe('When the `after:deploy:deploy` hook is executed', () => {
+        describe('When the `before:deploy:deploy` hook is executed', () => {
             before(() => {
-                pluginInstance.hooks['after:deploy:deploy']();
+                pluginInstance.hooks['before:deploy:deploy']();
             });
             it('Provider doesn\'t execute any requests to AWS SES', () => {
                 expect(requestStub.notCalled).to.be.true;

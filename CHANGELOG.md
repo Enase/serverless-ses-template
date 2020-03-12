@@ -1,6 +1,9 @@
 CHANGELOG
 ========
 
+# 1.3.2 (12.03.2020)
+- Changed: SES template deploy process moved "before deploy" stage.
+
 # 1.3.1 (12.03.2020)
 - Changed: SES template deploy process moved from "packaging" to "after deploy" stage.
 - Added: Ability to disable auto deploy with `sesTemplatesDisableAutoDeploy` configuration flag.

@@ -91,7 +91,7 @@ class ServerlessSesTemplate {
             'ses-template:deploy:syncTemplates': this.syncTemplates.bind(this),
             'ses-template:delete:deleteGiven': this.deleteGiven.bind(this),
             'ses-template:list:list': this.list.bind(this),
-            'after:deploy:deploy': this.syncTemplatesOnDeploy.bind(this),
+            'before:deploy:deploy': this.syncTemplatesOnDeploy.bind(this),
         };
     }
 
