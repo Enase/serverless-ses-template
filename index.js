@@ -167,8 +167,12 @@ class ServerlessSesTemplate {
         return [
             'us-east-1', // US East (N. Virginia)
             'us-west-2', // US West (Oregon)
-            'eu-west-1', // EU (Ireland)
+            'ca-central-1', // Canada (Montreal)
+            'sa-east-1', // South America (São Paulo)
+            'us-gov-west-1', // AWS GovCloud (US-West)
             'eu-central-1', // EU (Frankfurt)
+            'eu-west-1', // EU (Ireland)
+            'eu-west-2', // EU (London)
             'ap-southeast-2', // Asia Pacific (Sydney)
             'ap-south-1', // Asia Pacific (Mumbai)
         ].includes(this.region);
