@@ -121,7 +121,6 @@ CLI options:
 
 MIT
 
-
 [ico-serverless]: http://public.serverless.com/badges/v3.svg
 [ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
 [ico-npm-downloads]: https://img.shields.io/npm/dt/@haftahave/serverless-ses-template.svg
