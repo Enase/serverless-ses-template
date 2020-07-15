@@ -10,7 +10,7 @@ A serverless plugin that allows automatically creating, updating and removing
 AWS SES Templates using a configuration file and keeps your AWS SES Templates
 synced with your configuration file.
 
-**REQUIRES** nodejs 8.10+
+**REQUIRES** nodejs 10+
 
 ---
 **:zap: Features**
@@ -120,7 +120,6 @@ CLI options:
 ## License
 
 MIT
-
 
 [ico-serverless]: http://public.serverless.com/badges/v3.svg
 [ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
