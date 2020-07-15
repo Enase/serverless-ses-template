@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [1.3.4] - 2020-07-15
+
+### Changed
+- List of supported regions updated according to [AWS RPS](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)
+
 ## [1.3.3] - 2020-06-10
 
 ### Changed
