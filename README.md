@@ -17,7 +17,6 @@ synced with your configuration file.
 
 - Allows declaring email templates that will be synced in pre-deploy phase
 - Allows you to optionally add stage to template names while syncing
-  - Will also add alias, if specified (supports [serverless-aws-alias][link-aws-alias] plugin)
 - Allows you to list and delete SES template by specified name
 ---
 
@@ -36,10 +35,12 @@ plugins:
   - '@haftahave/serverless-ses-template'
 
 custom:
-  sesTemplatesDisableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy (default false)
-  sesTemplatesAddStageAlias: true                        # Specifies whether to add stage and alias (if present) to template name (default false)
-  sesTemplatesConfigFile: './custom-config-file/path.js' # Config file path (default './ses-email-templates/index.js')
-  sesTemplatesRegion: 'us-west-2'                        # Specifies AWS region for SES templates (not required)
+  sesTemplates:
+    addStage: true                             # Specifies whether to add stage to template name (default false)
+    configFile: './custom-config-file/path.js' # Config file path (default './ses-email-templates/index.js')
+    deployHook: 'after:deploy:deploy'          # Specifies serverless lifecycle event plugin use to deploy templates (default 'before:deploy:deploy')
+    disableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy (default false)
+    region: 'us-west-2'                        # Specifies AWS region for SES templates (not required)
 ```
 ---
 
@@ -85,7 +86,6 @@ Optional CLI options:
 --sesTemplatesRegion The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
 --sesTemplateConfig  Template configuration file path. Default: see "Template configuration file sequence" in readme.md. [OPTIONAL]
 --stage        The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---alias        Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
 --removeMissed Set this flag in order to remove templates those are not present in your configuration file. [OPTIONAL]
 ```
 ---
@@ -109,7 +109,6 @@ CLI options:
 --template    The template name you are going to delete [REQUIRED]
 --sesTemplatesRegion The region used to populate your templates. Default: see "Region fallback sequence" in readme.md. [OPTIONAL]
 --stage       The stage used to populate your templates. Default: the first stage found in your project. [OPTIONAL]
---alias       Template alias, works only with sesTemplatesAddStageAlias option enabled. [OPTIONAL]
 ```
 
 ## Links
@@ -131,4 +130,3 @@ MIT
 [link-build]: https://travis-ci.org/haftahave/serverless-ses-template
 [link-ses-guide]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html
 [link-ses-sdk]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SES.html#sendTemplatedEmail-property
-[link-aws-alias]: https://github.com/HyperBrain/serverless-aws-alias
