@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [3.0.0] - 2020-12-03
+
+### Breaking Changes
+- Config definition updated
+- Dropped `serverless-aws-aliasz plugin support
+
+### Added
+- Ability to set deploy hook
+- Config validation
+
+## Changed
+- Region verification removed
+
 ## [2.0.0] - 2020-07-15
 
 ### Breaking Changes
