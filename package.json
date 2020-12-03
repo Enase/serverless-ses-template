@@ -1,6 +1,6 @@
 {
   "name": "@haftahave/serverless-ses-template",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "keywords": [
     "serverless",
