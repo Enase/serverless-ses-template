@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Ability to set deploy hook
 - Config validation
 
-## Changed
+### Changed
 - Region verification removed
 
 ## [2.0.0] - 2020-07-15
