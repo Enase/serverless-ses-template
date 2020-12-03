@@ -17,6 +17,7 @@ Configuration details:
 - Assets deploy managed by [serverless-s3-deploy](https://github.com/funkybob/serverless-s3-deploy) plugin
 - CloudFront invalidation managed by `serverless-plugin-scripts` plugin. \
   See `after:s3deploy:deploy` and `after:deploy:finalize` hooks.
+- Assets deploy occurs while SES template update and before standard serverless deploy process.
 
 Install
 -------------
@@ -43,5 +44,6 @@ Remove
 Additional
 -------------
 
+1. Manually sync assets - `sls s3deploy --stage yourStage`
 1. Create a domain certificate - `sls create-cert --stage yourStage`
 1. Remove a domain certificate - `sls remove-cert --stage yourStage`

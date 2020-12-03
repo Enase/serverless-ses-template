@@ -21,7 +21,7 @@ custom:
       default: 'john-doe@localhost'
       returnPath: 'john-doe@localhost'
     domainConfig:
-      sesAssetBucketDomain: 'your.domain'
+      sesAssetBucketDomain: 'your.domain' # TODO: should be managed per stage
     hostedZoneId: 'YOUR_ZONE_ID' # can be found in Route 53
     bucket:
       sesAsset:
@@ -47,6 +47,8 @@ custom:
         if [ '${self:custom.cloudFrontDistributionId}' != '' ];
         then aws cloudfront create-invalidation --distribution-id ${self:custom.cloudFrontDistributionId} --paths "/*";
         fi
+      'before:deploy:deploy': sls s3deploy --stage ${self:provider.stage}
+      'ses-template:deploy:syncTemplates': sls s3deploy --stage ${self:provider.stage}
 
   # serverless-s3-deploy assets config
   # see https://github.com/funkybob/serverless-s3-deploy
