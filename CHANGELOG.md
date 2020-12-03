@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [3.0.1] - 2020-12-03
+
+### Improvement
+- Unnecessary files are not included in release anymore. Added `files` section in `package.json`.
+
+### Docs
+- Added extended example: [Plugin integration with asset management](examples/asset-management)
+
 ## [3.0.0] - 2020-12-03
 
 ### Breaking Changes
