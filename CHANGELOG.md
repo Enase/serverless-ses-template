@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Breaking Changes
 - Config definition updated
-- Dropped `serverless-aws-aliasz plugin support
+- Dropped `serverless-aws-alias` plugin support
 
 ### Added
 - Ability to set deploy hook
