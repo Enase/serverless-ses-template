@@ -1,5 +1,5 @@
 Resources:
-  # S3 bucket that stores js files we use to inject to shopify pages
+  # S3 bucket that stores asset files
   SesAssetBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: Delete
