@@ -1,5 +1,6 @@
 {
   "name": "@haftahave/serverless-ses-template",
+  "private": false,
   "version": "3.0.0",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "keywords": [
@@ -24,7 +25,7 @@
     "Arseny Yankovsky (https://github.com/ArsenyYankovsky)",
     "Mike Cousins <mike@cousins.io> (https://mike.cousins.io)"
   ],
-  "main": "index.js",
+  "main": "src/index.js",
   "directories": {
     "test": "tests"
   },
@@ -62,6 +63,11 @@
     "nyc": "^15.1.0",
     "sinon": "^9.2.1"
   },
+  "files": [
+    "src/",
+    "LICENSE",
+    "*.md"
+  ],
   "engines": {
     "node": ">= 10.12.0",
     "npm": ">= 6.14.4"

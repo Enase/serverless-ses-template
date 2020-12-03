@@ -72,11 +72,6 @@ module.exports = {
         Boolean: 'boolean', Number: 'number', object: 'Object', String: 'string',
       },
       prefer: {
-        // go to PhpStorm config path e.g. {UserFolder}\.PhpStorm2017.3\config\options\options.xml
-        // find and replace
-        // <application>
-        // <component name="PropertiesComponent">
-        // <property name="javascript.return.tag" value="returns" />
         return: 'returns',
       },
     }],
@@ -96,6 +91,12 @@ module.exports = {
       files: ['*.test.js'],
       rules: {
         'no-unused-expressions': OFF,
+      },
+    },
+    {
+      files: ['src/index.js'],
+      rules: {
+        'filenames/match-exported': OFF,
       },
     },
   ],
