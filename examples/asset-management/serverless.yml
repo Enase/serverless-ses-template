@@ -1,0 +1,116 @@
+service: asset-management
+
+frameworkVersion: ">=2.4.0"
+
+plugins:
+  modules:
+    - serverless-plugin-scripts
+    - serverless-iam-roles-per-function
+    - serverless-certificate-creator
+    - serverless-plugin-common-excludes
+    - serverless-s3-deploy
+    - serverless-webpack
+    - '@haftahave/serverless-ses-template'
+
+package:
+  individually: true
+
+custom:
+  projectConfig:
+    email:
+      default: 'john-doe@localhost'
+      returnPath: 'john-doe@localhost'
+    domainConfig:
+      sesAssetBucketDomain: 'your.domain'
+    hostedZoneId: 'YOUR_ZONE_ID' # can be found in Route 53
+    bucket:
+      sesAsset:
+        name: ${self:provider.stage}-ses-asset-bucket-name
+  awsAccountId: ${file(../serverless-common/aws-account-id.js):getAccountId}
+  customCertificate: ${file(../serverless-common/serverless-certificate-creator.yml)}
+  cloudFrontDistributionId: ${file(../serverless-common/stack-output.js):getOutputs.SesAssetCloudFrontDistributionId, ''}
+  webpack: ${file(../serverless-common/serverless-webpack.yml)}
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+  sesTemplates:
+    addStage: true
+
+  # serverless-plugin-scripts
+  scripts:
+    hooks:
+      'after:remove:remove': sls remove-cert --stage ${self:provider.stage}
+      'after:s3deploy:deploy': >-
+        if [ '${self:custom.cloudFrontDistributionId}' != '' ];
+        then aws cloudfront create-invalidation --distribution-id ${self:custom.cloudFrontDistributionId} --paths "/*";
+        fi
+      'after:deploy:finalize': >-
+        if [ '${self:custom.cloudFrontDistributionId}' != '' ];
+        then aws cloudfront create-invalidation --distribution-id ${self:custom.cloudFrontDistributionId} --paths "/*";
+        fi
+
+  # serverless-s3-deploy assets config
+  # see https://github.com/funkybob/serverless-s3-deploy
+  assets:
+    verbose: true
+    auto: true
+    targets:
+      - bucket:
+          Ref: SesAssetBucket
+        empty: true
+        files:
+          - source: ses-assets/
+            headers:
+              CacheControl: max-age=31104000 # 1 year
+
+provider:
+  name: aws
+  kmsKeyArn:
+    Fn::GetAtt:
+      - LambdaKmsKey
+      - Arn
+  runtime: nodejs12.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-west-2'}
+  memorySize: 1024
+  timeout: 10
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - kms:Decrypt
+      Resource:
+        Fn::GetAtt:
+          - LambdaKmsKey
+          - Arn
+  tracing:
+    lambda: true
+  environment:
+    SERVERLESS_STAGE: ${self:provider.stage}
+    SES_USE_STAGE: ${self:custom.sesTemplates.addStage}
+  logRetentionInDays: 14
+
+functions:
+  send_email_template:
+    name: ${self:provider.stage}_${service}_send_email_template
+    description: "Send SES email template with given params"
+    handler: functions/send-email-template/index.handler
+    environment:
+      ASSET_DOMAIN: ${self:custom.projectConfig.domainConfig.sesAssetBucketDomain}
+      APP_EMAIL_DEFAULT: ${self:custom.projectConfig.email.default}
+      APP_EMAIL_RETURN_PATH: ${self:custom.projectConfig.email.returnPath}
+    iamRoleStatementsName: "${self:provider.stage}_${service}_send_email_template_lambda_role"
+    iamRoleStatements:
+      - ${file(../aws-iam/ses/email-sender.yml)}
+
+resources:
+  # General KMS key
+  - ${file(../aws-resources/kms/lambda-general-key.yml)}
+  # Asset bucket
+  - ${file(../aws-resources/bucket/ses-asset-bucket.yml)}
+  # CloudFront for asset bucket
+  - ${file(../aws-resources/cloud-front/ses-asset-bucket-distribution.yml)}
+  # Route53 RecordSetGroup for asset bucket
+  - ${file(../aws-resources/route53/ses-asset-domain.yml)}
+  # Print out the function name
+  - Outputs:
+      FunctionNameSendEmailTemplate:
+        Value: ${self:provider.stage}_${service}_send_email_template

@@ -52,7 +52,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Breaking Changes
 - Ability to load template [configuration in any async way](https://github.com/haftahave/serverless-ses-template/issues/15) (eg. from DB or API). \
-Template configuration file must return an async function now. Example see [here](ses-email-templates/index.js).
+Template configuration file must return an async function now. Example see [here](examples/asset-management/ses-email-templates/index.js).
 
 ### Added
 - List of supported regions updated according to [AWS RPS](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)

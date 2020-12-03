@@ -5,6 +5,14 @@ const chai = require('chai');
 const ServerlessSesTemplate = require('../src/index');
 
 const { expect } = chai;
+const expectedTextPart = 'Hello world!\nSee image here: https://{{asset_domain}}/demo.jpg';
+const expectedHtmlPart = `<!doctype html>
+<html lang=\"en\">
+  <body>
+    <div>Hello world!</div>
+    <img src=\"//{{asset_domain}}/demo.jpg\" alt=\"image\" />
+  </body>
+</html>`;
 
 const defaultService = {
   provider: {
@@ -24,7 +32,7 @@ const defaultService = {
 const mockServerless = (command, service = defaultService, providerMock = () => {}) => ({
   service,
   processedInput: { commands: ['ses-template', command] },
-  config: { servicePath: path.join(__dirname, '..') },
+  config: { servicePath: path.join(__dirname, '../examples/asset-management') },
   getProvider: (name) => providerMock(name),
   utils: {
     fileExistsSync: sinon.spy(() => true),
@@ -74,7 +82,7 @@ describe('The `ses-template` plugin', () => {
     const slsMock = {
       service: serviceConfig,
       processedInput: { commands: ['ses-template', 'deploy'] },
-      config: { servicePath: path.join(__dirname, '..') },
+      config: { servicePath: path.join(__dirname, '../examples/asset-management') },
       getProvider: () => {},
       utils: {
         fileExistsSync: sinon.spy(() => false),
@@ -165,8 +173,8 @@ describe('The `ses-template` plugin', () => {
           Template: {
             TemplateName: 'example',
             SubjectPart: 'example',
-            HtmlPart: '<div>Hello world!</div>',
-            TextPart: 'Hello world!',
+            HtmlPart: expectedHtmlPart,
+            TextPart: expectedTextPart,
           },
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
@@ -213,8 +221,8 @@ describe('The `ses-template` plugin', () => {
           Template: {
             TemplateName: 'example',
             SubjectPart: 'example',
-            HtmlPart: '<div>Hello world!</div>',
-            TextPart: 'Hello world!',
+            HtmlPart: expectedHtmlPart,
+            TextPart: expectedTextPart,
           },
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
@@ -304,8 +312,8 @@ describe('The `ses-template` plugin', () => {
           Template: {
             TemplateName: 'example',
             SubjectPart: 'example',
-            HtmlPart: '<div>Hello world!</div>',
-            TextPart: 'Hello world!',
+            HtmlPart: expectedHtmlPart,
+            TextPart: expectedTextPart,
           },
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
@@ -360,8 +368,8 @@ describe('The `ses-template` plugin', () => {
           Template: {
             TemplateName: 'example',
             SubjectPart: 'example',
-            HtmlPart: '<div>Hello world!</div>',
-            TextPart: 'Hello world!',
+            HtmlPart: expectedHtmlPart,
+            TextPart: expectedTextPart,
           },
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
@@ -409,8 +417,8 @@ describe('The `ses-template` plugin', () => {
           Template: {
             TemplateName: 'example_dev',
             SubjectPart: 'example',
-            HtmlPart: '<div>Hello world!</div>',
-            TextPart: 'Hello world!',
+            HtmlPart: expectedHtmlPart,
+            TextPart: expectedTextPart,
           },
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });

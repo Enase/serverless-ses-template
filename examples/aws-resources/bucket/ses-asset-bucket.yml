@@ -1,0 +1,25 @@
+Resources:
+  # S3 bucket that stores js files we use to inject to shopify pages
+  SesAssetBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Delete
+    Properties:
+      BucketName: ${self:custom.projectConfig.bucket.sesAsset.name}
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        ErrorDocument: 'not-found.html'
+        IndexDocument: 'not-found.html'
+
+  SesAssetBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: SesAssetBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadForGetBucketObjects
+            Effect: "Allow"
+            Principal: '*'
+            Action:
+              - 's3:GetObject'
+            Resource: !Join ['', ['arn:aws:s3:::', !Ref SesAssetBucket, /*]]

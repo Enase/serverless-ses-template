@@ -90,8 +90,9 @@ class ServerlessSesTemplate {
    * @returns {string}
    */
   getTemplateConfigFile() {
-    return this.options.sesTemplateConfig || this.serverless.service.custom.sesTemplates.configFile
-            || defaultSesTemplatesConfigFilePath;
+    return this.options.sesTemplateConfig
+      || this.serverless.service.custom.sesTemplates.configFile
+      || defaultSesTemplatesConfigFilePath;
   }
 
   /**

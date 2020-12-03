@@ -1,0 +1,9 @@
+certificateName: ${self:custom.projectConfig.domainConfig.sesAssetBucketDomain}
+hostedZoneIds: ${self:custom.projectConfig.hostedZoneId}
+region: 'us-east-1'
+enabled: true
+writeCertInfoToFile: false
+rewriteRecords: false
+tags:
+  Name: ${self:custom.projectConfig.domainConfig.sesAssetBucketDomain}
+  Environment: ${self:provider.region}

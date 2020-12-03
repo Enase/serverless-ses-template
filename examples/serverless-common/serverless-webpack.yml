@@ -1,0 +1,8 @@
+webpackConfig: '../serverless-common/webpack.config.js'
+packExternalModulesMaxBuffer: 1000000
+keepOutputDirectory: true
+packager: 'yarn'
+includeModules:
+  packagePath: './package.json'
+  forceExclude:
+    - aws-sdk

@@ -20,6 +20,10 @@ synced with your configuration file.
 - Allows you to list and delete SES template by specified name
 ---
 
+#### Examples
+
+- [Plugin integration with asset management](examples/asset-management)
+
 #### Installation
 
 `npm install @haftahave/serverless-ses-template`
@@ -61,7 +65,7 @@ module.exports = async (serverless, options) => [{
 }];
 ```
 
-Real world example see [here](ses-email-templates/index.js).
+Real world example see [here](examples/asset-management/ses-email-templates/index.js).
 
 ## Plugin resolves region in the following order:
 

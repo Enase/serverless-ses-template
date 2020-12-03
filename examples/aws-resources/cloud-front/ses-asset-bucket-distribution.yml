@@ -1,0 +1,62 @@
+Resources:
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Comment: Endpoint for SES Assets
+        Origins:
+          - DomainName: !GetAtt SesAssetBucket.DomainName
+            Id: !Ref SesAssetBucket
+            S3OriginConfig:
+              OriginAccessIdentity:
+                Fn::Join:
+                  - ''
+                  -
+                    - 'origin-access-identity/cloudfront/'
+                    - Ref: SesAssetBucketCloudfrontOriginAccessIdentity
+        Aliases:
+          - ${self:custom.projectConfig.domainConfig.sesAssetBucketDomain}
+        CustomErrorResponses:
+          - ErrorCachingMinTTL: 60
+            ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: '/not-found.html'
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          DefaultTTL: 86400
+          ForwardedValues:
+            Cookies:
+              Forward: none
+            QueryString: false
+          MaxTTL: 31536000
+          SmoothStreaming: false
+          TargetOriginId: !Ref SesAssetBucket
+          ViewerProtocolPolicy: 'redirect-to-https'
+        DefaultRootObject: 'not-found.html'
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        PriceClass: PriceClass_All
+        ViewerCertificate:
+          AcmCertificateArn: ${certificate:${self:custom.customCertificate.certificateName}:CertificateArn}
+          MinimumProtocolVersion: TLSv1.2_2019
+          SslSupportMethod: sni-only
+
+  SesAssetBucketCloudfrontOriginAccessIdentity:
+    Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+    Properties:
+      CloudFrontOriginAccessIdentityConfig:
+        Comment: "SES Asset Bucket Access Identity"
+
+# Print out the Id of the CloudFront Distribution that is created
+Outputs:
+  SesAssetCloudFrontDistributionId:
+    Description: CloudFront Distribution for SES Assets
+    Value:
+      Ref: CloudFrontDistribution

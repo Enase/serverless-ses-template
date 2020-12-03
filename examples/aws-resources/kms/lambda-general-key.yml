@@ -1,0 +1,34 @@
+Resources:
+  LambdaKmsKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: Main key to encrypt service configuration
+      Enabled: true
+      EnableKeyRotation: true
+      KeyPolicy:
+        Version: "2012-10-17"
+        Id: "${service}-${self:provider.stage}"
+        Statement:
+          - Sid: "Enable IAM User Permissions"
+            Effect: Allow
+            Principal:
+              AWS: "arn:aws:iam::${self:custom.awsAccountId}:root"
+            Action: 'kms:*'
+            Resource: '*'
+
+  LambdaKmsKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: "alias/${service}-${self:provider.stage}"
+      TargetKeyId:
+        Ref: LambdaKmsKey
+
+Outputs:
+  LambdaKmsKeyArn:
+    Description: KMS key ARN
+    Value:
+      Fn::GetAtt:
+        - LambdaKmsKey
+        - Arn
+    Export:
+      Name: ${self:provider.stage}-${service}-LambdaKmsKeyArn
