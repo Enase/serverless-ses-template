@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [3.0.2] - 2020-12-17
+
+### Fixed
+- Default plugin options are not initialized. Fixes [#20](https://github.com/haftahave/serverless-ses-template/issues/20)
+
 ## [3.0.1] - 2020-12-03
 
 ### Improvement
