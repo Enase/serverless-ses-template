@@ -41,11 +41,11 @@ custom:
       'after:remove:remove': sls remove-cert --stage ${self:provider.stage}
       'after:s3deploy:deploy': >-
         if [ '${self:custom.cloudFrontDistributionId}' != '' ];
-        then aws cloudfront create-invalidation --distribution-id ${self:custom.cloudFrontDistributionId} --paths "/*";
+        then aws cloudfront create-invalidation --distribution-id '${self:custom.cloudFrontDistributionId}' --paths "/*";
         fi
       'after:deploy:finalize': >-
         if [ '${self:custom.cloudFrontDistributionId}' != '' ];
-        then aws cloudfront create-invalidation --distribution-id ${self:custom.cloudFrontDistributionId} --paths "/*";
+        then aws cloudfront create-invalidation --distribution-id '${self:custom.cloudFrontDistributionId}' --paths "/*";
         fi
       'before:deploy:deploy': sls s3deploy --stage ${self:provider.stage}
       'ses-template:deploy:syncTemplates': sls s3deploy --stage ${self:provider.stage}

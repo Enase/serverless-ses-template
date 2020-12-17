@@ -3,6 +3,7 @@ const Table = require('cli-table');
 const commandsConfig = require('./commands-config');
 
 const defaultSesTemplatesConfigFilePath = './ses-email-templates/index.js';
+const defaultSesTemplatesDeployHook = 'before:deploy:deploy';
 
 class ServerlessSesTemplate {
   /**
@@ -55,7 +56,7 @@ class ServerlessSesTemplate {
 
     const {
       service: {
-        custom: { sesTemplates: { deployHook = 'before:deploy:deploy' } = {} },
+        custom: { sesTemplates: { deployHook = defaultSesTemplatesDeployHook } = {} },
       },
     } = this.serverless;
 
@@ -74,7 +75,14 @@ class ServerlessSesTemplate {
     const {
       processedInput: { commands },
       service: {
-        custom: { sesTemplates: { region: sesTemplatesRegion } = {} },
+        custom: {
+          sesTemplates: {
+            region: sesTemplatesRegion,
+            addStage = false,
+            configFile = defaultSesTemplatesConfigFilePath,
+            disableAutoDeploy = false,
+          } = {},
+        },
         provider: { region, stage },
       },
     } = this.serverless;
@@ -84,29 +92,23 @@ class ServerlessSesTemplate {
 
     this.removeMissed = commands.includes('deploy') ? this.options.removeMissed !== undefined : false;
     this.filter = commands.includes('list') ? (this.options.filter || '') : '';
-  }
-
-  /**
-   * @returns {string}
-   */
-  getTemplateConfigFile() {
-    return this.options.sesTemplateConfig
-      || this.serverless.service.custom.sesTemplates.configFile
-      || defaultSesTemplatesConfigFilePath;
+    this.addStage = addStage;
+    this.configFile = this.options.sesTemplateConfig || configFile;
+    this.disableAutoDeploy = disableAutoDeploy;
   }
 
   /**
    * @returns {boolean}
    */
   canAddStage() {
-    return Boolean(this.serverless.service.custom.sesTemplates.addStage);
+    return Boolean(this.addStage);
   }
 
   /**
    * @returns {Promise<void>}
    */
   async checkConfigurationFile() {
-    const fileFullPath = path.join(this.serverless.config.servicePath, this.getTemplateConfigFile());
+    const fileFullPath = path.join(this.serverless.config.servicePath, this.configFile);
     if (!this.serverless.utils.fileExistsSync(fileFullPath)) {
       throw new this.serverless.classes.Error(
         `SES email templates configuration file not found by path "${fileFullPath}"`,
@@ -129,7 +131,8 @@ class ServerlessSesTemplate {
    * @returns {Promise}
    */
   async syncTemplatesOnDeploy() {
-    if (this.serverless.service.custom.sesTemplates.disableAutoDeploy) {
+    this.initOptions();
+    if (this.disableAutoDeploy) {
       return Promise.resolve();
     }
     return this.syncTemplates();

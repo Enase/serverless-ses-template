@@ -20,15 +20,9 @@ const defaultService = {
     region: 'us-west-2',
     stage: 'dev',
   },
-  custom: {
-    sesTemplates: {
-      disableAutoDeploy: null,
-      configFile: null,
-      addStage: null,
-      region: null,
-    },
-  },
+  custom: {},
 };
+
 const mockServerless = (command, service = defaultService, providerMock = () => {}) => ({
   service,
   processedInput: { commands: ['ses-template', command] },
@@ -250,7 +244,6 @@ describe('The `ses-template` plugin', () => {
           custom: {
             ...defaultService.custom,
             sesTemplates: {
-              ...defaultService.custom.sesTemplates,
               disableAutoDeploy: true,
             },
           },
@@ -391,6 +384,7 @@ describe('The `ses-template` plugin', () => {
     }));
     before(() => {
       serverless = mockServerless('deploy', defaultService, providerSpy);
+      serverless.service.custom.sesTemplates = {};
       serverless.service.custom.sesTemplates.addStage = true;
       pluginInstance = new ServerlessSesTemplate(serverless);
     });
