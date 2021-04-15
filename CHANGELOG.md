@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
-## [3.0.3] - 2021-03-15
+## [3.0.3] - 2021-04-15
 
 ### Added
 - Type definitions for CLI options for [Serverless 3.x compatibility](https://www.serverless.com/framework/docs/deprecations/#cli-options-extensions-type-requirement).
