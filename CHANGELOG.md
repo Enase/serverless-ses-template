@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [3.0.3] - 2021-03-15
+
+### Added
+- Type definitions for CLI options for [Serverless 3.x compatibility](https://www.serverless.com/framework/docs/deprecations/#cli-options-extensions-type-requirement).
+  Fixes [#22](https://github.com/haftahave/serverless-ses-template/issues/22)
+
+### Changed
+- Dependencies updated (security vulnerabilities)
+
 ## [3.0.2] - 2020-12-17
 
 ### Fixed

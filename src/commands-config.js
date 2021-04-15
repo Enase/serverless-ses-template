@@ -16,6 +16,7 @@ module.exports = {
           removeMissed: {
             usage: 'Set this flag in order to remove missed templates. (e.g. "--removeMissed")',
             required: false,
+            type: 'boolean',
           },
         },
       },
@@ -28,6 +29,7 @@ module.exports = {
           template: {
             usage: 'The template name you are going to delete (e.g. "--template name")',
             required: true,
+            type: 'string',
           },
         },
       },
@@ -40,6 +42,7 @@ module.exports = {
           filter: {
             usage: 'String to filter templates by name. (e.g. "--filter")',
             required: false,
+            type: 'string',
           },
         },
       },
@@ -48,14 +51,17 @@ module.exports = {
       stage: {
         usage: 'Specify the stage you want to sync templates (e.g. "--stage dev")',
         required: false,
+        type: 'string',
       },
       region: {
         usage: 'Specify the region you want to sync templates (e.g. "--region us-west-2")',
         required: false,
+        type: 'string',
       },
       sesTemplateConfig: {
         usage: 'Specify the configuration file location (e.g. "--sesTemplateConfig ./folder/file.js")',
         required: false,
+        type: 'string',
       },
     },
   },
