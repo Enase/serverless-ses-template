@@ -70,14 +70,14 @@ Real world example see [here](examples/asset-management/ses-email-templates/inde
 ## Plugin resolves region in the following order:
 
 - CLI argument named `sesTemplatesRegion`  - top priority
-- `serverless.yml` custom key named `sesTemplatesRegion`
+- `serverless.yml` plugin configuration param named `region`
 - CLI argument named `region`
 - fallback to default region resolving (first region in first stage defined in serverless.yml)
 
 ## Plugin resolves template configuration file path in the following order:
 
 - CLI argument named `sesTemplateConfig`  - top priority
-- `serverless.yml` custom key named `sesTemplatesConfigFile`
+- `serverless.yml` plugin configuration param named `configFile`
 - fallback to default `./ses-email-templates/index.js`
 
 ## Usage and command line options
