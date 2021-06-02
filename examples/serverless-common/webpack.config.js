@@ -19,7 +19,7 @@ console.log(`Bundling with webpack for environment ${process.env.NODE_ENV}`);
 
 module.exports = {
   entry: slsw.lib.entries,
-  target: 'node12.18',
+  target: 'node14.15',
   // Since 'aws-sdk' is not compatible with webpack,
   // we exclude all node dependencies
   externals: [
@@ -40,7 +40,6 @@ module.exports = {
   optimization: {
     // We do not want to minimize our code.
     minimize: false,
-    concatenateModules: false, // because of https://github.com/serverless-heaven/serverless-webpack/issues/651
   },
   stats: 'errors-only',
   output: {

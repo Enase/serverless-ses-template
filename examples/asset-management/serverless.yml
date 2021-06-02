@@ -70,19 +70,21 @@ provider:
     Fn::GetAtt:
       - LambdaKmsKey
       - Arn
-  runtime: nodejs12.x
+  runtime: nodejs14.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-west-2'}
   memorySize: 1024
   timeout: 10
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - kms:Decrypt
-      Resource:
-        Fn::GetAtt:
-          - LambdaKmsKey
-          - Arn
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - kms:Decrypt
+          Resource:
+            Fn::GetAtt:
+              - LambdaKmsKey
+              - Arn
   tracing:
     lambda: true
   environment:

@@ -1,4 +1,6 @@
 webpackConfig: '../serverless-common/webpack.config.js'
+concurrency: 5
+serializedCompile: true
 packExternalModulesMaxBuffer: 1000000
 keepOutputDirectory: true
 packager: 'yarn'
