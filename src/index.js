@@ -19,7 +19,7 @@ class ServerlessSesTemplate {
       throw new this.serverless.classes.Error('ses-template plugin supports only AWS');
     }
 
-    /** @type AwsProvider */
+    /** @type AWS.AwsProvider */
     this.provider = this.serverless.getProvider(this.serverless.service.provider.name);
 
     if (this.serverless.configSchemaHandler) {
