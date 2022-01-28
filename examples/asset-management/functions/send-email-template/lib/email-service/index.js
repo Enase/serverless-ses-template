@@ -29,11 +29,11 @@ class EmailService {
   /**
    * @param {string} templateId
    * @param {string} emailTo
-   * @param {Object} templateData
-   * @param {string|null} emailFrom
+   * @param {Object} [templateData]
+   * @param {string|null} [emailFrom]
    * @returns {Promise}
    */
-  async sendEmailTemplate(templateId, emailTo, templateData = {}, emailFrom) {
+  async sendEmailTemplate(templateId, emailTo, templateData = {}, emailFrom = null) {
     const emailAddressFrom = emailFrom || this.getFromEmail(templateId);
 
     /**
