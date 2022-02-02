@@ -174,7 +174,7 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(4);
       });
     });
   });
@@ -222,7 +222,7 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(4);
       });
     });
   });
@@ -320,7 +320,7 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.getCall(2).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(4);
+        expect(serverless.cli.log.callCount).to.equal(6);
       });
     });
   });
@@ -368,7 +368,7 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(4);
       });
     });
   });
@@ -418,7 +418,7 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(4);
       });
     });
   });
@@ -450,7 +450,7 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(4);
       });
     });
   });

@@ -10,10 +10,17 @@ class ServerlessSesTemplate {
    * Constructor
    * @param {Object} serverless
    * @param {Object} options
+   * @param {Object} v3Utils
+   * @param {Function} v3Utils.log
+   * @param {Object} v3Utils.progress
+   * @param {Function} v3Utils.writeText
    */
-  constructor(serverless, options = {}) {
+  constructor(serverless, options = {}, { log, progress, writeText } = {}) {
     this.serverless = serverless;
     this.options = options;
+    this.log = log || serverless.cli.log;
+    this.writeText = writeText || serverless.cli.log;
+    this.progress = progress;
 
     if (this.serverless.service.provider.name !== 'aws') {
       throw new this.serverless.classes.Error('ses-template plugin supports only AWS');
@@ -142,7 +149,8 @@ class ServerlessSesTemplate {
    * @returns {Promise}
    */
   async syncTemplates() {
-    this.serverless.cli.log('AWS SES template synchronization start');
+    const progressName = 'sls-ses-template-sync';
+    this.createProgress(progressName, 'AWS SES template synchronization started');
 
     this.initOptions();
     await this.checkConfigurationFile();
@@ -161,18 +169,22 @@ class ServerlessSesTemplate {
 
     const syncTemplatePromises = this.configuration.map((templateConfig) => {
       if (currentTemplates.includes(this.addStageToTemplateName(templateConfig.name))) {
-        return this.updateTemplate(templateConfig);
+        return this.updateTemplate(templateConfig, progressName);
       }
-      return this.createTemplate(templateConfig);
+      return this.createTemplate(templateConfig, progressName);
     });
 
-    const deleteTemplatePromises = templatesToRemove.map((templateName) => this.deleteTemplate(templateName));
+    const deleteTemplatePromises = templatesToRemove.map((templateName) => this.deleteTemplate(
+      templateName,
+      progressName,
+    ));
 
     await Promise.all([
       ...syncTemplatePromises,
       ...deleteTemplatePromises,
     ]);
-    this.serverless.cli.log('AWS SES template synchronization complete');
+    this.updateProgress(progressName, 'AWS SES template synchronization complete');
+    this.clearProgress(progressName);
   }
 
   /**
@@ -195,44 +207,55 @@ class ServerlessSesTemplate {
    * @returns {Promise}
    */
   async deleteGiven() {
-    this.serverless.cli.log('AWS SES template delete start');
+    const progressName = 'sls-ses-template-delete';
+    this.createProgress(progressName, 'AWS SES template delete start');
 
     this.initOptions();
 
-    await this.deleteTemplate(this.options.template);
+    await this.deleteTemplate(this.options.template, progressName);
 
-    this.serverless.cli.log('AWS SES template deleted');
+    this.updateProgress(progressName, 'AWS SES template deleted');
+    this.clearProgress(progressName);
   }
 
   /**
    * @param {string} templateName
+   * @param {string} progressName
    * @returns {Promise}
    */
-  deleteTemplate(templateName) {
+  async deleteTemplate(templateName, progressName) {
+    this.updateProgress(progressName, `WARNING: Going to delete template "${templateName}"`);
+
     const deleteParams = {
       TemplateName: templateName,
     };
-    this.serverless.cli.log(`WARNING: Going to delete template "${templateName}"`);
-    return this.provider.request('SES', 'deleteTemplate', deleteParams, {
+    const result = await this.provider.request('SES', 'deleteTemplate', deleteParams, {
       stage: this.stage,
       region: this.region,
     });
+
+    this.updateProgress(progressName, `Template "${templateName}" deleted`);
+    return result;
   }
 
   /**
-   * @param {string} name
-   * @param {string} subject
-   * @param {string} html
-   * @param {string} text
+   * @param {Object} template
+   * @param {string} template.name
+   * @param {string} template.subject
+   * @param {string} template.html
+   * @param {string} template.text
+   * @param {string} progressName
    * @returns {Promise}
    */
-  createTemplate({
+  async createTemplate({
     name,
     subject,
     html,
     text,
-  }) {
+  }, progressName) {
     const templateName = this.addStageToTemplateName(name);
+    this.updateProgress(progressName, `Creating "${templateName}" template`);
+
     const params = {
       Template: {
         TemplateName: this.addStageToTemplateName(name),
@@ -241,28 +264,33 @@ class ServerlessSesTemplate {
         TextPart: text,
       },
     };
-
-    this.serverless.cli.log(`Going to create template "${templateName}"`);
-    return this.provider.request('SES', 'createTemplate', params, {
+    const result = await this.provider.request('SES', 'createTemplate', params, {
       stage: this.stage,
       region: this.region,
     });
+
+    this.updateProgress(progressName, `Template "${templateName}" created`);
+    return result;
   }
 
   /**
-   * @param {string} name
-   * @param {string} subject
-   * @param {string} html
-   * @param {string} text
+   * @param {Object} template
+   * @param {string} template.name
+   * @param {string} template.subject
+   * @param {string} template.html
+   * @param {string} template.text
+   * @param {string} progressName
    * @returns {Promise}
    */
-  updateTemplate({
+  async updateTemplate({
     name,
     subject,
     html,
     text,
-  }) {
+  }, progressName) {
     const templateName = this.addStageToTemplateName(name);
+    this.updateProgress(progressName, `Updating template "${templateName}"`);
+
     const params = {
       Template: {
         TemplateName: templateName,
@@ -271,12 +299,13 @@ class ServerlessSesTemplate {
         TextPart: text,
       },
     };
-
-    this.serverless.cli.log(`Going to update template "${templateName}"`);
-    return this.provider.request('SES', 'updateTemplate', params, {
+    const result = await this.provider.request('SES', 'updateTemplate', params, {
       stage: this.stage,
       region: this.region,
     });
+
+    this.updateProgress(progressName, `Template "${templateName}" updated`);
+    return result;
   }
 
   /**
@@ -285,19 +314,19 @@ class ServerlessSesTemplate {
   async list() {
     this.initOptions();
 
-    this.serverless.cli.log(`AWS SES template list for ${this.region} region started`);
+    this.log(`AWS SES template list for ${this.region} region started`);
 
     const templates = await this.loadTemplates();
     if (templates.length) {
       const table = new Table({});
       table.push(...templates);
 
-      this.serverless.cli.log(`\n${table.toString()}`);
+      this.writeText(`\n${table.toString()}`);
     } else {
-      this.serverless.cli.log(`Templates not found in ${this.region} region`);
+      this.log(`Templates not found in ${this.region} region`);
     }
 
-    this.serverless.cli.log('AWS SES template list finished');
+    this.log('AWS SES template list finished');
   }
 
   /**
@@ -339,6 +368,45 @@ class ServerlessSesTemplate {
       return templatesToReturn;
     }
     return [];
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} message
+   * @returns void
+   */
+  createProgress(name, message) {
+    if (!this.progress) {
+      this.log(`SesTemplate: ${message}...`);
+    } else {
+      this.progress.create({
+        message,
+        name,
+      });
+    }
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} message
+   * @returns void
+   */
+  updateProgress(name, message) {
+    if (!this.progress) {
+      this.log(`SesTemplate: ${message}`);
+    } else {
+      this.progress.get(name).update(message);
+    }
+  }
+
+  /**
+   * @param {string} name
+   * @returns void
+   */
+  clearProgress(name) {
+    if (this.progress) {
+      this.progress.get(name).remove();
+    }
   }
 }
 

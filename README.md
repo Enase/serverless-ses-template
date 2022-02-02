@@ -10,6 +10,8 @@ A serverless plugin that allows automatically creating, updating and removing
 AWS SES Templates using a configuration file and keeps your AWS SES Templates
 synced with your configuration file.
 
+**SUPPORTS** Serverless ver 2 and 3
+
 **REQUIRES** nodejs 10+
 
 ---
