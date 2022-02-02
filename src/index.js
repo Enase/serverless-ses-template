@@ -11,9 +11,9 @@ class ServerlessSesTemplate {
    * @param {Object} serverless
    * @param {Object} options
    * @param {Object} v3Utils
-   * @param {Function} Object.log
-   * @param {Object} Object.progress
-   * @param {Function} Object.writeText
+   * @param {Function} v3Utils.log
+   * @param {Object} v3Utils.progress
+   * @param {Function} v3Utils.writeText
    */
   constructor(serverless, options = {}, { log, progress, writeText } = {}) {
     this.serverless = serverless;
@@ -150,7 +150,7 @@ class ServerlessSesTemplate {
    */
   async syncTemplates() {
     const progressName = 'sls-ses-template-sync';
-    this.createProgress(progressName, 'AWS SES template synchronization start');
+    this.createProgress(progressName, 'AWS SES template synchronization started');
 
     this.initOptions();
     await this.checkConfigurationFile();
@@ -289,7 +289,7 @@ class ServerlessSesTemplate {
     text,
   }, progressName) {
     const templateName = this.addStageToTemplateName(name);
-    this.updateProgress(progressName, `Updating "${templateName}" template`);
+    this.updateProgress(progressName, `Updating template "${templateName}"`);
 
     const params = {
       Template: {
