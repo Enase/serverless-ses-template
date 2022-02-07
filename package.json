@@ -31,7 +31,7 @@
   },
   "scripts": {
     "coverage_report": "nyc report --reporter=html",
-    "coverage_test": "nyc check-coverage --lines 90 --functions 90 --branches 90",
+    "coverage_test": "nyc check-coverage --lines 80 --functions 80 --branches 75",
     "lint": "eslint .",
     "test": "nyc ./node_modules/mocha/bin/_mocha tests -R spec --recursive"
   },
@@ -46,7 +46,8 @@
     "report-dir": "./coverage"
   },
   "dependencies": {
-    "cli-table": "^0.3.11"
+    "cli-table": "^0.3.11",
+    "chalk": "^5.0.0"
   },
   "devDependencies": {
     "chai": "^4.3.6",

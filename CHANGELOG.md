@@ -9,6 +9,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [4.0.1] - 2022-02-07
+
+### Added
+- Serverless SES service changes and status info added to "[Service information](https://www.serverless.com/framework/docs/guides/plugins/cli-output#service-information)"
+- `sls info` command support
+
+### Changed
+- Logs and messages improved
+
 ## [4.0.0] - 2022-01-02
 
 ### Added

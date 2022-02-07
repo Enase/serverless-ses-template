@@ -1,3 +1,4 @@
+const chalk = require('chalk');
 const path = require('path');
 const Table = require('cli-table');
 const commandsConfig = require('./commands-config');
@@ -68,6 +69,7 @@ class ServerlessSesTemplate {
     } = this.serverless;
 
     this.hooks = {
+      'after:info:info': this.info.bind(this),
       'ses-template:deploy:syncTemplates': this.syncTemplates.bind(this),
       'ses-template:delete:deleteGiven': this.deleteGiven.bind(this),
       'ses-template:list:list': this.list.bind(this),
@@ -142,13 +144,14 @@ class ServerlessSesTemplate {
     if (this.disableAutoDeploy) {
       return Promise.resolve();
     }
-    return this.syncTemplates();
+    return this.syncTemplates(true);
   }
 
   /**
+   * @param {boolean} isDeploy
    * @returns {Promise}
    */
-  async syncTemplates() {
+  async syncTemplates(isDeploy = false) {
     const progressName = 'sls-ses-template-sync';
     this.createProgress(progressName, 'AWS SES template synchronization started');
 
@@ -156,7 +159,7 @@ class ServerlessSesTemplate {
     await this.checkConfigurationFile();
 
     const templateList = await this.loadTemplates();
-    const currentTemplates = templateList.map((templateObject) => templateObject.Name);
+    const currentTemplates = templateList.map((templateObject) => templateObject.TemplateName);
 
     const templatesToSync = this.configuration.map(
       (templateConfig) => this.addStageToTemplateName(templateConfig.name),
@@ -167,10 +170,15 @@ class ServerlessSesTemplate {
                 && this.isTemplateFromCurrentStage(templateName))
       : [];
 
+    const updatedTemplates = [];
+    const createdTemplates = [];
     const syncTemplatePromises = this.configuration.map((templateConfig) => {
-      if (currentTemplates.includes(this.addStageToTemplateName(templateConfig.name))) {
+      const templateName = this.addStageToTemplateName(templateConfig.name);
+      if (currentTemplates.includes(templateName)) {
+        updatedTemplates.push(templateName);
         return this.updateTemplate(templateConfig, progressName);
       }
+      createdTemplates.push(templateName);
       return this.createTemplate(templateConfig, progressName);
     });
 
@@ -183,8 +191,37 @@ class ServerlessSesTemplate {
       ...syncTemplatePromises,
       ...deleteTemplatePromises,
     ]);
-    this.updateProgress(progressName, 'AWS SES template synchronization complete');
+
     this.clearProgress(progressName);
+
+    const summaryList = [
+      ...this.createSummary('Created templates:', createdTemplates),
+      ...this.createSummary('Updated templates:', updatedTemplates),
+      ...this.createSummary('Deleted templates:', templatesToRemove),
+    ];
+    if (summaryList.length) {
+      if (isDeploy) {
+        summaryList.push('----------------------------------------');
+        this.serverless.addServiceOutputSection('Serverless SES Template', summaryList);
+        await this.info();
+      } else {
+        this.writeText(`\n${summaryList.join('\n')}\n`);
+      }
+    }
+  }
+
+  /**
+   * @param {string} title
+   * @param {string[]} items
+   * @returns {string[]}
+   */
+  createSummary(title, items) {
+    const result = [];
+    if (items.length) {
+      result.push(title);
+      result.push(...items);
+    }
+    return result;
   }
 
   /**
@@ -212,10 +249,12 @@ class ServerlessSesTemplate {
 
     this.initOptions();
 
-    await this.deleteTemplate(this.options.template, progressName);
+    const result = await this.deleteTemplate(this.options.template, progressName);
 
-    this.updateProgress(progressName, 'AWS SES template deleted');
     this.clearProgress(progressName);
+    if (result) {
+      this.logSuccess(`AWS SES template "${this.options.template}" deleted`);
+    }
   }
 
   /**
@@ -224,18 +263,21 @@ class ServerlessSesTemplate {
    * @returns {Promise}
    */
   async deleteTemplate(templateName, progressName) {
-    this.updateProgress(progressName, `WARNING: Going to delete template "${templateName}"`);
+    this.updateProgress(progressName, `Template "${templateName}" delete in progress`);
 
     const deleteParams = {
       TemplateName: templateName,
     };
-    const result = await this.provider.request('SES', 'deleteTemplate', deleteParams, {
-      stage: this.stage,
-      region: this.region,
-    });
-
-    this.updateProgress(progressName, `Template "${templateName}" deleted`);
-    return result;
+    try {
+      const result = await this.provider.request('SESV2', 'deleteEmailTemplate', deleteParams, {
+        stage: this.stage,
+        region: this.region,
+      });
+      return result;
+    } catch (error) {
+      this.logError(error.message);
+      return false;
+    }
   }
 
   /**
@@ -257,19 +299,18 @@ class ServerlessSesTemplate {
     this.updateProgress(progressName, `Creating "${templateName}" template`);
 
     const params = {
-      Template: {
-        TemplateName: this.addStageToTemplateName(name),
-        SubjectPart: subject,
-        HtmlPart: html,
-        TextPart: text,
+      TemplateContent: {
+        Subject: subject,
+        Html: html,
+        Text: text,
       },
+      TemplateName: this.addStageToTemplateName(name),
     };
-    const result = await this.provider.request('SES', 'createTemplate', params, {
+    const result = await this.provider.request('SESV2', 'createEmailTemplate', params, {
       stage: this.stage,
       region: this.region,
     });
 
-    this.updateProgress(progressName, `Template "${templateName}" created`);
     return result;
   }
 
@@ -292,20 +333,68 @@ class ServerlessSesTemplate {
     this.updateProgress(progressName, `Updating template "${templateName}"`);
 
     const params = {
-      Template: {
-        TemplateName: templateName,
-        SubjectPart: subject,
-        HtmlPart: html,
-        TextPart: text,
+      TemplateContent: {
+        Subject: subject,
+        Html: html,
+        Text: text,
       },
+      TemplateName: templateName,
     };
-    const result = await this.provider.request('SES', 'updateTemplate', params, {
+    const result = await this.provider.request('SESV2', 'updateEmailTemplate', params, {
       stage: this.stage,
       region: this.region,
     });
 
-    this.updateProgress(progressName, `Template "${templateName}" updated`);
     return result;
+  }
+
+  /**
+   * @returns {Promise}
+   */
+  async info() {
+    this.initOptions();
+    const {
+      DedicatedIpAutoWarmupEnabled: dedicatedIpAutoWarmupEnabled,
+      EnforcementStatus: enforcementStatus,
+      ProductionAccessEnabled: productionAccessEnabled,
+      SendingEnabled: sendingEnabled,
+      Details: {
+        MailType: mailType,
+        WebsiteURL: websiteURL,
+        ReviewDetails: {
+          Status: renewStatus,
+        } = {},
+      } = {},
+    } = await this.getAccount();
+    const summaryList = [];
+    renewStatus && summaryList.push(`Renew Status: ${this.colorizeText(
+      renewStatus === 'GRANTED',
+      renewStatus,
+    )}`);
+    summaryList.push(`Production Access Enabled: ${this.colorizeText(
+      productionAccessEnabled,
+      productionAccessEnabled,
+    )}`);
+    summaryList.push(`Sending Enabled: ${this.colorizeText(
+      sendingEnabled,
+      sendingEnabled,
+    )}`);
+    summaryList.push(`Dedicated Ip Auto Warmup Enabled: ${this.colorizeText(
+      dedicatedIpAutoWarmupEnabled,
+      dedicatedIpAutoWarmupEnabled,
+    )}`);
+    summaryList.push(`Enforcement Status: ${this.colorizeText(
+      enforcementStatus === 'HEALTHY',
+      enforcementStatus,
+    )}`);
+    mailType && summaryList.push(`Mail Type: ${mailType}`);
+    websiteURL && summaryList.push(`Website URL: ${websiteURL}`);
+
+    this.serverless.addServiceOutputSection('Serverless SES Template Status', summaryList);
+  }
+
+  colorizeText(condition, text) {
+    return condition ? chalk.green(text) : chalk.green(text);
   }
 
   /**
@@ -313,24 +402,41 @@ class ServerlessSesTemplate {
    */
   async list() {
     this.initOptions();
-
-    this.log(`AWS SES template list for ${this.region} region started`);
+    const progressName = 'sls-ses-template-list';
+    this.createProgress(progressName, `AWS SES template list for ${this.region} region started`);
 
     const templates = await this.loadTemplates();
+
     if (templates.length) {
-      const table = new Table({});
-      table.push(...templates);
+      const maxTitleLength = templates.reduce((acc, template) => {
+        const titleLength = template.TemplateName.length + 2;
+        if (acc < titleLength) {
+          return titleLength;
+        }
+        return acc;
+      }, 10);
+
+      const table = new Table({
+        style: { head: ['green'] },
+        head: ['Template Name', 'Created At'],
+        colWidths: [maxTitleLength, 31],
+      });
+
+      templates.forEach((template) => {
+        table.push([template.TemplateName, template.CreatedTimestamp.toUTCString()]);
+      });
 
       this.writeText(`\n${table.toString()}`);
     } else {
-      this.log(`Templates not found in ${this.region} region`);
+      this.logWarning(`Templates not found in "${this.region}" region`);
     }
-
-    this.log('AWS SES template list finished');
+    this.clearProgress(progressName);
+    this.logSuccess('AWS SES template list finished');
   }
 
   /**
-   * requestOptions.maxItems - 10 max, see https://docs.aws.amazon.com/ses/latest/APIReference/API_ListTemplates.html
+   * requestOptions.pageSize - 10 max
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#listEmailTemplates-property
    * @param {Object} requestOptions
    * @param {number} [requestOptions.maxItems]
    * @param {string} [requestOptions.token]
@@ -340,11 +446,11 @@ class ServerlessSesTemplate {
    */
   async loadTemplates({ maxItems = 10, token = undefined, ...options } = {}, filter = this.filter) {
     const { TemplatesMetadata: templates = [], NextToken: nextToken } = await this.provider.request(
-      'SES',
-      'listTemplates',
+      'SESV2',
+      'listEmailTemplates',
       {
         ...options,
-        MaxItems: maxItems,
+        PageSize: maxItems,
         NextToken: token,
       },
       {
@@ -354,7 +460,7 @@ class ServerlessSesTemplate {
     );
 
     const templatesToReturn = filter
-      ? templates.filter((templateObject) => String(templateObject.Name).includes(filter))
+      ? templates.filter((templateObject) => String(templateObject.TemplateName).includes(filter))
       : templates;
 
     if (templates && templates.length) {
@@ -368,6 +474,60 @@ class ServerlessSesTemplate {
       return templatesToReturn;
     }
     return [];
+  }
+
+  /**
+   * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#getAccount-property
+   * @returns {Promise<Array>}
+   */
+  async getAccount() {
+    const account = await this.provider.request(
+      'SESV2',
+      'getAccount',
+      { },
+      {
+        stage: this.stage,
+        region: this.region,
+      },
+    );
+
+    return account;
+  }
+
+  /**
+   * @param {string} message
+   * @returns void
+   */
+  logSuccess(message) {
+    if (this.log.success) {
+      this.log.success(message);
+    } else {
+      this.log(message);
+    }
+  }
+
+  /**
+   * @param {string} message
+   * @returns void
+   */
+  logWarning(message) {
+    if (this.log.warning) {
+      this.log.warning(message);
+    } else {
+      this.log(message);
+    }
+  }
+
+  /**
+   * @param {string} message
+   * @returns void
+   */
+  logError(message) {
+    if (this.log.error) {
+      this.log.error(message);
+    } else {
+      this.log(message);
+    }
   }
 
   /**

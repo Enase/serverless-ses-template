@@ -110,7 +110,8 @@ describe('The `ses-template` plugin', () => {
     });
     it('Exposes correct list of hooks', () => {
       expect(pluginInstance.hooks).to.be.an('object');
-      expect(Object.keys(pluginInstance.hooks)).to.be.lengthOf(4);
+      expect(Object.keys(pluginInstance.hooks)).to.be.lengthOf(5);
+      expect(pluginInstance.hooks['after:info:info']).to.be.a('function');
       expect(pluginInstance.hooks['ses-template:deploy:syncTemplates']).to.be.a('function');
       expect(pluginInstance.hooks['ses-template:delete:deleteGiven']).to.be.a('function');
       expect(pluginInstance.hooks['ses-template:list:list']).to.be.a('function');
@@ -135,7 +136,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -152,29 +153,29 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
       it('Loads templates from SES executes', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10,
+          PageSize: 10,
           NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Creates template resource', () => {
-        expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('createTemplate');
+        expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
-          Template: {
-            TemplateName: 'example',
-            SubjectPart: 'example',
-            HtmlPart: expectedHtmlPart,
-            TextPart: expectedTextPart,
+          TemplateContent: {
+            Subject: 'example',
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
           },
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(4);
+        expect(serverless.cli.log.callCount).to.equal(3);
       });
     });
   });
@@ -183,7 +184,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -200,29 +201,29 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
       it('Loads templates from SES executes', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10,
+          PageSize: 10,
           NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Creates template resource', () => {
-        expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('createTemplate');
+        expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
-          Template: {
-            TemplateName: 'example',
-            SubjectPart: 'example',
-            HtmlPart: expectedHtmlPart,
-            TextPart: expectedTextPart,
+          TemplateContent: {
+            Subject: 'example',
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
           },
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(4);
+        expect(serverless.cli.log.callCount).to.equal(2);
       });
     });
   });
@@ -231,7 +232,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -269,7 +270,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
     requestStub.onCall(1).resolves();
     requestStub.onCall(2).resolves();
     const providerSpy = sinon.spy(() => ({
@@ -290,37 +291,37 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(3);
       });
       it('Loads templates from SES executes', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10,
+          PageSize: 10,
           NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
       });
       it('Creates template resource', () => {
-        expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('createTemplate');
+        expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
-          Template: {
-            TemplateName: 'example',
-            SubjectPart: 'example',
-            HtmlPart: expectedHtmlPart,
-            TextPart: expectedTextPart,
+          TemplateContent: {
+            Subject: 'example',
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
           },
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
       });
       it('Removes missed template resource', () => {
-        expect(requestStub.getCall(2).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(2).args[1]).to.be.equal('deleteTemplate');
+        expect(requestStub.getCall(2).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(2).args[1]).to.be.equal('deleteEmailTemplate');
         expect(requestStub.getCall(2).args[2]).to.be.deep.equal({
           TemplateName: 'template-id',
         });
         expect(requestStub.getCall(2).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(6);
+        expect(serverless.cli.log.callCount).to.equal(4);
       });
     });
   });
@@ -329,7 +330,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'example' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'example' }] });
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -346,29 +347,29 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
       it('Loads templates from SES executes', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10,
+          PageSize: 10,
           NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Updates template resource', () => {
-        expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('updateTemplate');
+        expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('updateEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
-          Template: {
-            TemplateName: 'example',
-            SubjectPart: 'example',
-            HtmlPart: expectedHtmlPart,
-            TextPart: expectedTextPart,
+          TemplateContent: {
+            Subject: 'example',
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
           },
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(4);
+        expect(serverless.cli.log.callCount).to.equal(3);
       });
     });
   });
@@ -377,7 +378,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template-id' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -396,29 +397,29 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
       it('Loads templates from SES executes', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10,
+          PageSize: 10,
           NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Creates template resource', () => {
-        expect(requestStub.getCall(1).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('createTemplate');
+        expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
-          Template: {
-            TemplateName: 'example_dev',
-            SubjectPart: 'example',
-            HtmlPart: expectedHtmlPart,
-            TextPart: expectedTextPart,
+          TemplateContent: {
+            Subject: 'example',
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
           },
+          TemplateName: 'example_dev',
         });
         expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(4);
+        expect(serverless.cli.log.callCount).to.equal(3);
       });
     });
   });
@@ -427,7 +428,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'example' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'example' }] });
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -444,13 +445,13 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(1);
       });
       it('Delete template from SES', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('deleteTemplate');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('deleteEmailTemplate');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({ TemplateName: 'template-name' });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(4);
+        expect(serverless.cli.log.callCount).to.equal(3);
       });
     });
   });
@@ -460,8 +461,8 @@ describe('The `ses-template` plugin', () => {
     let loadTemplatesSpy;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'example' }], NextToken: 'NextToken' });
-    requestStub.onCall(1).resolves({ TemplatesMetadata: [{ Name: 'example2' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'example' }], NextToken: 'NextToken' });
+    requestStub.onCall(1).resolves({ TemplatesMetadata: [{ TemplateName: 'example2' }] });
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
     }));
@@ -478,23 +479,23 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
       it('List templates from SES', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10, NextToken: undefined,
+          PageSize: 10, NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Template list returns correct result', (done) => {
         loadTemplatesSpy.returnValues[0].then((result) => {
-          expect(result).to.be.deep.equal([{ Name: 'example' }, { Name: 'example2' }]);
+          expect(result).to.be.deep.equal([{ TemplateName: 'example' }, { TemplateName: 'example2' }]);
           done();
         }).catch((error) => {
           done(error);
         });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(1);
       });
     });
     after(() => {
@@ -507,8 +508,8 @@ describe('The `ses-template` plugin', () => {
     let loadTemplatesSpy;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ Name: 'template name' }], NextToken: 'NextToken' });
-    requestStub.onCall(1).resolves({ TemplatesMetadata: [{ Name: 'template to filter' }] });
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template name' }], NextToken: 'NextToken' });
+    requestStub.onCall(1).resolves({ TemplatesMetadata: [{ TemplateName: 'template to filter' }] });
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
     }));
@@ -525,23 +526,23 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
       it('List templates from SES', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10, NextToken: undefined,
+          PageSize: 10, NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
       it('Template list uses filter', (done) => {
         loadTemplatesSpy.returnValues[0].then((result) => {
-          expect(result).to.be.deep.equal([{ Name: 'template to filter' }]);
+          expect(result).to.be.deep.equal([{ TemplateName: 'template to filter' }]);
           done();
         }).catch((error) => {
           done(error);
         });
       });
       it('Logs messages', () => {
-        expect(serverless.cli.log.callCount).to.equal(3);
+        expect(serverless.cli.log.callCount).to.equal(1);
       });
     });
     after(() => {
@@ -569,10 +570,10 @@ describe('The `ses-template` plugin', () => {
         expect(requestStub.callCount).to.be.equal(1);
       });
       it('List templates from SES', () => {
-        expect(requestStub.getCall(0).args[0]).to.be.equal('SES');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listTemplates');
+        expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          MaxItems: 10, NextToken: undefined,
+          PageSize: 10, NextToken: undefined,
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
