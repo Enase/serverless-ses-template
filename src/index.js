@@ -390,9 +390,14 @@ class ServerlessSesTemplate {
     mailType && summaryList.push(`Mail Type: ${mailType}`);
     websiteURL && summaryList.push(`Website URL: ${websiteURL}`);
 
-    this.serverless.addServiceOutputSection('Serverless SES Template Status', summaryList);
+    this.serverless.addServiceOutputSection('Serverless SES Status', summaryList);
   }
 
+  /**
+   * @param {boolean} condition
+   * @param {string} text
+   * @returns {string}
+   */
   colorizeText(condition, text) {
     return condition ? chalk.green(text) : chalk.green(text);
   }
