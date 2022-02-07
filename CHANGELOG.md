@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [4.0.3] - 2022-02-08
+
+### Fixed
+- Serverless ver 2 support
+
 ## [4.0.2] - 2022-02-08
 
 ### Fixed

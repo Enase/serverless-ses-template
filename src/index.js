@@ -165,10 +165,9 @@ class ServerlessSesTemplate {
       (templateConfig) => this.addStageToTemplateName(templateConfig.name),
     );
 
-    const templatesToRemove = this.removeMissed
-      ? currentTemplates.filter((templateName) => !templatesToSync.includes(templateName)
-                && this.isTemplateFromCurrentStage(templateName))
-      : [];
+    const templatesToRemove = this.removeMissed ? currentTemplates.filter(
+      (templateName) => !templatesToSync.includes(templateName) && this.isTemplateFromCurrentStage(templateName),
+    ) : [];
 
     const updatedTemplates = [];
     const createdTemplates = [];
@@ -199,14 +198,19 @@ class ServerlessSesTemplate {
       ...this.createSummary('Updated templates:', updatedTemplates),
       ...this.createSummary('Deleted templates:', templatesToRemove),
     ];
-    if (summaryList.length) {
-      if (isDeploy) {
-        summaryList.push('----------------------------------------');
+
+    if (!summaryList.length) {
+      return;
+    }
+
+    if (isDeploy) {
+      summaryList.push('----------------------------------------');
+      if (this.serverless.addServiceOutputSection) {
         this.serverless.addServiceOutputSection('Serverless SES Template', summaryList);
         await this.info();
-      } else {
-        this.writeText(`\n${summaryList.join('\n')}\n`);
       }
+    } else {
+      this.writeText(`\n${summaryList.join('\n')}\n`);
     }
   }
 
@@ -352,6 +356,9 @@ class ServerlessSesTemplate {
    * @returns {Promise}
    */
   async info() {
+    if (!this.serverless.addServiceOutputSection) {
+      return;
+    }
     this.initOptions();
     const {
       DedicatedIpAutoWarmupEnabled: dedicatedIpAutoWarmupEnabled,
