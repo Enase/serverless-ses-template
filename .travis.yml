@@ -14,7 +14,7 @@ before_script:
 - travis_retry npm install --global nyc
 - travis_retry npm install
 script:
-- node node_modules/eslint/bin/eslint.js --config ./.eslintrc.js .
+- npm run lint
 - npm test
 - npm run coverage_test
 notifications:

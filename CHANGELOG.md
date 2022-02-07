@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [4.0.2] - 2022-02-08
+
+### Fixed
+- Wrong `chalk` version
+
 ## [4.0.1] - 2022-02-07
 
 ### Added
@@ -19,7 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - SES API version updated to [SESV2](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html)
 - Logs and messages improved
 
-## [4.0.0] - 2022-01-02
+## [4.0.0] - 2022-02-01
 
 ### Added
 - Serverless Framework v3 support
