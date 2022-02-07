@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `sls info` command support
 
 ### Changed
+- SES API version updated to [SESV2](https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html)
 - Logs and messages improved
 
 ## [4.0.0] - 2022-01-02
