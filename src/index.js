@@ -153,7 +153,7 @@ class ServerlessSesTemplate {
    */
   async syncTemplates(isDeploy = false) {
     const progressName = 'sls-ses-template-sync';
-    this.createProgress(progressName, 'AWS SES template synchronization started');
+    this.createProgress(progressName, 'AWS SES template synchronization');
 
     this.initOptions();
     await this.checkConfigurationFile();
@@ -245,7 +245,7 @@ class ServerlessSesTemplate {
    */
   async deleteGiven() {
     const progressName = 'sls-ses-template-delete';
-    this.createProgress(progressName, 'AWS SES template delete start');
+    this.createProgress(progressName, 'AWS SES template delete');
 
     this.initOptions();
 
@@ -408,7 +408,7 @@ class ServerlessSesTemplate {
   async list() {
     this.initOptions();
     const progressName = 'sls-ses-template-list';
-    this.createProgress(progressName, `AWS SES template list for ${this.region} region started`);
+    this.createProgress(progressName, `AWS SES template list for ${this.region} region`);
 
     const templates = await this.loadTemplates();
 
