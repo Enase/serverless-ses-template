@@ -3,21 +3,21 @@
   "version": "1.0.0",
   "keywords": [],
   "resolutions": {
-    "aws-sdk": "2.1030.0"
+    "aws-sdk": "2.1111.0"
   },
   "dependencies": {
-    "@babel/runtime": "7.17.0",
-    "aws-sdk": "2.1070.0"
+    "@babel/runtime": "7.17.9",
+    "aws-sdk": "2.1111.0"
   },
   "devDependencies": {
-    "@babel/core": "7.17.0",
+    "@babel/core": "7.17.9",
     "@babel/plugin-transform-runtime": "7.17.0",
     "@babel/preset-env": "7.16.11",
-    "@babel/register": "7.17.0",
-    "@haftahave/serverless-ses-template": "4.0.1",
+    "@babel/register": "7.17.7",
+    "@haftahave/serverless-ses-template": "4.0.4",
     "babel-eslint": "10.1.0",
-    "babel-loader": "8.2.3",
-    "core-js": "3.21.0",
+    "babel-loader": "8.2.4",
+    "core-js": "3.21.1",
     "glob": "7.2.0",
     "serverless-certificate-creator": "1.6.0",
     "serverless-deployment-bucket": "1.5.2",
@@ -25,8 +25,8 @@
     "serverless-plugin-common-excludes": "4.0.0",
     "serverless-plugin-scripts": "1.0.2",
     "serverless-s3-deploy": "0.10.1",
-    "serverless-webpack": "5.6.1",
-    "webpack": "5.68.0",
+    "serverless-webpack": "5.7.0",
+    "webpack": "5.72.0",
     "webpack-cli": "4.9.2",
     "webpack-node-externals": "3.0.0"
   },
