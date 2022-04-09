@@ -406,7 +406,7 @@ class ServerlessSesTemplate {
    * @returns {string}
    */
   colorizeText(condition, text) {
-    return condition ? chalk.green(text) : chalk.green(text);
+    return condition ? chalk.green(text) : chalk.red(text);
   }
 
   /**
