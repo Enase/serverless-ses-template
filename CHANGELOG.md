@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [4.0.4] - 2022-04-08
+
+### Fixed
+- Display falsy values in red for cli SES
+
+### Changed
+- Dependencies updated (security vulnerabilities)
+
 ## [4.0.3] - 2022-02-08
 
 ### Fixed
