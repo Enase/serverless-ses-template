@@ -31,7 +31,7 @@
   },
   "scripts": {
     "coverage_report": "nyc report --reporter=html",
-    "coverage_test": "nyc check-coverage --lines 80 --functions 80 --branches 75",
+    "coverage_test": "nyc check-coverage --lines 80 --functions 80 --branches 70",
     "lint": "eslint .",
     "test": "nyc ./node_modules/mocha/bin/_mocha tests -R spec --recursive"
   },
