@@ -3,30 +3,29 @@
   "version": "1.0.0",
   "keywords": [],
   "resolutions": {
-    "aws-sdk": "2.1111.0"
+    "aws-sdk": "2.1138.0"
   },
   "dependencies": {
     "@babel/runtime": "7.17.9",
-    "aws-sdk": "2.1111.0"
+    "aws-sdk": "2.1138.0"
   },
   "devDependencies": {
-    "@babel/core": "7.17.9",
-    "@babel/plugin-transform-runtime": "7.17.0",
-    "@babel/preset-env": "7.16.11",
+    "@babel/core": "7.17.12",
+    "@babel/plugin-transform-runtime": "7.17.12",
+    "@babel/preset-env": "7.17.12",
     "@babel/register": "7.17.7",
     "@haftahave/serverless-ses-template": "4.0.4",
-    "babel-eslint": "10.1.0",
-    "babel-loader": "8.2.4",
-    "core-js": "3.21.1",
-    "glob": "7.2.0",
+    "babel-loader": "8.2.5",
+    "core-js": "3.22.5",
+    "glob": "7.2.3",
     "serverless-certificate-creator": "1.6.0",
-    "serverless-deployment-bucket": "1.5.2",
+    "serverless-deployment-bucket": "1.6.0",
     "serverless-iam-roles-per-function": "3.2.0",
     "serverless-plugin-common-excludes": "4.0.0",
     "serverless-plugin-scripts": "1.0.2",
     "serverless-s3-deploy": "0.10.1",
-    "serverless-webpack": "5.7.0",
-    "webpack": "5.72.0",
+    "serverless-webpack": "5.7.1",
+    "webpack": "5.72.1",
     "webpack-cli": "4.9.2",
     "webpack-node-externals": "3.0.0"
   },

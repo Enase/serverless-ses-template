@@ -136,7 +136,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
+    requestStub.onCall(0).resolves(null);
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -152,16 +152,23 @@ describe('The `ses-template` plugin', () => {
       it('Provider does requests to AWS SES', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
-      it('Loads templates from SES executes', () => {
+      // it('Loads templates from SES executes', () => {
+      //   expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+      //   expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
+      //   expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+      //     PageSize: 10,
+      //     NextToken: undefined,
+      //   });
+      //   expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+      // });
+      it('Creates template resource', () => {
         expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('getEmailTemplate');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          PageSize: 10,
-          NextToken: undefined,
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
-      });
-      it('Creates template resource', () => {
+
         expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
         expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
@@ -200,18 +207,16 @@ describe('The `ses-template` plugin', () => {
       it('Provider does requests to AWS SES', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
-      it('Loads templates from SES executes', () => {
+      it('Creates template resource', () => {
         expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('getEmailTemplate');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          PageSize: 10,
-          NextToken: undefined,
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
-      });
-      it('Creates template resource', () => {
+
         expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('updateEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
           TemplateContent: {
             Subject: 'example',
@@ -271,8 +276,9 @@ describe('The `ses-template` plugin', () => {
     let pluginInstance;
     const requestStub = sinon.stub();
     requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
-    requestStub.onCall(1).resolves();
+    requestStub.onCall(1).resolves(null);
     requestStub.onCall(2).resolves();
+    requestStub.onCall(3).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
     }));
@@ -288,7 +294,7 @@ describe('The `ses-template` plugin', () => {
         pluginInstance.hooks['ses-template:deploy:syncTemplates']();
       });
       it('Provider does requests to AWS SES', () => {
-        expect(requestStub.callCount).to.be.equal(3);
+        expect(requestStub.callCount).to.be.equal(4);
       });
       it('Loads templates from SES executes', () => {
         expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
@@ -299,24 +305,31 @@ describe('The `ses-template` plugin', () => {
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
       });
+      it('Removes missed template resource', () => {
+        expect(requestStub.getCall(2).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(2).args[1]).to.be.equal('deleteEmailTemplate');
+        expect(requestStub.getCall(2).args[2]).to.be.deep.equal({
+          TemplateName: 'template-id',
+        });
+        expect(requestStub.getCall(2).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
+      });
       it('Creates template resource', () => {
         expect(requestStub.getCall(1).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(1).args[1]).to.be.equal('createEmailTemplate');
+        expect(requestStub.getCall(1).args[1]).to.be.equal('getEmailTemplate');
         expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+          TemplateName: 'example',
+        });
+        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
+
+        expect(requestStub.getCall(3).args[0]).to.be.equal('SESV2');
+        expect(requestStub.getCall(3).args[1]).to.be.equal('createEmailTemplate');
+        expect(requestStub.getCall(3).args[2]).to.be.deep.equal({
           TemplateContent: {
             Subject: 'example',
             Html: expectedHtmlPart,
             Text: expectedTextPart,
           },
           TemplateName: 'example',
-        });
-        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
-      });
-      it('Removes missed template resource', () => {
-        expect(requestStub.getCall(2).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(2).args[1]).to.be.equal('deleteEmailTemplate');
-        expect(requestStub.getCall(2).args[2]).to.be.deep.equal({
-          TemplateName: 'template-id',
         });
         expect(requestStub.getCall(2).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-east-1' });
       });
@@ -346,12 +359,11 @@ describe('The `ses-template` plugin', () => {
       it('Provider does requests to AWS SES', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
-      it('Loads templates from SES executes', () => {
+      it('Get template from SES executes', () => {
         expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('getEmailTemplate');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          PageSize: 10,
-          NextToken: undefined,
+          TemplateName: 'example',
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });
@@ -378,7 +390,7 @@ describe('The `ses-template` plugin', () => {
     let serverless;
     let pluginInstance;
     const requestStub = sinon.stub();
-    requestStub.onCall(0).resolves({ TemplatesMetadata: [{ TemplateName: 'template-id' }] });
+    requestStub.onCall(0).resolves(null);
     requestStub.onCall(1).resolves();
     const providerSpy = sinon.spy(() => ({
       request: requestStub,
@@ -396,12 +408,11 @@ describe('The `ses-template` plugin', () => {
       it('Provider does requests to AWS SES', () => {
         expect(requestStub.callCount).to.be.equal(2);
       });
-      it('Loads templates from SES executes', () => {
+      it('Get template from SES executes', () => {
         expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
-        expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
+        expect(requestStub.getCall(0).args[1]).to.be.equal('getEmailTemplate');
         expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
-          PageSize: 10,
-          NextToken: undefined,
+          TemplateName: 'example_dev',
         });
         expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
       });

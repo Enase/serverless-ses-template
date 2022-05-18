@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [4.0.5] - 2022-05-18
+
+### Fixed
+- [Invalid PageToken](https://github.com/haftahave/serverless-ses-template/issues/31) issue while deploy
+
 ## [4.0.4] - 2022-04-08
 
 ### Fixed

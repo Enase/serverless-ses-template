@@ -158,22 +158,18 @@ class ServerlessSesTemplate {
     this.initOptions();
     await this.checkConfigurationFile();
 
-    const templateList = await this.loadTemplates();
-    const currentTemplates = templateList.map((templateObject) => templateObject.TemplateName);
-
     const templatesToSync = this.configuration.map(
       (templateConfig) => this.addStageToTemplateName(templateConfig.name),
     );
 
-    const templatesToRemove = this.removeMissed ? currentTemplates.filter(
-      (templateName) => !templatesToSync.includes(templateName) && this.isTemplateFromCurrentStage(templateName),
-    ) : [];
+    const templatesToRemove = this.removeMissed ? await this.getTemplatesToRemove(templatesToSync) : [];
 
     const updatedTemplates = [];
     const createdTemplates = [];
-    const syncTemplatePromises = this.configuration.map((templateConfig) => {
+    const syncTemplatePromises = this.configuration.map(async (templateConfig) => {
       const templateName = this.addStageToTemplateName(templateConfig.name);
-      if (currentTemplates.includes(templateName)) {
+      const oldTemplate = await this.getEmailTemplate(templateName);
+      if (oldTemplate !== null) {
         updatedTemplates.push(templateName);
         return this.updateTemplate(templateConfig, progressName);
       }
@@ -319,6 +315,29 @@ class ServerlessSesTemplate {
   }
 
   /**
+   * @param {string} templateName
+   * @returns {Promise}
+   */
+  async getEmailTemplate(templateName) {
+    try {
+      const params = {
+        TemplateName: templateName,
+      };
+      const result = await this.provider.request('SESV2', 'getEmailTemplate', params, {
+        stage: this.stage,
+        region: this.region,
+      });
+
+      return result;
+    } catch (error) {
+      if (error && error.providerErrorCodeExtension === 'NOT_FOUND_EXCEPTION') {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  /**
    * @param {Object} template
    * @param {string} template.name
    * @param {string} template.subject
@@ -350,6 +369,18 @@ class ServerlessSesTemplate {
     });
 
     return result;
+  }
+
+  /**
+   * @param {Array} templatesToSync
+   * @returns {Promise<*[]>}
+   */
+  async getTemplatesToRemove(templatesToSync) {
+    const templateList = await this.loadTemplates();
+    const currentTemplates = templateList.map((templateObject) => templateObject.TemplateName);
+    return currentTemplates.filter(
+      (templateName) => !templatesToSync.includes(templateName) && this.isTemplateFromCurrentStage(templateName),
+    );
   }
 
   /**
