@@ -47,6 +47,7 @@ custom:
     deployHook: 'after:deploy:deploy'          # Specifies serverless lifecycle event plugin use to deploy templates (default 'before:deploy:deploy')
     disableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy (default false)
     region: 'us-west-2'                        # Specifies AWS region for SES templates (not required)
+    removeMissed: false                        # Set this flag in order to remove templates those are not present in your configuration file. (not required, default false)
 ```
 ---
 
