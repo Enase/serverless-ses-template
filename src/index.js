@@ -40,6 +40,9 @@ class ServerlessSesTemplate {
               addStage: {
                 type: 'boolean',
               },
+              removeMissed: {
+                type: 'boolean',
+              },
               configFile: {
                 type: 'string',
               },
@@ -87,6 +90,7 @@ class ServerlessSesTemplate {
         custom: {
           sesTemplates: {
             region: sesTemplatesRegion,
+            removeMissed = false,
             addStage = false,
             configFile = defaultSesTemplatesConfigFilePath,
             disableAutoDeploy = false,
@@ -99,7 +103,7 @@ class ServerlessSesTemplate {
     this.region = this.options.sesTemplatesRegion || sesTemplatesRegion || this.options.region || region;
     this.stage = this.options.stage || stage;
 
-    this.removeMissed = commands.includes('deploy') ? this.options.removeMissed !== undefined : false;
+    this.removeMissed = commands.includes('deploy') ? this.options.removeMissed !== undefined : removeMissed;
     this.filter = commands.includes('list') ? (this.options.filter || '') : '';
     this.addStage = addStage;
     this.configFile = this.options.sesTemplateConfig || configFile;
