@@ -8,12 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 - Unreleased list of features goes here...
 
+
+-->
+
+
+## [4.0.6] - 2023-04-06
+
 ### Added
 - `removeMissed` configuration flag
 
 ### Changed
 - Dependencies updated
--->
 
 
 ## [4.0.5] - 2022-05-18
