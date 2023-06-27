@@ -1,0 +1,20 @@
+version: 2
+updates:
+  # node packages
+  - package-ecosystem: 'npm'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    commit-message:
+      prefix: 'chore'
+      include: 'scope'
+    open-pull-requests-limit: 10
+
+  # node packages
+  - package-ecosystem: 'npm'
+    directory: '/examples/asset-management'
+    schedule:
+      interval: 'weekly'
+    # Setting the limit of open pull requests to zero is the documented way
+    # to disable Dependabot.
+    open-pull-requests-limit: 0

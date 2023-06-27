@@ -67,7 +67,7 @@ class ServerlessSesTemplate {
 
     const {
       service: {
-        custom: { sesTemplates: { deployHook = defaultSesTemplatesDeployHook } = {} },
+        custom: { sesTemplates: { deployHook = defaultSesTemplatesDeployHook } = {} } = {},
       },
     } = this.serverless;
 
@@ -95,7 +95,7 @@ class ServerlessSesTemplate {
             configFile = defaultSesTemplatesConfigFilePath,
             disableAutoDeploy = false,
           } = {},
-        },
+        } = {},
         provider: { region, stage },
       },
     } = this.serverless;

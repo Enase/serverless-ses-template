@@ -7,9 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!--
 ## [Unreleased]
 - Unreleased list of features goes here...
-
-
 -->
+
+## [4.0.7] - 2023-06-27
+
+### Fixed
+- Resolved serverless configuration issue for plugin usage without `custom` node
+
+### Changed
+- Dependencies updated
+
+### Added
+- dependabot configuration
 
 
 ## [4.0.6] - 2023-04-06
