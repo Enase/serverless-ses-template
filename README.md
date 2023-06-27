@@ -12,7 +12,7 @@ synced with your configuration file.
 
 **SUPPORTS** Serverless ver 2 and 3
 
-**REQUIRES** nodejs 10+
+**REQUIRES** nodejs 14+
 
 ---
 **:zap: Features**

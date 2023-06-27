@@ -1,6 +1,9 @@
 {
   "name": "@haftahave/serverless-ses-template",
   "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "4.0.6",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "keywords": [
@@ -47,11 +50,11 @@
   },
   "dependencies": {
     "cli-table": "^0.3.11",
-    "chalk": "^4.1.2"
+    "chalk": "^5.2.0"
   },
   "devDependencies": {
     "chai": "^4.3.7",
-    "eslint": "^8.37.0",
+    "eslint": "^8.42.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-filenames": "^1.3.2",
@@ -63,7 +66,7 @@
     "minimist": "^1.2.8",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
-    "sinon": "^15.0.3"
+    "sinon": "^15.1.2"
   },
   "files": [
     "src/",
@@ -71,7 +74,7 @@
     "*.md"
   ],
   "engines": {
-    "node": ">= 10.12.0",
+    "node": ">= 14.15.4",
     "npm": ">= 6.14.4"
   }
 }
