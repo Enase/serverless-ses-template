@@ -1,5 +1,3 @@
-const EMAIL_TYPE_EXAMPLE = 'example';
+const EMAIL_TYPE_EXAMPLE = "example"
 
-export {
-  EMAIL_TYPE_EXAMPLE,
-};
+export { EMAIL_TYPE_EXAMPLE }

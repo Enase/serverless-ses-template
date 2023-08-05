@@ -1,16 +1,16 @@
-import AWS from 'aws-sdk';
-import EmailService from './lib/email-service';
+import AWS from "aws-sdk"
+import EmailService from "./lib/email-service"
 
 const config = {
   aws: {
-    region: 'us-west-2',
+    region: "us-west-2",
   },
   defaultEmail: process.env.APP_EMAIL_DEFAULT,
   returnPathEmail: process.env.APP_EMAIL_RETURN_PATH,
   currentStage: process.env.SERVERLESS_STAGE,
   sesUseStage: process.env.SES_USE_STAGE,
   assetDomain: process.env.ASSET_DOMAIN,
-};
+}
 
 /**
  * SendEmailTemplateEvent
@@ -28,18 +28,17 @@ const config = {
  */
 exports.handler = async (event) => {
   const ses = new AWS.SES({
-    apiVersion: '2010-12-01',
+    apiVersion: "2010-12-01",
     region: config.aws.region,
-  });
+  })
 
-  const emailService = new EmailService(ses, config.defaultEmail, config.returnPathEmail);
+  const emailService = new EmailService(
+    ses,
+    config.defaultEmail,
+    config.returnPathEmail,
+  )
 
-  const {
-    templateId,
-    templateData,
-    recipientEmail,
-    emailFrom = null,
-  } = event;
+  const { templateId, templateData, recipientEmail, emailFrom = null } = event
 
   try {
     await emailService.sendEmailTemplate(
@@ -50,9 +49,9 @@ exports.handler = async (event) => {
         asset_domain: config.assetDomain,
       },
       emailFrom,
-    );
-    return { status: 'OK' };
+    )
+    return { status: "OK" }
   } catch (error) {
-    return { status: 'Error', message: error.message };
+    return { status: "Error", message: error.message }
   }
-};
+}

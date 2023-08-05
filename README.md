@@ -130,10 +130,10 @@ MIT
 [ico-serverless]: http://public.serverless.com/badges/v3.svg
 [ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
 [ico-npm-downloads]: https://img.shields.io/npm/dt/@haftahave/serverless-ses-template.svg
-[ico-build]: https://app.travis-ci.com/haftahave/serverless-ses-template.svg?branch=master
+[ico-build]: https://app.travis-ci.com/Enase/serverless-ses-template.svg?branch=master
 
 [link-serverless]: http://www.serverless.com/
 [link-npm]: https://www.npmjs.com/package/@haftahave/serverless-ses-template
-[link-build]: https://app.travis-ci.com/haftahave/serverless-ses-template
+[link-build]: https://app.travis-ci.com/Enase/serverless-ses-template
 [link-ses-guide]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html
 [link-ses-sdk]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SES.html#sendTemplatedEmail-property

@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [4.0.5] - 2022-05-18
 
 ### Fixed
-- [Invalid PageToken](https://github.com/haftahave/serverless-ses-template/issues/31) issue while deploy
+- [Invalid PageToken](https://github.com/Enase/serverless-ses-template/issues/31) issue while deploy
 
 ## [4.0.4] - 2022-04-08
 
@@ -72,7 +72,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 - Type definitions for CLI options for [Serverless 3.x compatibility](https://www.serverless.com/framework/docs/deprecations/#cli-options-extensions-type-requirement).
-  Fixes [#22](https://github.com/haftahave/serverless-ses-template/issues/22)
+  Fixes [#22](https://github.com/Enase/serverless-ses-template/issues/22)
 
 ### Changed
 - Dependencies updated (security vulnerabilities)
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [3.0.2] - 2020-12-17
 
 ### Fixed
-- Default plugin options are not initialized. Fixes [#20](https://github.com/haftahave/serverless-ses-template/issues/20)
+- Default plugin options are not initialized. Fixes [#20](https://github.com/Enase/serverless-ses-template/issues/20)
 
 ## [3.0.1] - 2020-12-03
 
@@ -132,7 +132,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.3.0] - 2020-02-26
 
 ### Breaking Changes
-- Ability to load template [configuration in any async way](https://github.com/haftahave/serverless-ses-template/issues/15) (eg. from DB or API). \
+- Ability to load template [configuration in any async way](https://github.com/Enase/serverless-ses-template/issues/15) (eg. from DB or API). \
 Template configuration file must return an async function now. Example see [here](examples/asset-management/ses-email-templates/index.js).
 
 ### Added
@@ -147,7 +147,7 @@ Template configuration file must return an async function now. Example see [here
 ## [1.2.5] - 2019-10-15
 
 ### Changed
-- FIX: [Variable refs aren't resolved](https://github.com/haftahave/serverless-ses-template/issues/12)
+- FIX: [Variable refs aren't resolved](https://github.com/Enase/serverless-ses-template/issues/12)
 
 ## [1.2.4] - 2019-09-20
 
@@ -173,32 +173,32 @@ Template configuration file must return an async function now. Example see [here
 ## [1.2.0] - 2019-02-27
 
 ### Changed
-- [Do not add alias to template names if alias plugin isn't used](https://github.com/haftahave/serverless-ses-template/pull/11)
+- [Do not add alias to template names if alias plugin isn't used](https://github.com/Enase/serverless-ses-template/pull/11)
 
 ## [1.1.0] - 2019-02-22
 
 ### Added
-- [Custom region parameter + ability to filter templates for list function](https://github.com/haftahave/serverless-ses-template/pull/9) \
+- [Custom region parameter + ability to filter templates for list function](https://github.com/Enase/serverless-ses-template/pull/9) \
     see details in pull request description
 
 ## [1.0.7] - 2019-02-16
 
 ### Added
-- [Ability to list email templates](https://github.com/haftahave/serverless-ses-template/pull/7)
+- [Ability to list email templates](https://github.com/Enase/serverless-ses-template/pull/7)
 
 ## [1.0.6] - 2019-01-17
 
 ### Changed
-- [Fixed Promise.all not actually waiting on the array of arrays](https://github.com/haftahave/serverless-ses-template/pull/6)
+- [Fixed Promise.all not actually waiting on the array of arrays](https://github.com/Enase/serverless-ses-template/pull/6)
 
 ## [1.0.5] - 2018-09-24
 
 ### Changed
-- [Remove command shortcuts](https://github.com/haftahave/serverless-ses-template/pull/4) \
+- [Remove command shortcuts](https://github.com/Enase/serverless-ses-template/pull/4) \
    Shortcuts deleted for all the commands.
 
 ## [1.0.4] - 2018-09-24
 
 ### Changed
-- [--keep-missed flag replaced by --remove-missed](https://github.com/haftahave/serverless-ses-template/pull/2) \
+- [--keep-missed flag replaced by --remove-missed](https://github.com/Enase/serverless-ses-template/pull/2) \
    Plugin does not remove templates those are not present in your configuration file by default.
