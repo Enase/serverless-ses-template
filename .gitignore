@@ -26,8 +26,9 @@ jspm_packages
 .nyc_output/
 coverage/
 
-# Jetbrains IDEs
+# IDEs
 .idea/
+.vscode/
 
 # Platform specific
 .DS_Store

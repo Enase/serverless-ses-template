@@ -1,6 +1,4 @@
-import {
-  EMAIL_TYPE_EXAMPLE,
-} from './email-constants';
+import { EMAIL_TYPE_EXAMPLE } from "./email-constants"
 
 class EmailService {
   /**
@@ -9,9 +7,9 @@ class EmailService {
    * @param {string} returnPathEmail
    */
   constructor(ses, defaultEmail, returnPathEmail) {
-    this.ses = ses;
-    this.defaultEmail = defaultEmail;
-    this.returnPathEmail = returnPathEmail;
+    this.ses = ses
+    this.defaultEmail = defaultEmail
+    this.returnPathEmail = returnPathEmail
   }
 
   /**
@@ -21,9 +19,9 @@ class EmailService {
   getFromEmail(templateId) {
     const map = {
       [EMAIL_TYPE_EXAMPLE]: this.defaultEmail,
-    };
+    }
 
-    return map[templateId] || this.defaultEmail;
+    return map[templateId] || this.defaultEmail
   }
 
   /**
@@ -33,8 +31,13 @@ class EmailService {
    * @param {string|null} [emailFrom]
    * @returns {Promise}
    */
-  async sendEmailTemplate(templateId, emailTo, templateData = {}, emailFrom = null) {
-    const emailAddressFrom = emailFrom || this.getFromEmail(templateId);
+  async sendEmailTemplate(
+    templateId,
+    emailTo,
+    templateData = {},
+    emailFrom = null,
+  ) {
+    const emailAddressFrom = emailFrom || this.getFromEmail(templateId)
 
     /**
      * @type {SES.SendTemplatedEmailRequest}
@@ -48,9 +51,7 @@ class EmailService {
         // CcAddresses: [
         //     emailTo,
         // ],
-        ToAddresses: [
-          emailTo,
-        ],
+        ToAddresses: [emailTo],
       },
       Source: emailAddressFrom,
       Template: templateId,
@@ -58,9 +59,7 @@ class EmailService {
       // ConfigurationSetName: 'STRING_VALUE',
       // The reply-to email address(es) for the message.
       // If the recipient replies to the message, each reply-to address will receive the reply.
-      ReplyToAddresses: [
-        emailAddressFrom,
-      ],
+      ReplyToAddresses: [emailAddressFrom],
       // The email address that bounces and complaints will be forwarded to when feedback forwarding is enabled.
       // If the message cannot be delivered to the recipient, then an error message will be returned
       // from the recipient's ISP; this message will then be forwarded to the email address specified by
@@ -68,10 +67,10 @@ class EmailService {
       // This email address must be either individually verified with Amazon SES, or from a domain that has been
       // verified with Amazon SES.
       ReturnPath: this.returnPathEmail,
-    };
+    }
 
-    return this.ses.sendTemplatedEmail(sendTemplatedEmailRequest).promise();
+    return this.ses.sendTemplatedEmail(sendTemplatedEmailRequest).promise()
   }
 }
 
-export default EmailService;
+export default EmailService

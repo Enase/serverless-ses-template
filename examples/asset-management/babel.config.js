@@ -1,26 +1,24 @@
 module.exports = {
   compact: true,
   targets: {
-    node: '14.15.4',
+    node: "14.15.4",
   },
-  plugins: [
-    '@babel/plugin-transform-runtime',
-  ],
+  plugins: ["@babel/plugin-transform-runtime"],
   presets: [
     [
-      '@babel/env',
+      "@babel/env",
       {
         shippedProposals: true,
-        useBuiltIns: 'usage',
+        useBuiltIns: "usage",
         corejs: 3,
       },
     ],
     [
-      '@babel/preset-react',
+      "@babel/preset-react",
       {
-        runtime: 'automatic',
+        runtime: "automatic",
       },
     ],
   ],
   ignore: [/node_modules/],
-};
+}

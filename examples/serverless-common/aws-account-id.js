@@ -1,1 +1,2 @@
-module.exports.getAccountId = async (serverless) => serverless.providers.aws.getAccountId();
+module.exports.getAccountId = async (serverless) =>
+  serverless.providers.aws.getAccountId()
