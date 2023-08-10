@@ -22,10 +22,6 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# Coverage directory used by tools like istanbul
-.nyc_output/
-coverage/
-
 # IDEs
 .idea/
 .vscode/

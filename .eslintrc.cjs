@@ -4,13 +4,15 @@ module.exports = {
     commonjs: true,
     es6: true,
     node: true,
-    mocha: true,
+    jest: true,
   },
   extends: [
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended",
+    "plugin:jest/recommended",
+    "plugin:jest/style",
     "prettier",
   ],
   settings: {
@@ -20,7 +22,7 @@ module.exports = {
   },
   parser: "@typescript-eslint/parser",
   ignorePatterns: ["dist", "node_modules"],
-  plugins: ["@typescript-eslint"],
+  plugins: ["@typescript-eslint", "jest"],
   rules: {
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "lines-between-class-members": ["error", "always", { "exceptAfterSingleLine": true }],

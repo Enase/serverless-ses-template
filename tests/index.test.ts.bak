@@ -1,0 +1,729 @@
+import fs from "fs"
+import path from "path"
+import sinon from "sinon"
+import chai from "chai"
+import ServerlessSesTemplatePlugin from "../src/index"
+
+const { expect } = chai
+const expectedTextPart =
+  "Hello world!\nSee image here: https://{{asset_domain}}/demo.jpg"
+
+/* eslint-disable no-useless-escape */
+const expectedHtmlPart = `<!doctype html>
+<html lang=\"en\">
+  <body>
+    <div>Hello world!</div>
+    <img src=\"//{{asset_domain}}/demo.jpg\" alt=\"image\" />
+  </body>
+</html>`
+/* eslint-enable no-useless-escape */
+
+const defaultService = {
+  provider: {
+    name: "aws",
+    region: "us-west-2",
+    stage: "dev",
+  },
+  custom: {},
+}
+
+const mockServerless = (
+  command: string,
+  service = defaultService,
+  providerMock = () => {},
+) => ({
+  service,
+  processedInput: { commands: ["ses-template", command] },
+  config: { servicePath: path.join(__dirname, "../examples/asset-management") },
+  getProvider: (name) => providerMock(name),
+  utils: {
+    fileExistsSync: sinon.spy(() => true),
+    readFileSync: (filePath) => fs.readFileSync(filePath).toString().trim(),
+  },
+  classes: {
+    Error: sinon.spy((message) => {
+      throw new Error(message)
+    }),
+  },
+  cli: {
+    log: sinon.spy(),
+  },
+  configSchemaHandler: {
+    defineCustomProperties: sinon.spy(() => true),
+  },
+})
+
+describe("The `ses-template` plugin", () => {
+  it("Exports a constructor function", () => {
+    expect(ServerlessSesTemplatePlugin).to.be.a("function")
+  })
+
+  it("Validates service provider", () => {
+    const slsMock = mockServerless("deploy", { provider: { name: "unknown" } })
+    try {
+      new ServerlessSesTemplatePlugin(slsMock) // eslint-disable-line no-new
+      expect.fail(
+        "unknown is valid provider",
+        "unknown is invalid provider",
+        "ServerlessSesTemplate does check service provider",
+      )
+    } catch (err) {
+      expect(err).to.be.an("Error")
+      expect(slsMock.classes.Error.calledOnce).to.be.true
+      expect(err.message).to.be.equal("ses-template plugin supports only AWS")
+    }
+  })
+
+  it("Validates configuration file", (done) => {
+    const serviceConfig = {
+      ...defaultService,
+      custom: {
+        sesTemplates: { configFile: "file-not-exist-name.js" },
+      },
+    }
+    const slsMock = {
+      service: serviceConfig,
+      processedInput: { commands: ["ses-template", "deploy"] },
+      config: {
+        servicePath: path.join(__dirname, "../examples/asset-management"),
+      },
+      getProvider: () => {},
+      utils: {
+        fileExistsSync: sinon.spy(() => false),
+      },
+      classes: {
+        Error: sinon.spy((message) => {
+          throw new Error(message)
+        }),
+      },
+      cli: {
+        log: sinon.spy(),
+      },
+    }
+    const pluginInstance = new ServerlessSesTemplatePlugin(slsMock)
+
+    const syncPromise =
+      pluginInstance.hooks["ses-template:deploy:syncTemplates"]()
+    syncPromise.then(
+      () => {
+        done(new Error("Configuration path not validated."))
+      },
+      (err) => {
+        expect(err.message).to.include(
+          "SES email templates configuration file not found by path",
+        )
+        expect(slsMock.cli.log.callCount).to.equal(1)
+        done()
+      },
+    )
+  })
+
+  describe("The constructed object", () => {
+    let pluginInstance
+    beforeEach(() => {
+      pluginInstance = new ServerlessSesTemplatePlugin(mockServerless("list"))
+    })
+    it("Exposes correct list of hooks", () => {
+      expect(pluginInstance.hooks).to.be.an("object")
+      expect(Object.keys(pluginInstance.hooks)).to.be.lengthOf(5)
+      expect(pluginInstance.hooks["after:info:info"]).to.be.a("function")
+      expect(pluginInstance.hooks["ses-template:deploy:syncTemplates"]).to.be.a(
+        "function",
+      )
+      expect(pluginInstance.hooks["ses-template:delete:deleteGiven"]).to.be.a(
+        "function",
+      )
+      expect(pluginInstance.hooks["ses-template:list:list"]).to.be.a("function")
+      expect(pluginInstance.hooks["before:deploy:deploy"]).to.be.a("function")
+    })
+    it("Exposes correct list of commands", () => {
+      expect(pluginInstance.commands).to.be.an("object")
+      expect(Object.keys(pluginInstance.commands)).to.be.lengthOf(1)
+      expect(pluginInstance.commands["ses-template"]).to.be.a("object")
+      expect(pluginInstance.commands["ses-template"]).deep.property("usage")
+      expect(pluginInstance.commands["ses-template"]).deep.property(
+        "lifecycleEvents",
+      )
+      expect(pluginInstance.commands["ses-template"]).deep.property("commands")
+      expect(pluginInstance.commands["ses-template"]).deep.property("commands")
+      expect(pluginInstance.commands["ses-template"].commands).deep.property(
+        "deploy",
+      )
+      expect(pluginInstance.commands["ses-template"].commands).deep.property(
+        "delete",
+      )
+      expect(pluginInstance.commands["ses-template"].commands).deep.property(
+        "list",
+      )
+      expect(pluginInstance.commands["ses-template"]).deep.property("options")
+    })
+  })
+
+  describe("Fresh deploy command with no custom properties", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub.onCall(0).resolves(null)
+    requestStub.onCall(1).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("deploy", defaultService, providerSpy)
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless)
+    })
+    describe("When the `ses-template:deploy:syncTemplates` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:deploy:syncTemplates"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(2)
+      })
+      // it('Loads templates from SES executes', () => {
+      //   expect(requestStub.getCall(0).args[0]).to.be.equal('SESV2');
+      //   expect(requestStub.getCall(0).args[1]).to.be.equal('listEmailTemplates');
+      //   expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+      //     PageSize: 10,
+      //     NextToken: undefined,
+      //   });
+      //   expect(requestStub.getCall(0).args[3]).to.be.deep.equal({ stage: 'dev', region: 'us-west-2' });
+      // });
+      it("Creates template resource", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("getEmailTemplate")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+
+        expect(requestStub.getCall(1).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(1).args[1]).to.be.equal(
+          "createEmailTemplate",
+        )
+        expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+          TemplateContent: {
+            Subject: "example",
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
+          },
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(3)
+      })
+    })
+  })
+
+  describe("Auto deploy with no custom properties", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub
+      .onCall(0)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "template-id" }] })
+    requestStub.onCall(1).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("deploy", defaultService, providerSpy)
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless)
+    })
+    describe("When the `before:deploy:deploy` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["before:deploy:deploy"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(2)
+      })
+      it("Creates template resource", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("getEmailTemplate")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+
+        expect(requestStub.getCall(1).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(1).args[1]).to.be.equal(
+          "updateEmailTemplate",
+        )
+        expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+          TemplateContent: {
+            Subject: "example",
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
+          },
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(2)
+      })
+    })
+  })
+
+  describe("Auto deploy with auto deploy disabled", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub
+      .onCall(0)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "template-id" }] })
+    requestStub.onCall(1).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless(
+        "deploy",
+        {
+          ...defaultService,
+          custom: {
+            ...defaultService.custom,
+            sesTemplates: {
+              disableAutoDeploy: true,
+            },
+          },
+        },
+        providerSpy,
+      )
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless)
+    })
+    describe("When the `before:deploy:deploy` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["before:deploy:deploy"]()
+      })
+      it("Provider doesn't execute any requests to AWS SES", () => {
+        expect(requestStub.notCalled).to.be.true
+      })
+      it("Logs do not log any messages", () => {
+        expect(serverless.cli.log.notCalled).to.be.true
+      })
+    })
+  })
+
+  describe("Fresh deploy with --removeMissed and --sesTemplatesRegion", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub
+      .onCall(0)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "template-id" }] })
+    requestStub.onCall(1).resolves(null)
+    requestStub.onCall(2).resolves()
+    requestStub.onCall(3).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("deploy", defaultService, providerSpy)
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless, {
+        removeMissed: true,
+        sesTemplatesRegion: "us-east-1",
+      })
+    })
+    describe("When the `ses-template:deploy:syncTemplates` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:deploy:syncTemplates"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(4)
+      })
+      it("Loads templates from SES executes", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("listEmailTemplates")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          PageSize: 10,
+          NextToken: undefined,
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-east-1",
+        })
+      })
+      it("Removes missed template resource", () => {
+        expect(requestStub.getCall(2).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(2).args[1]).to.be.equal(
+          "deleteEmailTemplate",
+        )
+        expect(requestStub.getCall(2).args[2]).to.be.deep.equal({
+          TemplateName: "template-id",
+        })
+        expect(requestStub.getCall(2).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-east-1",
+        })
+      })
+      it("Creates template resource", () => {
+        expect(requestStub.getCall(1).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(1).args[1]).to.be.equal("getEmailTemplate")
+        expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-east-1",
+        })
+
+        expect(requestStub.getCall(3).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(3).args[1]).to.be.equal(
+          "createEmailTemplate",
+        )
+        expect(requestStub.getCall(3).args[2]).to.be.deep.equal({
+          TemplateContent: {
+            Subject: "example",
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
+          },
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(2).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-east-1",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(4)
+      })
+    })
+  })
+
+  describe("Repeated deploy with no custom properties", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub
+      .onCall(0)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "example" }] })
+    requestStub.onCall(1).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("deploy", defaultService, providerSpy)
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless)
+    })
+    describe("When the `ses-template:deploy:syncTemplates` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:deploy:syncTemplates"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(2)
+      })
+      it("Get template from SES executes", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("getEmailTemplate")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Updates template resource", () => {
+        expect(requestStub.getCall(1).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(1).args[1]).to.be.equal(
+          "updateEmailTemplate",
+        )
+        expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+          TemplateContent: {
+            Subject: "example",
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
+          },
+          TemplateName: "example",
+        })
+        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(3)
+      })
+    })
+  })
+
+  describe("Fresh deploy with stage option enabled", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub.onCall(0).resolves(null)
+    requestStub.onCall(1).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("deploy", defaultService, providerSpy)
+      serverless.service.custom.sesTemplates = {}
+      serverless.service.custom.sesTemplates.addStage = true
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless)
+    })
+    describe("When the `ses-template:deploy:syncTemplates` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:deploy:syncTemplates"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(2)
+      })
+      it("Get template from SES executes", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("getEmailTemplate")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          TemplateName: "example_dev",
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Creates template resource", () => {
+        expect(requestStub.getCall(1).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(1).args[1]).to.be.equal(
+          "createEmailTemplate",
+        )
+        expect(requestStub.getCall(1).args[2]).to.be.deep.equal({
+          TemplateContent: {
+            Subject: "example",
+            Html: expectedHtmlPart,
+            Text: expectedTextPart,
+          },
+          TemplateName: "example_dev",
+        })
+        expect(requestStub.getCall(1).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(3)
+      })
+    })
+  })
+
+  describe("Delete template with correct values", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub
+      .onCall(0)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "example" }] })
+    requestStub.onCall(1).resolves()
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("delete", defaultService, providerSpy)
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless, {
+        template: "template-name",
+      })
+    })
+    describe("When the `ses-template:delete:deleteGiven` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:delete:deleteGiven"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(1)
+      })
+      it("Delete template from SES", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal(
+          "deleteEmailTemplate",
+        )
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          TemplateName: "template-name",
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(3)
+      })
+    })
+  })
+
+  describe("List templates with correct result", () => {
+    let serverless
+    let loadTemplatesSpy
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub.onCall(0).resolves({
+      TemplatesMetadata: [{ TemplateName: "example" }],
+      NextToken: "NextToken",
+    })
+    requestStub
+      .onCall(1)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "example2" }] })
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("list", defaultService, providerSpy)
+      loadTemplatesSpy = sinon.spy(
+        ServerlessSesTemplatePlugin.prototype,
+        "loadTemplates",
+      )
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless, {})
+    })
+    describe("When the `ses-template:list:list` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:list:list"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(2)
+      })
+      it("List templates from SES", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("listEmailTemplates")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          PageSize: 10,
+          NextToken: undefined,
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Template list returns correct result", (done) => {
+        loadTemplatesSpy.returnValues[0]
+          .then((result) => {
+            expect(result).to.be.deep.equal([
+              { TemplateName: "example" },
+              { TemplateName: "example2" },
+            ])
+            done()
+          })
+          .catch((error) => {
+            done(error)
+          })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(1)
+      })
+    })
+    after(() => {
+      loadTemplatesSpy.restore()
+    })
+  })
+
+  describe("List templates with --filter parameter", () => {
+    let serverless
+    let loadTemplatesSpy
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub.onCall(0).resolves({
+      TemplatesMetadata: [{ TemplateName: "template name" }],
+      NextToken: "NextToken",
+    })
+    requestStub
+      .onCall(1)
+      .resolves({ TemplatesMetadata: [{ TemplateName: "template to filter" }] })
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("list", defaultService, providerSpy)
+      loadTemplatesSpy = sinon.spy(
+        ServerlessSesTemplatePlugin.prototype,
+        "loadTemplates",
+      )
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless, {
+        filter: "filter",
+      })
+    })
+    describe("When the `ses-template:list:list` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:list:list"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(2)
+      })
+      it("List templates from SES", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("listEmailTemplates")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          PageSize: 10,
+          NextToken: undefined,
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Template list uses filter", (done) => {
+        loadTemplatesSpy.returnValues[0]
+          .then((result) => {
+            expect(result).to.be.deep.equal([
+              { TemplateName: "template to filter" },
+            ])
+            done()
+          })
+          .catch((error) => {
+            done(error)
+          })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(1)
+      })
+    })
+    after(() => {
+      loadTemplatesSpy.restore()
+    })
+  })
+
+  describe("List templates with empty result", () => {
+    let serverless
+    let pluginInstance
+    const requestStub = sinon.stub()
+    requestStub.onCall(0).resolves({ TemplatesMetadata: [] })
+    const providerSpy = sinon.spy(() => ({
+      request: requestStub,
+    }))
+    before(() => {
+      serverless = mockServerless("list", defaultService, providerSpy)
+      pluginInstance = new ServerlessSesTemplatePlugin(serverless, {})
+    })
+    describe("When the `ses-template:list:list` hook is executed", () => {
+      before(() => {
+        pluginInstance.hooks["ses-template:list:list"]()
+      })
+      it("Provider does requests to AWS SES", () => {
+        expect(requestStub.callCount).to.be.equal(1)
+      })
+      it("List templates from SES", () => {
+        expect(requestStub.getCall(0).args[0]).to.be.equal("SESV2")
+        expect(requestStub.getCall(0).args[1]).to.be.equal("listEmailTemplates")
+        expect(requestStub.getCall(0).args[2]).to.be.deep.equal({
+          PageSize: 10,
+          NextToken: undefined,
+        })
+        expect(requestStub.getCall(0).args[3]).to.be.deep.equal({
+          stage: "dev",
+          region: "us-west-2",
+        })
+      })
+      it("Logs messages", () => {
+        expect(serverless.cli.log.callCount).to.equal(3)
+      })
+    })
+  })
+})
