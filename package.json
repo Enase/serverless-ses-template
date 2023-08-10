@@ -13,6 +13,7 @@
     "Amazon Simple Email Service",
     "plugin"
   ],
+  "homepage": "https://github.com/Enase/serverless-ses-template",
   "bugs": {
     "url": "https://github.com/Enase/serverless-ses-template/issues"
   },
@@ -21,18 +22,23 @@
     "url": "https://github.com/Enase/serverless-ses-template.git"
   },
   "license": "MIT",
-  "author": "Sergii Kovalov <enasik@gmail.com>",
+  "author": "Sergii Kovalov <enasik@gmail.com> (https://www.linkedin.com/in/enase)",
   "maintainers": [
-    "Sergii Kovalev <enasik@gmail.com> (https://github.com/Enase)"
+    {
+      "name": "Sergii Kovalev",
+      "email": "enasik@gmail.com"
+    }
   ],
   "contributors": [
-    "Arseny Yankovsky (https://github.com/ArsenyYankovsky)",
-    "Mike Cousins <mike@cousins.io> (https://mike.cousins.io)"
+    {
+      "name": "Arseny Yankovsky"
+    },
+    {
+      "name": "Arseny Yankovsky",
+      "email": "mike@cousins.io"
+    }
   ],
-  "main": "dist/index.ts",
-  "directories": {
-    "test": "tests"
-  },
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "lint": "eslint .",
@@ -72,7 +78,7 @@
     "eslint-config-prettier": "^9.0.0"
   },
   "files": [
-    "src/",
+    "dist/",
     "LICENSE",
     "*.md"
   ],
