@@ -29,26 +29,15 @@
     "Arseny Yankovsky (https://github.com/ArsenyYankovsky)",
     "Mike Cousins <mike@cousins.io> (https://mike.cousins.io)"
   ],
-  "main": "src/index.ts",
+  "main": "dist/index.ts",
   "directories": {
     "test": "tests"
   },
   "scripts": {
-    "coverage_report": "nyc report --reporter=html",
-    "coverage_test": "nyc check-coverage --lines 80 --functions 80 --branches 70",
+    "build": "tsc",
     "lint": "eslint .",
     "typecheck": "tsc -noEmit",
-    "test": "nyc ./node_modules/mocha/bin/_mocha tests -R spec --recursive"
-  },
-  "nyc": {
-    "all": true,
-    "exclude": [
-      "examples/*",
-      ".eslintrc.js",
-      "tests/*",
-      "coverage/*"
-    ],
-    "report-dir": "./coverage"
+    "test": "yarn jest --env=node --colors --verbose true"
   },
   "peerDependencies": {
     "serverless": ">=3.0.0"
@@ -58,22 +47,28 @@
     "chalk": "^5.3.0"
   },
   "devDependencies": {
+    "@babel/core": "7.22.10",
+    "@babel/preset-env": "7.22.10",
+    "@babel/preset-typescript": "7.22.5",
     "@types/node": "16.18.39",
     "@types/serverless": "^3.12.13",
     "@types/cli-table": "^0.3.1",
-    "chai": "^4.3.7",
+    "@types/jest": "^29.5.3",
+    "babel-jest": "^29.6.0",
     "eslint": "^8.46.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
+    "nock": "^13.3.2",
+    "jest": "^29.6.2",
+    "jest-circus": "^29.6.2",
     "serverless": "^3.34.0",
-    "sinon": "^15.2.0",
     "typescript": "5.1.6",
+    "ts-node": "10.9.1",
     "@tsconfig/node16": "16.1.0",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
     "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-jest": "^27.2.3",
     "eslint-config-prettier": "^8.10.0"
   },
   "files": [

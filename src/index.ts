@@ -2,7 +2,7 @@ import chalk from "chalk"
 import path from "path"
 import Table from "cli-table"
 import { commandsConfig } from "./commands-config"
-import type SesTemplatePlugin from "./SesTemplatePlugin"
+import type SesPluginTypes from "./SesTemplatePlugin"
 import SesTemplatePluginLogger from "./logger"
 import RequestHandler from "./request-handler"
 import RuntimeUtils from "./runtime-utils"
@@ -11,20 +11,20 @@ const defaultSesTemplatesDeployHook = "before:deploy:deploy"
 
 class ServerlessSesTemplatePlugin {
   private readonly AWS = "aws"
-  private readonly serverless: SesTemplatePlugin.ServerlessExtended
-  private readonly options: SesTemplatePlugin.PluginOptions
+  private readonly serverless: SesPluginTypes.ServerlessExtended
+  private readonly options: SesPluginTypes.PluginOptions
   private readonly commands: typeof commandsConfig
   private readonly logger: SesTemplatePluginLogger
 
   private requestHandler?: RequestHandler
   private runtimeUtils?: RuntimeUtils
-  private configuration?: SesTemplatePlugin.Configuration
-  private hooks: SesTemplatePlugin.ServerlessHooksDefinition
+  private configuration?: SesPluginTypes.Configuration
+  private hooks: SesPluginTypes.ServerlessHooksDefinition
 
   constructor(
-    serverless: SesTemplatePlugin.ServerlessExtended,
-    options: SesTemplatePlugin.PluginOptions,
-    { log, progress, writeText }: SesTemplatePlugin.ServerlessLogging,
+    serverless: SesPluginTypes.ServerlessExtended,
+    options: SesPluginTypes.PluginOptions,
+    { log, progress, writeText }: SesPluginTypes.ServerlessLogging,
   ) {
     this.serverless = serverless
     this.options = options
@@ -115,7 +115,7 @@ class ServerlessSesTemplatePlugin {
     return this.requestHandler
   }
 
-  async loadConfigurationFile(): Promise<SesTemplatePlugin.Configuration> {
+  async loadConfigurationFile(): Promise<SesPluginTypes.Configuration> {
     if (!this.configuration) {
       const fileFullPath = path.join(
         this.serverless.config.servicePath,
@@ -132,7 +132,7 @@ class ServerlessSesTemplatePlugin {
         this.configuration = (await configFunction(
           this.serverless,
           this.options,
-        )) as SesTemplatePlugin.Configuration
+        )) as SesPluginTypes.Configuration
         return this.configuration
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)

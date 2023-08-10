@@ -4,10 +4,10 @@ import type { Logging } from "serverless/classes/Plugin"
 import type AwsProvider from "serverless/plugins/aws/provider/awsProvider"
 import Service from "serverless/classes/Service"
 
-declare namespace SesTemplatePlugin {
+declare namespace SesPluginTypes {
   interface PluginOptions extends Options {
     sesTemplatesRegion?: string
-    removeMissed?: string
+    removeMissed?: string | boolean
     filter?: string
     sesTemplateConfig?: string
     template?: string
@@ -104,4 +104,4 @@ declare namespace SesTemplatePlugin {
   }
 }
 
-export = SesTemplatePlugin
+export default SesPluginTypes
