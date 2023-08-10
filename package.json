@@ -54,7 +54,7 @@
     "@types/serverless": "^3.12.13",
     "@types/cli-table": "^0.3.1",
     "@types/jest": "^29.5.3",
-    "babel-jest": "^29.6.0",
+    "babel-jest": "^29.6.2",
     "eslint": "^8.46.0",
     "lodash": "^4.17.21",
     "minimist": "^1.2.8",
@@ -65,11 +65,11 @@
     "typescript": "5.1.6",
     "ts-node": "10.9.1",
     "@tsconfig/node16": "16.1.0",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
-    "@typescript-eslint/parser": "^6.2.1",
+    "@typescript-eslint/eslint-plugin": "^6.3.0",
+    "@typescript-eslint/parser": "^6.3.0",
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-jest": "^27.2.3",
-    "eslint-config-prettier": "^8.10.0"
+    "eslint-config-prettier": "^9.0.0"
   },
   "files": [
     "src/",
