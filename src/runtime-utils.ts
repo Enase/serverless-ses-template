@@ -1,4 +1,4 @@
-import type SesPluginTypes from "./SesTemplatePlugin"
+import type SesPluginTypes from "./serverless-ses-template-plugin"
 
 const defaultSesTemplatesConfigFilePath = "./ses-email-templates/index.js"
 

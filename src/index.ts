@@ -1,8 +1,8 @@
+import path from "node:path"
 import chalk from "chalk"
-import path from "path"
 import Table from "cli-table"
 import { commandsConfig } from "./commands-config"
-import type SesPluginTypes from "./SesTemplatePlugin"
+import type SesPluginTypes from "./serverless-ses-template-plugin"
 import SesTemplatePluginLogger from "./logger"
 import RequestHandler from "./request-handler"
 import RuntimeUtils from "./runtime-utils"
@@ -222,7 +222,7 @@ class ServerlessSesTemplatePlugin {
     }
   }
 
-  createSummary(title: string, items: string[]): string[] {
+  createSummary(title: string, items: ReadonlyArray<string>): string[] {
     const result = []
     if (items.length) {
       result.push(title)
@@ -253,7 +253,9 @@ class ServerlessSesTemplatePlugin {
     }
   }
 
-  async getTemplatesToRemove(templatesToSync: string[]): Promise<string[]> {
+  async getTemplatesToRemove(
+    templatesToSync: ReadonlyArray<string>,
+  ): Promise<string[]> {
     const templateList = await this.getRequestHandler().loadTemplates()
     const currentTemplates = templateList.map(
       (templateObject) => templateObject.TemplateName,
@@ -280,7 +282,7 @@ class ServerlessSesTemplatePlugin {
         ReviewDetails: { Status: renewStatus = "" } = {},
       } = {},
     } = await this.getRequestHandler().getAccount()
-    const summaryList = []
+    const summaryList: string[] = []
     renewStatus &&
       summaryList.push(
         `Renew Status: ${this.colorizeText(

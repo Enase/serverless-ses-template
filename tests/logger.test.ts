@@ -1,5 +1,5 @@
 import SesTemplatePluginLogger from "../src/logger"
-import SesPluginTypes from "../src/SesTemplatePlugin"
+import type SesPluginTypes from "../src/serverless-ses-template-plugin"
 
 describe("The `SesTemplatePluginLogger` class", () => {
   it("createProgress: should log info message when progress is not defined", () => {
@@ -33,12 +33,13 @@ describe("The `SesTemplatePluginLogger` class", () => {
     const progressUpdateSpy = jest.fn()
     const progressCreateSpy = jest.fn()
     const progress = {
-      get: () => ({ update: progressUpdateSpy }),
+      get: jest.fn((_name) => ({ update: progressUpdateSpy })),
       create: progressCreateSpy,
     } as unknown as SesPluginTypes.ServerlessLogging["progress"]
     const slsLogger = new SesTemplatePluginLogger(logger, jest.fn(), progress)
     slsLogger.updateProgress("name", "message")
     expect(progressCreateSpy).toHaveBeenCalledTimes(0)
+    expect(progress.get).toHaveBeenCalledWith("name")
     expect(progressUpdateSpy).toHaveBeenCalledWith("message")
   })
   it("updateProgress: should call logger.info with provided message when progress is not defined", () => {
@@ -56,11 +57,12 @@ describe("The `SesTemplatePluginLogger` class", () => {
     const logger =
       jest.fn() as unknown as SesPluginTypes.ServerlessLogging["log"]
     const progress = {
-      get: () => ({ remove: progressRemoveSpy }),
+      get: jest.fn((_name) => ({ remove: progressRemoveSpy })),
       create: progressCreateSpy,
     } as unknown as SesPluginTypes.ServerlessLogging["progress"]
     const slsLogger = new SesTemplatePluginLogger(logger, jest.fn(), progress)
     slsLogger.clearProgress("name")
+    expect(progress.get).toHaveBeenCalledWith("name")
     expect(progressRemoveSpy).toHaveBeenCalled()
   })
   it("clearProgress: should not throw an error when progress is undefined", () => {
