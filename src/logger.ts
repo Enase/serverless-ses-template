@@ -1,4 +1,4 @@
-import type SesPluginTypes from "./serverless-ses-template-plugin"
+import type * as SesPluginTypes from "./serverless-ses-template-plugin"
 
 class SesTemplatePluginLogger {
   private readonly log: SesPluginTypes.ServerlessLogging["log"]

@@ -4,104 +4,100 @@ import type { Logging } from "serverless/classes/Plugin"
 import type AwsProvider from "serverless/plugins/aws/provider/awsProvider"
 import Service from "serverless/classes/Service"
 
-declare namespace SesPluginTypes {
-  interface PluginOptions extends Options {
-    sesTemplatesRegion?: string
-    removeMissed?: string | boolean
-    filter?: string
-    sesTemplateConfig?: string
-    template?: string
+export interface PluginOptions extends Options {
+  sesTemplatesRegion?: string
+  removeMissed?: string | boolean
+  filter?: string
+  sesTemplateConfig?: string
+  template?: string
+}
+
+export interface CustomConfig extends Service.Custom {
+  sesTemplates?: {
+    region?: string
+    removeMissed?: boolean
+    addStage?: boolean
+    configFile?: string
+    disableAutoDeploy?: boolean
+  }
+}
+export interface ServerlessLogging extends Logging {}
+
+export declare class ServerlessExtended extends Serverless {
+  custom: CustomConfig
+  addServiceOutputSection?: (name: string, massages: string[]) => void
+  processedInput: {
+    commands: string[]
   }
 
-  interface CustomConfig extends Service.Custom {
-    sesTemplates?: {
-      region?: string
-      removeMissed?: boolean
-      addStage?: boolean
-      configFile?: string
-      disableAutoDeploy?: boolean
-    }
+  classes: {
+    Error: typeof Error
   }
-  interface ServerlessLogging extends Logging {}
+}
 
-  declare class ServerlessExtended extends Serverless {
-    custom: CustomConfig
-    addServiceOutputSection?: (name: string, massages: string[]) => void
-    processedInput: {
-      commands: string[]
-    }
+export type ServerlessHooksDefinition = {
+  [key: string]: (arg?: any) => any
+}
 
-    classes: {
-      Error: typeof Error
-    }
-  }
+export type ConfigurationItem = {
+  name: string
+  subject: string
+  html: string
+  text: string
+}
+export type Configuration = ConfigurationItem[]
 
-  type ServerlessHooksDefinition = {
-    [key: string]: (arg?: any) => any
-  }
+export type ProviderError = {
+  message: string
+  providerErrorCodeExtension: string
+}
+declare class Provider extends AwsProvider {
+  request(
+    service: string,
+    method: string,
+    params?: {},
+    options?: {
+      useCache?: boolean | undefined
+      region?: string | undefined
+      stage?: string | undefined
+    },
+  ): Promise<any>
+}
 
-  type ConfigurationItem = {
-    name: string
-    subject: string
-    html: string
-    text: string
-  }
-  type Configuration = ConfigurationItem[]
-
-  type ProviderError = {
-    message: string
-    providerErrorCodeExtension: string
-  }
-  declare class Provider extends AwsProvider {
-    request(
-      service: string,
-      method: string,
-      params?: {},
-      options?: {
-        useCache?: boolean | undefined
-        region?: string | undefined
-        stage?: string | undefined
-      },
-    ): Promise<any>
-  }
-
-  interface SesGetAccountResponse {
-    DedicatedIpAutoWarmupEnabled: boolean
-    EnforcementStatus: string
-    ProductionAccessEnabled: boolean
-    SendingEnabled: boolean
-    Details?: {
-      MailType: string
-      WebsiteURL: string
-      ReviewDetails?: {
-        Status: string
-      }
-    }
-  }
-
-  interface LoadTemplatesParams {
-    maxItems?: number
-    token?: string
-    [key: string]: any
-  }
-
-  interface SesTemplateResponseItem {
-    TemplateName: string
-    CreatedTimestamp: Date
-  }
-  interface SesListEmailTemplatesResponse {
-    TemplatesMetadata: SesTemplateResponseItem[]
-    NextToken: string
-  }
-
-  interface SesGetEmailTemplateResponse {
-    TemplateName: string
-    TemplateContent: {
-      Subject: string
-      Text: string
-      Html: string
+export interface SesGetAccountResponse {
+  DedicatedIpAutoWarmupEnabled: boolean
+  EnforcementStatus: string
+  ProductionAccessEnabled: boolean
+  SendingEnabled: boolean
+  Details?: {
+    MailType: string
+    WebsiteURL: string
+    ReviewDetails?: {
+      Status: string
     }
   }
 }
 
-export default SesPluginTypes
+export interface LoadTemplatesParams {
+  maxItems?: number
+  token?: string
+  [key: string]: any
+}
+
+export interface SesTemplateResponseItem {
+  TemplateName: string
+  CreatedTimestamp: Date
+}
+export interface SesListEmailTemplatesResponse {
+  TemplatesMetadata: SesTemplateResponseItem[]
+  NextToken: string
+}
+
+export interface SesGetEmailTemplateResponse {
+  TemplateName: string
+  TemplateContent: {
+    Subject: string
+    Text: string
+    Html: string
+  }
+}

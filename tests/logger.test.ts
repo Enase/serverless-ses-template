@@ -1,5 +1,5 @@
 import SesTemplatePluginLogger from "../src/logger"
-import type SesPluginTypes from "../src/serverless-ses-template-plugin"
+import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 
 describe("The `SesTemplatePluginLogger` class", () => {
   it("createProgress: should log info message when progress is not defined", () => {

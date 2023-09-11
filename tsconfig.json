@@ -4,19 +4,9 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "module": "esnext",
-    "lib": [
-      "esnext"
-    ],
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "strict": true
+    "allowSyntheticDefaultImports": true
   },
   "include": ["src/*"],
-  "exclude": ["node_modules", "dist", "test"],
-  "ts-node": {
-		"transpileOnly": true,
-		"files": true,
-		"experimentalResolver": true
-	}
+  "exclude": ["node_modules", "dist"]
 }

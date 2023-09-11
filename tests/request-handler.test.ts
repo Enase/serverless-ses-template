@@ -1,6 +1,6 @@
 import nock from "nock"
 import SesTemplatePluginLogger from "../src/logger"
-import type SesPluginTypes from "../src/serverless-ses-template-plugin"
+import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 import RequestHandler from "../src/request-handler"
 import RuntimeUtils from "../src/runtime-utils"
 
