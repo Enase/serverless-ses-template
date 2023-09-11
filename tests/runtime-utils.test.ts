@@ -1,5 +1,5 @@
 import RuntimeUtils from "../src/runtime-utils"
-import type SesPluginTypes from "../src/serverless-ses-template-plugin"
+import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 
 describe("The `RuntimeUtils` class", () => {
   it("should return the same template name when canAddStage is false", () => {

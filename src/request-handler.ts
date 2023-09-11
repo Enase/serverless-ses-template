@@ -1,4 +1,4 @@
-import type SesPluginTypes from "./serverless-ses-template-plugin"
+import type * as SesPluginTypes from "./serverless-ses-template-plugin"
 import SesTemplatePluginLogger from "./logger"
 import RuntimeUtils from "./runtime-utils"
 

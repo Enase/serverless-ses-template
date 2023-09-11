@@ -2,7 +2,7 @@ import path from "node:path"
 import chalk from "chalk"
 import Table from "cli-table"
 import { commandsConfig } from "./commands-config"
-import type SesPluginTypes from "./serverless-ses-template-plugin"
+import type * as SesPluginTypes from "./serverless-ses-template-plugin"
 import SesTemplatePluginLogger from "./logger"
 import RequestHandler from "./request-handler"
 import RuntimeUtils from "./runtime-utils"
@@ -129,7 +129,7 @@ class ServerlessSesTemplatePlugin {
 
       try {
         const configFunction = await import(fileFullPath)
-        this.configuration = (await configFunction(
+        this.configuration = (await configFunction.default(
           this.serverless,
           this.options,
         )) as SesPluginTypes.Configuration
