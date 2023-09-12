@@ -92,7 +92,7 @@ class ServerlessSesTemplatePlugin {
       const providerName = this.serverless.service.provider.name
       if (providerName !== this.AWS) {
         throw new this.serverless.classes.Error(
-          "ses-template plugin supports only AWS",
+          "@haftahave/serverless-ses-template plugin supports only AWS",
         )
       }
       this.requestHandler = new RequestHandler(
@@ -149,7 +149,7 @@ class ServerlessSesTemplatePlugin {
     )
 
     const templatesToRemove = this.getRuntimeUtils().shouldRemoveMissed()
-      ? await this.getTemplatesToRemove(templatesToSync || [])
+      ? await this.getTemplatesToRemove(templatesToSync)
       : []
 
     const updatedTemplates: string[] = []
@@ -180,10 +180,7 @@ class ServerlessSesTemplatePlugin {
         this.getRequestHandler().deleteTemplate(templateName, progressName),
     )
 
-    await Promise.all([
-      ...(syncTemplatePromises || []),
-      ...deleteTemplatePromises,
-    ])
+    await Promise.all([...syncTemplatePromises, ...deleteTemplatePromises])
 
     this.logger.clearProgress(progressName)
 
