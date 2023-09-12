@@ -522,4 +522,34 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     const result = plugin.createSummary(title, items)
     expect(result).toEqual(["Test Title", "Item 1", "Item 2"])
   })
+  it("should return an empty array when there are no templates to remove", async () => {
+    const loadTemplatesMock = jest
+      .spyOn(mockedRequestHandler.prototype, "loadTemplates")
+      .mockImplementation(async () => [])
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    const templatesToSync: ReadonlyArray<string> = []
+    const result = await plugin.getTemplatesToRemove(templatesToSync)
+    expect(loadTemplatesMock).toHaveBeenCalledTimes(1)
+    expect(result).toEqual([])
+  })
+  it("should return the correct templates to remove based on the templates to sync and the current templates", async () => {
+    const currentTemplates = [
+      { TemplateName: "template1", CreatedTimestamp: new Date() },
+      { TemplateName: "template2", CreatedTimestamp: new Date() },
+      { TemplateName: "template3", CreatedTimestamp: new Date() },
+    ]
+    const loadTemplatesMock = jest
+      .spyOn(mockedRequestHandler.prototype, "loadTemplates")
+      .mockImplementation(async () => currentTemplates)
+    const isTemplateFromCurrentStageMock = jest
+      .spyOn(mockedRuntimeUtils.prototype, "isTemplateFromCurrentStage")
+      .mockImplementation((_name) => true)
+
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    const templatesToSync: ReadonlyArray<string> = ["template1", "template2"]
+    const result = await plugin.getTemplatesToRemove(templatesToSync)
+    expect(loadTemplatesMock).toHaveBeenCalledTimes(1)
+    expect(isTemplateFromCurrentStageMock).toHaveBeenCalledTimes(1)
+    expect(result).toEqual(["template3"])
+  })
 })

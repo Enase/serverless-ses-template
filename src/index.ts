@@ -28,49 +28,38 @@ class ServerlessSesTemplatePlugin {
   ) {
     this.serverless = serverless
     this.options = options
-    const logger = log || {
-      error: serverless.cli.log,
-      warning: serverless.cli.log,
-      notice: serverless.cli.log,
-      info: serverless.cli.log,
-      debug: serverless.cli.log,
-      verbose: serverless.cli.log,
-      success: serverless.cli.log,
-    }
-    this.logger = new SesTemplatePluginLogger(logger, writeText, progress)
+    this.logger = new SesTemplatePluginLogger(log, writeText, progress)
 
-    if (this.serverless.configSchemaHandler) {
-      const newCustomPropSchema = {
-        type: "object",
-        properties: {
-          sesTemplates: {
-            type: "object",
-            properties: {
-              addStage: {
-                type: "boolean",
-              },
-              removeMissed: {
-                type: "boolean",
-              },
-              configFile: {
-                type: "string",
-              },
-              deployHook: {
-                type: "string",
-              },
-              disableAutoDeploy: {
-                type: "boolean",
-              },
-              region: {
-                type: "string",
-              },
+    const newCustomPropSchema = {
+      type: "object",
+      properties: {
+        sesTemplates: {
+          type: "object",
+          properties: {
+            addStage: {
+              type: "boolean",
             },
-            additionalProperties: false,
+            removeMissed: {
+              type: "boolean",
+            },
+            configFile: {
+              type: "string",
+            },
+            deployHook: {
+              type: "string",
+            },
+            disableAutoDeploy: {
+              type: "boolean",
+            },
+            region: {
+              type: "string",
+            },
           },
+          additionalProperties: false,
         },
-      }
-      serverless.configSchemaHandler.defineCustomProperties(newCustomPropSchema)
+      },
     }
+    serverless.configSchemaHandler.defineCustomProperties(newCustomPropSchema)
 
     this.commands = commandsConfig
 
@@ -210,13 +199,11 @@ class ServerlessSesTemplatePlugin {
 
     if (isDeploy) {
       summaryList.push("----------------------------------------")
-      if (this.serverless.addServiceOutputSection) {
-        this.serverless.addServiceOutputSection(
-          "Serverless SES Template",
-          summaryList,
-        )
-        await this.info()
-      }
+      this.serverless.addServiceOutputSection(
+        "Serverless SES Template",
+        summaryList,
+      )
+      await this.info()
     } else {
       this.logger.writeText(`\n${summaryList.join("\n")}\n`)
     }
@@ -268,9 +255,6 @@ class ServerlessSesTemplatePlugin {
   }
 
   async info(): Promise<void> {
-    if (!this.serverless.addServiceOutputSection) {
-      return
-    }
     const {
       DedicatedIpAutoWarmupEnabled: dedicatedIpAutoWarmupEnabled,
       EnforcementStatus: enforcementStatus,
