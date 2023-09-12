@@ -1,11 +1,17 @@
 import fs from "node:fs"
 import path from "node:path"
 import nock from "nock"
+import chalk from "chalk"
 import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 import ServerlessSesTemplatePlugin from "../src/index"
 import RuntimeUtils from "../src/runtime-utils"
 import RequestHandler from "../src/request-handler"
 import SesTemplatePluginLogger from "../src/logger"
+
+jest.mock("chalk", () => ({
+  green: jest.fn(),
+  red: jest.fn(),
+}))
 
 jest.mock("../src/runtime-utils")
 const mockedRuntimeUtils = RuntimeUtils as jest.MockedClass<typeof RuntimeUtils>
@@ -47,7 +53,6 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
 
   beforeEach(() => {
     nock.disableNetConnect()
-
     getConfigFileMock = jest
       .spyOn(mockedRuntimeUtils.prototype, "getConfigFile")
       .mockImplementation(() => "./ses-email-templates/index.js")
@@ -525,7 +530,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   it("should return an empty array when there are no templates to remove", async () => {
     const loadTemplatesMock = jest
       .spyOn(mockedRequestHandler.prototype, "loadTemplates")
-      .mockImplementation(async () => [])
+      .mockResolvedValueOnce([])
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     const templatesToSync: ReadonlyArray<string> = []
     const result = await plugin.getTemplatesToRemove(templatesToSync)
@@ -540,7 +545,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     ]
     const loadTemplatesMock = jest
       .spyOn(mockedRequestHandler.prototype, "loadTemplates")
-      .mockImplementation(async () => currentTemplates)
+      .mockResolvedValueOnce(currentTemplates)
     const isTemplateFromCurrentStageMock = jest
       .spyOn(mockedRuntimeUtils.prototype, "isTemplateFromCurrentStage")
       .mockImplementation((_name) => true)
@@ -551,5 +556,80 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     expect(loadTemplatesMock).toHaveBeenCalledTimes(1)
     expect(isTemplateFromCurrentStageMock).toHaveBeenCalledTimes(1)
     expect(result).toEqual(["template3"])
+  })
+  it("should successfully retrieve account information and add an output section", async () => {
+    const accountInfo = {
+      DedicatedIpAutoWarmupEnabled: true,
+      EnforcementStatus: "HEALTHY",
+      ProductionAccessEnabled: true,
+      SendingEnabled: true,
+      Details: {
+        MailType: "test-mail-type",
+        WebsiteURL: "test-website-url",
+        ReviewDetails: { Status: "GRANTED" },
+      },
+    }
+
+    const addServiceOutputSectionMock = jest.spyOn(
+      serverless,
+      "addServiceOutputSection",
+    )
+
+    const getAccountMock = jest
+      .spyOn(mockedRequestHandler.prototype, "getAccount")
+      .mockResolvedValueOnce(accountInfo)
+
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    plugin.colorizeText = jest
+      .fn()
+      .mockImplementation((_condition: boolean, text: string) => text)
+    await plugin.info()
+
+    // Assert that the account information is displayed correctly
+    expect(getAccountMock).toHaveBeenCalledTimes(1)
+    expect(plugin.colorizeText).toHaveBeenCalledTimes(5)
+    expect(plugin.colorizeText).toHaveBeenCalledWith(true, "GRANTED")
+    expect(plugin.colorizeText).toHaveBeenCalledWith(true, "true")
+    expect(plugin.colorizeText).toHaveBeenCalledWith(true, "true")
+    expect(plugin.colorizeText).toHaveBeenCalledWith(true, "true")
+    expect(plugin.colorizeText).toHaveBeenCalledWith(true, "true")
+    expect(addServiceOutputSectionMock).toHaveBeenCalledWith(
+      "Serverless SES Status",
+      [
+        "Renew Status: GRANTED",
+        "Production Access Enabled: true",
+        "Sending Enabled: true",
+        "Dedicated Ip Auto Warmup Enabled: true",
+        "Enforcement Status: HEALTHY",
+        "Mail Type: test-mail-type",
+        "Website URL: test-website-url",
+      ],
+    )
+  })
+  it("should return a string with green color when the condition is true and the text is not empty", () => {
+    const greenMock = chalk.green as unknown as jest.Mock
+    greenMock.mockReturnValueOnce("test-green")
+
+    const redMock = chalk.red as unknown as jest.Mock
+    redMock.mockReturnValueOnce("test-red")
+
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    const result = plugin.colorizeText(true, "text")
+    expect(chalk.green).toHaveBeenCalledTimes(1)
+    expect(chalk.red).toHaveBeenCalledTimes(0)
+    expect(result).toBe("test-green")
+  })
+  it("should return a string with red color when the condition is false and the text is not empty", () => {
+    const greenMock = chalk.green as unknown as jest.Mock
+    greenMock.mockReturnValueOnce("test-green")
+
+    const redMock = chalk.red as unknown as jest.Mock
+    redMock.mockReturnValueOnce("test-red")
+
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    const result = plugin.colorizeText(false, "text")
+    expect(chalk.green).toHaveBeenCalledTimes(0)
+    expect(chalk.red).toHaveBeenCalledTimes(1)
+    expect(result).toBe("test-red")
   })
 })

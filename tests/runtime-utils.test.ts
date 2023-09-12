@@ -228,4 +228,20 @@ describe("The `RuntimeUtils` class", () => {
     const result = runtimeUtils.isAutoDeployDisabled()
     expect(result).toBe(false)
   })
+  it("should return default values if plugin is not configured", () => {
+    const runtimeUtils = new RuntimeUtils(
+      {
+        processedInput: { commands: [] },
+        service: {
+          provider: { region: undefined, stage: undefined },
+        },
+      } as unknown as SesPluginTypes.ServerlessExtended,
+      { filter: "filter" } as SesPluginTypes.PluginOptions,
+    )
+    expect(runtimeUtils.getRegion()).toBeUndefined()
+    expect(runtimeUtils.isAutoDeployDisabled()).toBe(false)
+    expect(runtimeUtils.shouldRemoveMissed()).toBe(false)
+    expect(runtimeUtils.addStageToTemplateName("test")).toBe("test")
+    expect(runtimeUtils.getConfigFile()).toBe("./ses-email-templates/index.js")
+  })
 })
