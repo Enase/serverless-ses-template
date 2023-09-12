@@ -25,7 +25,7 @@ export interface ServerlessLogging extends Logging {}
 
 export declare class ServerlessExtended extends Serverless {
   custom: CustomConfig
-  addServiceOutputSection?: (name: string, massages: string[]) => void
+  addServiceOutputSection: (name: string, massages: string[]) => void
   processedInput: {
     commands: string[]
   }

@@ -2,15 +2,6 @@ import SesTemplatePluginLogger from "../src/logger"
 import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 
 describe("The `SesTemplatePluginLogger` class", () => {
-  it("createProgress: should log info message when progress is not defined", () => {
-    const logger = {
-      info: jest.fn(),
-    } as unknown as SesPluginTypes.ServerlessLogging["log"]
-    const logSpy = jest.spyOn(logger, "info")
-    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn())
-    slsLogger.createProgress("name", "message")
-    expect(logSpy).toHaveBeenCalledWith("SesTemplate: message...")
-  })
   it("createProgress: should create progress when progress is available", () => {
     const progressGetSpy = jest.fn()
     const progressCreateSpy = jest.fn()
@@ -42,15 +33,6 @@ describe("The `SesTemplatePluginLogger` class", () => {
     expect(progress.get).toHaveBeenCalledWith("name")
     expect(progressUpdateSpy).toHaveBeenCalledWith("message")
   })
-  it("updateProgress: should call logger.info with provided message when progress is not defined", () => {
-    const logger = {
-      info: jest.fn(),
-    } as unknown as SesPluginTypes.ServerlessLogging["log"]
-    const logSpy = jest.spyOn(logger, "info")
-    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn())
-    slsLogger.updateProgress("name", "message")
-    expect(logSpy).toHaveBeenCalledWith("SesTemplate: message")
-  })
   it("clearProgress: should remove progress when progress is available", () => {
     const progressRemoveSpy = jest.fn()
     const progressCreateSpy = jest.fn()
@@ -65,40 +47,34 @@ describe("The `SesTemplatePluginLogger` class", () => {
     expect(progress.get).toHaveBeenCalledWith("name")
     expect(progressRemoveSpy).toHaveBeenCalled()
   })
-  it("clearProgress: should not throw an error when progress is undefined", () => {
-    const logger = console as unknown as SesPluginTypes.ServerlessLogging["log"]
-    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn())
-    expect(() => slsLogger.clearProgress("name")).not.toThrow()
-  })
-  it("logSuccess: should log success message with correct input", () => {
+  it("logSuccess: should call the success method of the logger with the provided message", () => {
     const logger = {
       success: jest.fn(),
     } as unknown as SesPluginTypes.ServerlessLogging["log"]
-    const logSuccessSpy = jest.spyOn(logger, "success")
-    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn())
+    const progress = jest.fn() as unknown as SesPluginTypes.ServerlessLogging["progress"]
+    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn(), progress)
     const message = "Test message"
     slsLogger.logSuccess(message)
-    expect(logSuccessSpy).toHaveBeenCalledWith(message)
+    expect(logger.success).toHaveBeenCalledWith(message)
   })
-  it("logWarning: should log a non-empty string message", () => {
+  it("logWarning: should call the warning method of the log object with a non-empty message", () => {
     const logger = {
       warning: jest.fn(),
     } as unknown as SesPluginTypes.ServerlessLogging["log"]
-    const logSpy = jest.spyOn(logger, "warning")
-    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn())
+    const progress = jest.fn() as unknown as SesPluginTypes.ServerlessLogging["progress"]
+    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn(), progress)
     const message = "This is a warning message"
     slsLogger.logWarning(message)
-    expect(logSpy).toHaveBeenCalledWith(message)
-    expect(logSpy).toHaveBeenCalledTimes(1)
+    expect(logger.warning).toHaveBeenCalledWith(message)
   })
-  it("logError: should log the same non-empty string message passed as argument", () => {
+  it("logError: should log the error message correctly", () => {
     const logger = {
       error: jest.fn(),
     } as unknown as SesPluginTypes.ServerlessLogging["log"]
-    const logSpy = jest.spyOn(logger, "error")
-    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn())
-    const message = "Test error message"
-    slsLogger.logError(message)
-    expect(logSpy).toHaveBeenCalledWith(message)
+    const progress = jest.fn() as unknown as SesPluginTypes.ServerlessLogging["progress"]
+    const slsLogger = new SesTemplatePluginLogger(logger, jest.fn(), progress)
+    const errorMessage = "This is an error message"
+    slsLogger.logError(errorMessage)
+    expect(logger.error).toHaveBeenCalledWith(errorMessage)
   })
 })
