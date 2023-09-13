@@ -2,7 +2,7 @@
 [![NPM][ico-npm]][link-npm]
 [![npm][ico-npm-downloads]][link-npm]
 [![Build Status][ico-build]][link-build]
-[![slack](ico-slack)](link-slack)
+[![slack][ico-slack]][link-slack]
 
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
