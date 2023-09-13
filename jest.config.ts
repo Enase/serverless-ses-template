@@ -22,7 +22,11 @@ const config: Config = {
       lines: 100,
     },
   },
-  collectCoverageFrom: ["!**/dist/**", "src/**"],
+  collectCoverageFrom: [
+    "!**/dist/**",
+    "src/**",
+    "!src/serverless-ses-template-plugin.d.ts",
+  ],
 }
 
 export default config

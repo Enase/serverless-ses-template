@@ -3,6 +3,9 @@
 [![npm][ico-npm-downloads]][link-npm]
 [![Build Status][ico-build]][link-build]
 
+
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
+
 Template sync plugin for Amazon Simple Email Service
 ===
 
@@ -10,9 +13,12 @@ A serverless plugin that allows automatically creating, updating and removing
 AWS SES Templates using a configuration file and keeps your AWS SES Templates
 synced with your configuration file.
 
-**SUPPORTS** Serverless ver 2 and 3
+> 🚨 **Important Notice**: Starting from 5.0.0 version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
+> If you need compatibility with previous versions of serverless, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
+>
+> Read motivation [here]()
 
-**REQUIRES** nodejs 14+
+**REQUIRES** nodejs 16+
 
 ---
 **:zap: Features**
