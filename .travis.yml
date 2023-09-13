@@ -20,4 +20,6 @@ script:
 - pnpm lint
 - npm test
 notifications:
-  slack: enasetech:kCpjRaaLjiHMfDkzq5fkfrcU
+  slack:
+    rooms:
+     - enasetech:kCpjRaaLjiHMfDkzq5fkfrcU#serverless-ses-template
