@@ -2,6 +2,7 @@
 [![NPM][ico-npm]][link-npm]
 [![npm][ico-npm-downloads]][link-npm]
 [![Build Status][ico-build]][link-build]
+[![slack](ico-slack)](link-slack)
 
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
@@ -16,7 +17,7 @@ synced with your configuration file.
 > 🚨 **Important Notice**: Starting from 5.0.0 version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
 > If you need compatibility with previous versions of serverless, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
 >
-> Read motivation [here]()
+> Read [motivation here]()
 
 **REQUIRES** nodejs 16+
 
@@ -137,9 +138,11 @@ MIT
 [ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
 [ico-npm-downloads]: https://img.shields.io/npm/dt/@haftahave/serverless-ses-template.svg
 [ico-build]: https://app.travis-ci.com/Enase/serverless-ses-template.svg?branch=master
+[ico-slack]: https://img.shields.io/badge/Join%20Our%20Community-Slack-blue
 
 [link-serverless]: http://www.serverless.com/
 [link-npm]: https://www.npmjs.com/package/@haftahave/serverless-ses-template
 [link-build]: https://app.travis-ci.com/Enase/serverless-ses-template
+[link-slack]: https://enasetech.slack.com/archives/C05S2SZNRTM
 [link-ses-guide]: https://docs.aws.amazon.com/ses/latest/DeveloperGuide/send-personalized-email-api.html
 [link-ses-sdk]: https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SES.html#sendTemplatedEmail-property
