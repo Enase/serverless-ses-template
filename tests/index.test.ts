@@ -2,11 +2,11 @@ import fs from "node:fs"
 import path from "node:path"
 import nock from "nock"
 import chalk from "chalk"
-import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 import ServerlessSesTemplatePlugin from "../src/index"
 import RuntimeUtils from "../src/runtime-utils"
 import RequestHandler from "../src/request-handler"
 import SesTemplatePluginLogger from "../src/logger"
+import type { ServerlessExtended, ServerlessLogging } from "../src/types"
 
 jest.mock("chalk", () => ({
   green: jest.fn(),
@@ -40,12 +40,12 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     stage: null,
     region: null,
   }
-  let logger: SesPluginTypes.ServerlessLogging
+  let logger: ServerlessLogging
   let progressUpdateSpy: jest.Mock
   let progressRemoveSpy: jest.Mock
   let getConfigFileMock: jest.SpyInstance
   let isAutoDeployDisabledMock: jest.SpyInstance
-  let serverless: SesPluginTypes.ServerlessExtended
+  let serverless: ServerlessExtended
 
   beforeEach(() => {
     nock.disableNetConnect()
@@ -64,19 +64,19 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
         remove: progressRemoveSpy,
       })),
       create: jest.fn(),
-    } as unknown as SesPluginTypes.ServerlessLogging["progress"]
+    } as unknown as ServerlessLogging["progress"]
 
     const logSpy = {
       success: jest.fn(),
       warning: jest.fn(),
       error: jest.fn(),
-    } as unknown as SesPluginTypes.ServerlessLogging["log"]
+    } as unknown as ServerlessLogging["log"]
 
     logger = {
       log: logSpy,
       progress,
       writeText: jest.fn(),
-    } as SesPluginTypes.ServerlessLogging
+    } as ServerlessLogging
     serverless = {
       service: {
         provider: {
@@ -85,11 +85,11 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
           stage: "dev",
         },
         custom: {},
-      } as unknown as SesPluginTypes.ServerlessExtended["service"],
+      } as unknown as ServerlessExtended["service"],
       processedInput: { commands: ["ses-template"] },
       config: {
         servicePath: path.join(__dirname, "../examples/asset-management"),
-      } as SesPluginTypes.ServerlessExtended["config"],
+      } as ServerlessExtended["config"],
       getProvider: (_name: string) => undefined,
       utils: {
         fileExistsSync: jest.fn((_filePath: string) => {
@@ -97,18 +97,18 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
         }),
         readFileSync: (filePath: string) =>
           fs.readFileSync(filePath).toString().trim(),
-      } as unknown as SesPluginTypes.ServerlessExtended["utils"],
+      } as unknown as ServerlessExtended["utils"],
       classes: {
         Error: jest.fn((message: string) => Error(message)),
-      } as unknown as SesPluginTypes.ServerlessExtended["classes"],
+      } as unknown as ServerlessExtended["classes"],
       cli: {
         log: jest.fn(),
-      } as SesPluginTypes.ServerlessExtended["cli"],
+      } as ServerlessExtended["cli"],
       configSchemaHandler: {
         defineCustomProperties: jest.fn((_schema: any) => true),
-      } as unknown as SesPluginTypes.ServerlessExtended["configSchemaHandler"],
+      } as unknown as ServerlessExtended["configSchemaHandler"],
       addServiceOutputSection: jest.fn(),
-    } as unknown as SesPluginTypes.ServerlessExtended
+    } as unknown as ServerlessExtended
   })
 
   afterEach(() => {
@@ -146,7 +146,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     const plugin = new ServerlessSesTemplatePlugin(
       serverless,
       options,
-      {} as SesPluginTypes.ServerlessLogging,
+      {} as ServerlessLogging,
     )
     serverless.utils.fileExistsSync = jest.fn((_filePath: string) => {
       return false
@@ -174,7 +174,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     const plugin = new ServerlessSesTemplatePlugin(
       serverless,
       options,
-      {} as SesPluginTypes.ServerlessLogging,
+      {} as ServerlessLogging,
     )
     const error: Error = await getError(
       async () => await plugin.loadConfigurationFile(),
@@ -195,7 +195,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     const plugin = new ServerlessSesTemplatePlugin(
       serverless,
       options,
-      {} as SesPluginTypes.ServerlessLogging,
+      {} as ServerlessLogging,
     )
     const error: Error = await getError(
       async () => await plugin.loadConfigurationFile(),
@@ -804,7 +804,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
           name: "unknown",
         },
       },
-    } as unknown as SesPluginTypes.ServerlessExtended
+    } as unknown as ServerlessExtended
     const pluginOptions = {
       template: "some-title",
       ...options,

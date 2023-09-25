@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.esm.json",
+  "compilerOptions": {
+    "removeComments": false,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "../dist/types",
+    "declarationDir": "../dist/types",
+    "emitDeclarationOnly": true
+  }
+}

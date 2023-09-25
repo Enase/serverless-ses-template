@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "baseUrl": ".",
+    "paths": {
+      "@haftahave/serverless-ses-template": ["./"],
+      "@haftahave/serverless-ses-template/*": ["./*"]
+    }
+  },
+  "include": ["./**/*.ts"]
+}

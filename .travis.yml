@@ -18,7 +18,8 @@ install:
 script:
 - pnpm typecheck
 - pnpm lint
-- npm test
+- pnpm test
+- pnpm build:package
 notifications:
   slack:
     rooms:

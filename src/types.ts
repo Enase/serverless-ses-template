@@ -1,4 +1,4 @@
-import Serverless from "serverless"
+import type Serverless from "serverless"
 import type { Options } from "serverless"
 import type { Logging } from "serverless/classes/Plugin"
 import type AwsProvider from "serverless/plugins/aws/provider/awsProvider"
@@ -51,7 +51,7 @@ export type ProviderError = {
   message: string
   providerErrorCodeExtension: string
 }
-declare class Provider extends AwsProvider {
+export declare class Provider extends AwsProvider {
   request(
     service: string,
     method: string,

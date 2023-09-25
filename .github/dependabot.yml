@@ -18,3 +18,11 @@ updates:
     # Setting the limit of open pull requests to zero is the documented way
     # to disable Dependabot.
     open-pull-requests-limit: 0
+
+  - package-ecosystem: 'npm'
+    directory: '/examples/simple-service'
+    schedule:
+      interval: 'weekly'
+    # Setting the limit of open pull requests to zero is the documented way
+    # to disable Dependabot.
+    open-pull-requests-limit: 0

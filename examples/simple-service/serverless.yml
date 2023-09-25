@@ -1,0 +1,13 @@
+service: test
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+plugins:
+  - '@haftahave/serverless-ses-template'
+
+functions:
+  function1:
+    handler: index.handler
