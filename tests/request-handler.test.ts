@@ -1,8 +1,8 @@
 import nock from "nock"
 import SesTemplatePluginLogger from "../src/logger"
-import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
 import RequestHandler from "../src/request-handler"
 import RuntimeUtils from "../src/runtime-utils"
+import type { Provider } from "../src/types"
 
 describe("The `RequestHandler` class", () => {
   let logger: SesTemplatePluginLogger
@@ -44,7 +44,7 @@ describe("The `RequestHandler` class", () => {
   it("should call makeRequest with correct params when progress is not set", async () => {
     const provider = {
       request: jest.fn(),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const configurationItem = {
       name: "test-template",
@@ -83,7 +83,7 @@ describe("The `RequestHandler` class", () => {
   it("should call makeRequest with correct params and return null when deletion is successful", async () => {
     const provider = {
       request: jest.fn(() => Promise.resolve(null)),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
@@ -112,7 +112,7 @@ describe("The `RequestHandler` class", () => {
   it("should log an error and return false when deletion fails", async () => {
     const provider = {
       request: jest.fn(() => Promise.reject(new Error("test-error"))),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
@@ -141,7 +141,7 @@ describe("The `RequestHandler` class", () => {
   it("should not log an error and return false when deletion fails", async () => {
     const provider = {
       request: jest.fn(() => Promise.reject(new Object("test-error"))),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
@@ -175,7 +175,7 @@ describe("The `RequestHandler` class", () => {
         ProductionAccessEnabled: true,
         SendingEnabled: true,
       }),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const response = await requestHandler.getAccount()
     expect(addStageToTemplateNameSpy).toHaveBeenCalledTimes(0)
@@ -203,7 +203,7 @@ describe("The `RequestHandler` class", () => {
           },
         }),
       ),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
     const result = await requestHandler.getEmailTemplate(templateName)
@@ -235,7 +235,7 @@ describe("The `RequestHandler` class", () => {
           providerErrorCodeExtension: "NOT_FOUND_EXCEPTION",
         }),
       ),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
     const result = await requestHandler.getEmailTemplate(templateName)
@@ -256,7 +256,7 @@ describe("The `RequestHandler` class", () => {
   it("should throw an error when request fails", async () => {
     const provider = {
       request: jest.fn(() => Promise.reject(new Error("test-error"))),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
@@ -269,7 +269,7 @@ describe("The `RequestHandler` class", () => {
       request: jest.fn().mockResolvedValue({
         Message: "test-message",
       }),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const configurationItem = {
       name: "test-template",
@@ -309,7 +309,7 @@ describe("The `RequestHandler` class", () => {
   it("should return an empty array when there are no templates", async () => {
     const provider = {
       request: jest.fn().mockResolvedValue({ TemplatesMetadata: [] }),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const result = await requestHandler.loadTemplates()
     expect(result).toEqual([])
@@ -323,7 +323,7 @@ describe("The `RequestHandler` class", () => {
       request: jest.fn().mockResolvedValue({
         TemplatesMetadata: templates,
       }),
-    } as unknown as SesPluginTypes.Provider
+    } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const result = await requestHandler.loadTemplates({}, "template1")
     expect(result).toEqual([

@@ -2,11 +2,21 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/",
-    "module": "esnext",
+    "incremental": true,
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "strict": true,
+    "noImplicitReturns": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "stripInternal": true,
+    "noEmit": true,
   },
-  "include": ["src/*"],
-  "exclude": ["node_modules", "dist"]
+  "lib": [
+    "esnext"
+  ],
+  "target": "esnext",
+  "baseUrl": ".",
+  "paths": {
+    "@haftahave/serverless-ses-template": ["./src/index"]
+  }
 }

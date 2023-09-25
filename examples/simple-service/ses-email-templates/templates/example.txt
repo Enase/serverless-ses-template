@@ -1,0 +1,2 @@
+Hello world!
+See image here: https://{{asset_domain}}/demo.jpg

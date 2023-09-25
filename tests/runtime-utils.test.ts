@@ -1,5 +1,5 @@
 import RuntimeUtils from "../src/runtime-utils"
-import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
+import type { PluginOptions, ServerlessExtended } from "../src/types"
 
 describe("The `RuntimeUtils` class", () => {
   it("should return the same template name when canAddStage is false", () => {
@@ -14,8 +14,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const templateName = "test-template"
     const result = runtimeUtils.addStageToTemplateName(templateName)
@@ -33,8 +33,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const templateName = "test-template"
     const result = runtimeUtils.addStageToTemplateName(templateName)
@@ -52,8 +52,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const templateName = "test-template"
     const result = runtimeUtils.isTemplateFromCurrentStage(templateName)
@@ -71,8 +71,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const templateName = "test-template_test-stage"
     const result = runtimeUtils.isTemplateFromCurrentStage(templateName)
@@ -91,8 +91,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const templateName = "test-template"
     const result = runtimeUtils.isTemplateFromCurrentStage(templateName)
@@ -113,8 +113,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      { filter: "filter" } as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      { filter: "filter" } as PluginOptions,
     )
     expect(runtimeUtils.getFilter()).toBe("filter")
   })
@@ -133,8 +133,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      { filter: "filter" } as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      { filter: "filter" } as PluginOptions,
     )
     expect(runtimeUtils.getFilter()).toBe("")
   })
@@ -150,8 +150,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const result = runtimeUtils.getConfigFile()
     expect(result).toBe("test-config-file")
@@ -168,8 +168,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     expect(runtimeUtils.getStage()).toBe("test-stage")
     expect(runtimeUtils.getRegion()).toBe("test-region")
@@ -186,8 +186,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      { removeMissed: true } as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      { removeMissed: true } as PluginOptions,
     )
     const result = runtimeUtils.shouldRemoveMissed()
     expect(result).toBe(true)
@@ -204,8 +204,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const result = runtimeUtils.shouldRemoveMissed()
     expect(result).toBe(true)
@@ -222,8 +222,8 @@ describe("The `RuntimeUtils` class", () => {
           },
           provider: { region: "test-region", stage: "test-stage" },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      {} as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      {} as PluginOptions,
     )
     const result = runtimeUtils.isAutoDeployDisabled()
     expect(result).toBe(false)
@@ -235,8 +235,8 @@ describe("The `RuntimeUtils` class", () => {
         service: {
           provider: { region: undefined, stage: undefined },
         },
-      } as unknown as SesPluginTypes.ServerlessExtended,
-      { filter: "filter" } as SesPluginTypes.PluginOptions,
+      } as unknown as ServerlessExtended,
+      { filter: "filter" } as PluginOptions,
     )
     expect(runtimeUtils.getRegion()).toBeUndefined()
     expect(runtimeUtils.isAutoDeployDisabled()).toBe(false)

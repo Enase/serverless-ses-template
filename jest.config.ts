@@ -1,18 +1,18 @@
 import type { Config } from "jest"
 
 const config: Config = {
+  moduleDirectories: ["node_modules", "node_modules/.pnpm", "src"],
   verbose: true,
   clearMocks: true,
-  testEnvironment: "node",
-  testRunner: "jest-circus/runner",
   collectCoverage: true,
   transform: {
     tsconfig: "<rootDir>/tsconfig.test.json",
   },
+  extensionsToTreatAsEsm: [".ts"],
   projects: [
     {
       displayName: "serverless-ses-template",
-      testRegex: "tests",
+      testRegex: "(/tests/.*|(\\.|/)test)\\.ts$",
       testPathIgnorePatterns: ["./dist", ".eslintrc.cjs"],
     },
   ],
@@ -22,11 +22,7 @@ const config: Config = {
       lines: 100,
     },
   },
-  collectCoverageFrom: [
-    "!**/dist/**",
-    "src/**",
-    "!src/serverless-ses-template-plugin.d.ts",
-  ],
+  collectCoverageFrom: ["!**/dist/**", "src/**", "!src/types.ts"],
 }
 
 export default config

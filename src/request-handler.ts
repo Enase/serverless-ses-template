@@ -1,15 +1,24 @@
-import type * as SesPluginTypes from "./serverless-ses-template-plugin"
 import SesTemplatePluginLogger from "./logger"
 import RuntimeUtils from "./runtime-utils"
+import type {
+  ConfigurationItem,
+  LoadTemplatesParams,
+  Provider,
+  ProviderError,
+  SesGetAccountResponse,
+  SesGetEmailTemplateResponse,
+  SesListEmailTemplatesResponse,
+  SesTemplateResponseItem,
+} from "./types"
 
 class RequestHandler {
   private readonly AWS_SES_SERVICE_NAME = "SESV2"
-  private readonly provider: SesPluginTypes.Provider
+  private readonly provider: Provider
   private readonly runtimeUtils: RuntimeUtils
   private readonly logger: SesTemplatePluginLogger
 
   constructor(
-    provider: SesPluginTypes.Provider,
+    provider: Provider,
     runtimeUtils: RuntimeUtils,
     logger: SesTemplatePluginLogger,
   ) {
@@ -22,7 +31,7 @@ class RequestHandler {
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#createEmailTemplate-property
    */
   createTemplate(
-    { name, subject, html, text }: SesPluginTypes.ConfigurationItem,
+    { name, subject, html, text }: ConfigurationItem,
     progressName: string,
   ): Promise<null | unknown> {
     const templateName = this.runtimeUtils.addStageToTemplateName(name)
@@ -70,7 +79,7 @@ class RequestHandler {
   /**
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#getAccount-property
    */
-  getAccount(): Promise<SesPluginTypes.SesGetAccountResponse> {
+  getAccount(): Promise<SesGetAccountResponse> {
     return this.makeRequest("getAccount")
   }
 
@@ -79,14 +88,14 @@ class RequestHandler {
    */
   getEmailTemplate(
     templateName: string,
-  ): Promise<SesPluginTypes.SesGetEmailTemplateResponse | null> {
+  ): Promise<SesGetEmailTemplateResponse | null> {
     const params = {
       TemplateName: templateName,
     }
     return this.makeRequest("getEmailTemplate", params).catch((error): null => {
       if (
         error &&
-        (error as SesPluginTypes.ProviderError).providerErrorCodeExtension ===
+        (error as ProviderError).providerErrorCodeExtension ===
           "NOT_FOUND_EXCEPTION"
       ) {
         return null
@@ -99,7 +108,7 @@ class RequestHandler {
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#updateEmailTemplate-property
    */
   updateTemplate(
-    { name, subject, html, text }: SesPluginTypes.ConfigurationItem,
+    { name, subject, html, text }: ConfigurationItem,
     progressName: string,
   ): Promise<null | unknown> {
     const templateName = this.runtimeUtils.addStageToTemplateName(name)
@@ -124,17 +133,17 @@ class RequestHandler {
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#listEmailTemplates-property
    */
   async loadTemplates(
-    { maxItems = 10, ...options }: SesPluginTypes.LoadTemplatesParams = {},
+    { maxItems = 10, ...options }: LoadTemplatesParams = {},
     filter = this.runtimeUtils.getFilter(),
-  ): Promise<SesPluginTypes.SesTemplateResponseItem[]> {
-    let templates: SesPluginTypes.SesTemplateResponseItem[] = []
+  ): Promise<SesTemplateResponseItem[]> {
+    let templates: SesTemplateResponseItem[] = []
     let nextToken: string | undefined = undefined
     do {
       const response = (await this.makeRequest("listEmailTemplates", {
         ...options,
         PageSize: maxItems,
         NextToken: nextToken,
-      })) as SesPluginTypes.SesListEmailTemplatesResponse
+      })) as SesListEmailTemplatesResponse
       templates = templates.concat(
         this.filterTemplates(response.TemplatesMetadata, filter),
       )
@@ -151,13 +160,12 @@ class RequestHandler {
   }
 
   private filterTemplates(
-    templates: SesPluginTypes.SesTemplateResponseItem[],
+    templates: SesTemplateResponseItem[],
     filter: string,
-  ): SesPluginTypes.SesTemplateResponseItem[] {
+  ): SesTemplateResponseItem[] {
     return filter
-      ? templates.filter(
-          (templateObject: SesPluginTypes.SesTemplateResponseItem) =>
-            String(templateObject.TemplateName).includes(filter),
+      ? templates.filter((templateObject: SesTemplateResponseItem) =>
+          String(templateObject.TemplateName).includes(filter),
         )
       : templates
   }

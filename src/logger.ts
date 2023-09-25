@@ -1,14 +1,14 @@
-import type * as SesPluginTypes from "./serverless-ses-template-plugin"
+import type { ServerlessLogging } from "./types"
 
 class SesTemplatePluginLogger {
-  private readonly log: SesPluginTypes.ServerlessLogging["log"]
-  public readonly writeText: SesPluginTypes.ServerlessLogging["writeText"]
-  private readonly progress: SesPluginTypes.ServerlessLogging["progress"]
+  private readonly log: ServerlessLogging["log"]
+  public readonly writeText: ServerlessLogging["writeText"]
+  private readonly progress: ServerlessLogging["progress"]
 
   constructor(
-    logger: SesPluginTypes.ServerlessLogging["log"],
-    writeText: SesPluginTypes.ServerlessLogging["writeText"],
-    progress: SesPluginTypes.ServerlessLogging["progress"],
+    logger: ServerlessLogging["log"],
+    writeText: ServerlessLogging["writeText"],
+    progress: ServerlessLogging["progress"],
   ) {
     this.log = logger
     this.writeText = writeText

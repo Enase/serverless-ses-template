@@ -1,30 +1,37 @@
 import path from "node:path"
 import chalk from "chalk"
 import Table from "cli-table"
-import { commandsConfig } from "./commands-config"
-import type * as SesPluginTypes from "./serverless-ses-template-plugin"
+import commandsConfig from "./commands-config"
 import SesTemplatePluginLogger from "./logger"
 import RequestHandler from "./request-handler"
 import RuntimeUtils from "./runtime-utils"
+import type {
+  Configuration,
+  ConfigurationItem,
+  PluginOptions,
+  ServerlessExtended,
+  ServerlessHooksDefinition,
+  ServerlessLogging,
+} from "./types"
 
 const defaultSesTemplatesDeployHook = "before:deploy:deploy"
 
 class ServerlessSesTemplatePlugin {
   private readonly AWS = "aws"
-  private readonly serverless: SesPluginTypes.ServerlessExtended
-  private readonly options: SesPluginTypes.PluginOptions
+  private readonly serverless: ServerlessExtended
+  private readonly options: PluginOptions
   private readonly commands: typeof commandsConfig
   private readonly logger: SesTemplatePluginLogger
 
   private requestHandler?: RequestHandler
   private runtimeUtils?: RuntimeUtils
-  private configuration?: SesPluginTypes.Configuration
-  private hooks: SesPluginTypes.ServerlessHooksDefinition
+  private configuration?: Configuration
+  private hooks: ServerlessHooksDefinition
 
   constructor(
-    serverless: SesPluginTypes.ServerlessExtended,
-    options: SesPluginTypes.PluginOptions,
-    { log, progress, writeText }: SesPluginTypes.ServerlessLogging,
+    serverless: ServerlessExtended,
+    options: PluginOptions,
+    { log, progress, writeText }: ServerlessLogging,
   ) {
     this.serverless = serverless
     this.options = options
@@ -104,7 +111,7 @@ class ServerlessSesTemplatePlugin {
     return this.requestHandler
   }
 
-  async loadConfigurationFile(): Promise<SesPluginTypes.Configuration> {
+  async loadConfigurationFile(): Promise<Configuration> {
     if (!this.configuration) {
       const fileFullPath = path.join(
         this.serverless.config.servicePath,
@@ -121,7 +128,7 @@ class ServerlessSesTemplatePlugin {
         this.configuration = (await configFunction.default(
           this.serverless,
           this.options,
-        )) as SesPluginTypes.Configuration
+        )) as Configuration
         return this.configuration
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
@@ -144,8 +151,9 @@ class ServerlessSesTemplatePlugin {
 
     const configuration = await this.loadConfigurationFile()
 
-    const templatesToSync = configuration.map((templateConfig) =>
-      this.getRuntimeUtils().addStageToTemplateName(templateConfig.name),
+    const templatesToSync = configuration.map(
+      (templateConfig: ConfigurationItem) =>
+        this.getRuntimeUtils().addStageToTemplateName(templateConfig.name),
     )
 
     const templatesToRemove = this.getRuntimeUtils().shouldRemoveMissed()
@@ -154,26 +162,27 @@ class ServerlessSesTemplatePlugin {
 
     const updatedTemplates: string[] = []
     const createdTemplates: string[] = []
-    const syncTemplatePromises = configuration.map(async (templateConfig) => {
-      const templateName = this.getRuntimeUtils().addStageToTemplateName(
-        templateConfig.name,
-      )
-      const oldTemplate = await this.getRequestHandler().getEmailTemplate(
-        templateName,
-      )
-      if (oldTemplate !== null) {
-        updatedTemplates.push(templateName)
-        return this.getRequestHandler().updateTemplate(
+    const syncTemplatePromises = configuration.map(
+      async (templateConfig: ConfigurationItem) => {
+        const templateName = this.getRuntimeUtils().addStageToTemplateName(
+          templateConfig.name,
+        )
+        const oldTemplate =
+          await this.getRequestHandler().getEmailTemplate(templateName)
+        if (oldTemplate !== null) {
+          updatedTemplates.push(templateName)
+          return this.getRequestHandler().updateTemplate(
+            templateConfig,
+            progressName,
+          )
+        }
+        createdTemplates.push(templateName)
+        return this.getRequestHandler().createTemplate(
           templateConfig,
           progressName,
         )
-      }
-      createdTemplates.push(templateName)
-      return this.getRequestHandler().createTemplate(
-        templateConfig,
-        progressName,
-      )
-    })
+      },
+    )
 
     const deleteTemplatePromises = templatesToRemove.map(
       (templateName: string) =>
@@ -258,8 +267,8 @@ class ServerlessSesTemplatePlugin {
       ProductionAccessEnabled: productionAccessEnabled,
       SendingEnabled: sendingEnabled,
       Details: {
-        MailType: mailType,
-        WebsiteURL: websiteURL,
+        MailType: mailType = undefined,
+        WebsiteURL: websiteURL = undefined,
         ReviewDetails: { Status: renewStatus = "" } = {},
       } = {},
     } = await this.getRequestHandler().getAccount()

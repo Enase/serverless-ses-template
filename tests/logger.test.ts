@@ -1,19 +1,19 @@
 import SesTemplatePluginLogger from "../src/logger"
-import type * as SesPluginTypes from "../src/serverless-ses-template-plugin"
+import type { ServerlessLogging } from "../src/types"
 
 describe("The `SesTemplatePluginLogger` class", () => {
-  let logger: SesPluginTypes.ServerlessLogging["log"]
+  let logger: ServerlessLogging["log"]
   let progressUpdateSpy: jest.Mock
   let progressGetSpy: jest.Mock
   let progressCreateSpy: jest.Mock
-  let progress: SesPluginTypes.ServerlessLogging["progress"]
+  let progress: ServerlessLogging["progress"]
 
   beforeEach(() => {
     logger = {
       success: jest.fn(),
       warning: jest.fn(),
       error: jest.fn(),
-    } as unknown as SesPluginTypes.ServerlessLogging["log"]
+    } as unknown as ServerlessLogging["log"]
 
     progressUpdateSpy = jest.fn()
     progressGetSpy = jest.fn((_name) => ({ update: progressUpdateSpy }))
@@ -46,7 +46,7 @@ describe("The `SesTemplatePluginLogger` class", () => {
     const progress = {
       get: jest.fn((_name) => ({ remove: progressRemoveSpy })),
       create: progressCreateSpy,
-    } as unknown as SesPluginTypes.ServerlessLogging["progress"]
+    } as unknown as ServerlessLogging["progress"]
     const slsLogger = new SesTemplatePluginLogger(logger, jest.fn(), progress)
     slsLogger.clearProgress("name")
     expect(progress.get).toHaveBeenCalledWith("name")

@@ -1,4 +1,4 @@
-import type * as SesPluginTypes from "./serverless-ses-template-plugin"
+import type { PluginOptions, ServerlessExtended } from "./types"
 
 const defaultSesTemplatesConfigFilePath = "./ses-email-templates/index.js"
 
@@ -11,10 +11,7 @@ class RuntimeUtils {
   private readonly region: string
   private readonly stage: string
 
-  constructor(
-    serverless: SesPluginTypes.ServerlessExtended,
-    options: SesPluginTypes.PluginOptions,
-  ) {
+  constructor(serverless: ServerlessExtended, options: PluginOptions) {
     const {
       processedInput: { commands },
       service: {

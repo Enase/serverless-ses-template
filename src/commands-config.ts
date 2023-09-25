@@ -1,4 +1,4 @@
-export const commandsConfig = {
+const commandsConfig = {
   "ses-template": {
     usage: "Manage AWS SES templates",
     lifecycleEvents: ["deploy", "delete", "list"],
@@ -61,3 +61,4 @@ export const commandsConfig = {
     },
   },
 }
+export default commandsConfig
