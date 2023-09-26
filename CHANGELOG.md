@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
-## [5.0.2] - 2023-09-12
+## [5.0.2] - 2023-09-26
 
 ### Breaking Changes
 - **Migration to TypeScript**: The project has been refactored using TypeScript. [Learn about our motivation and the detailed changes](https://github.com/Enase/serverless-ses-template/discussions/61).
@@ -95,7 +95,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unnecessary files are not included in release anymore. Added `files` section in `package.json`.
 
 ### Docs
-- Added extended example: [Plugin integration with asset management](examples/asset-management)
+- Added extended example: [Plugin integration with asset management](examples/cloud-front-service/asset-management)
 
 ## [3.0.0] - 2020-12-03
 
@@ -140,7 +140,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Breaking Changes
 - Ability to load template [configuration in any async way](https://github.com/Enase/serverless-ses-template/issues/15) (eg. from DB or API). \
-Template configuration file must return an async function now. Example see [here](examples/asset-management/ses-email-templates/index.js).
+Template configuration file must return an async function now. Example see [here](examples/cloud-front-service/asset-management/ses-email-templates/index.js).
 
 ### Added
 - List of supported regions updated according to [AWS RPS](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/)
