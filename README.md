@@ -19,7 +19,7 @@ synced with your configuration file.
 >
 > Read [motivation here]()
 
-**REQUIRES** nodejs 16+
+**REQUIRES** nodejs 18+
 
 ---
 **:zap: Features**
