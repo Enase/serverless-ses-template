@@ -5,7 +5,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.0.0",
+  "version": "5.0.2",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "keywords": [
     "serverless",
@@ -53,7 +53,6 @@
     "build:package": "npm-run-all build:clean compile",
     "compile": "npm-run-all compile:esm compile:types",
     "compile:esm": "tsc -b ./src/tsconfig.esm.json",
-    "compile:cjs": "tsc -b ./src/tsconfig.cjs.json",
     "compile:types": "tsc -b ./src/tsconfig.types.json",
     "prepublishOnly": "npm-run-all module:set build:package typecheck lint test",
     "postpublish": "pnpm run module:delete",

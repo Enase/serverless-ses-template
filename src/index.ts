@@ -362,6 +362,4 @@ class ServerlessSesTemplatePlugin {
   }
 }
 
-// cjs export type in case of `tsconfig.cjs.json` usage
-// export = ServerlessSesTemplatePlugin
 export default ServerlessSesTemplatePlugin
