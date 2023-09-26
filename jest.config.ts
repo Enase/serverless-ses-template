@@ -1,19 +1,28 @@
 import type { Config } from "jest"
 
 const config: Config = {
-  moduleDirectories: ["node_modules", "node_modules/.pnpm", "src"],
   verbose: true,
-  clearMocks: true,
-  collectCoverage: true,
+  preset: "ts-jest/presets/default-esm",
+  extensionsToTreatAsEsm: [".ts"],
   transform: {
     tsconfig: "<rootDir>/tsconfig.test.json",
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        useESM: true,
+      },
+    ],
   },
-  extensionsToTreatAsEsm: [".ts"],
   projects: [
     {
+      clearMocks: true,
       displayName: "serverless-ses-template",
       testRegex: "(/tests/.*|(\\.|/)test)\\.ts$",
       testPathIgnorePatterns: ["./dist", ".eslintrc.cjs"],
+      moduleDirectories: ["node_modules", "node_modules/.pnpm", "src"],
+      moduleNameMapper: {
+        "^(\\.{1,2}/.*)\\.js$": "$1",
+      },
     },
   ],
   coverageReporters: ["text"],
@@ -22,6 +31,8 @@ const config: Config = {
       lines: 100,
     },
   },
+  collectCoverage: true,
+  coverageDirectory: "coverage",
   collectCoverageFrom: ["!**/dist/**", "src/**", "!src/types.ts"],
 }
 

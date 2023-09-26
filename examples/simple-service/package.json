@@ -4,7 +4,7 @@
   "keywords": [],
   "type": "module",
   "dependencies": {
-    "aws-sdk": "^2.1459.0"
+    "aws-sdk": "^2.1464.0"
   },
   "devDependencies": {
     "@haftahave/serverless-ses-template": "5.0.0"

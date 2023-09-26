@@ -12,9 +12,8 @@ pids
 node_modules
 jspm_packages
 
-# Serverless directories
-.serverless
-.webpack/
+# ci directories
+coverage/
 
 # Optional npm cache directory
 .npm
@@ -34,6 +33,6 @@ jspm_packages
 
 # build
 dist/
-coverage/
 
-tsconfig.tsbuildinfo
+# typescript
+*.tsbuildinfo

@@ -1,4 +1,4 @@
-import type { PluginOptions, ServerlessExtended } from "./types"
+import type { PluginOptions, ServerlessExtended } from "./types.js"
 
 const defaultSesTemplatesConfigFilePath = "./ses-email-templates/index.js"
 
