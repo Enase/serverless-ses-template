@@ -14,10 +14,13 @@ A serverless plugin that allows automatically creating, updating and removing
 AWS SES Templates using a configuration file and keeps your AWS SES Templates
 synced with your configuration file.
 
-> 🚨 **Important Notice**: Starting from 5.0.0 version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
-> If you need compatibility with previous versions of serverless, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
+> 🚨 **Important Notice**: Starting from 6.x version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
 >
-> Read [motivation here]()
+> If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.0.2) plugin series
+>
+> If you need compatibility with `serverless<=3.2.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
+>
+> Read [motivation here](https://github.com/Enase/serverless-ses-template/discussions/61)
 
 **REQUIRES** nodejs 18+
 
@@ -31,7 +34,7 @@ synced with your configuration file.
 
 #### Examples
 
-- [Simple Plugin integration](examples/simple-service)
+- [Simple plugin integration](examples/simple-service)
 - [Plugin integration with asset management](examples/cloud-front-service) (not maintained)
 
 #### Installation
@@ -76,7 +79,7 @@ module.exports = async (serverless, options) => [{
 }];
 ```
 
-Real world example see [here](examples/asset-management/ses-email-templates/index.js).
+Real world example see [here](examples/simple-service/ses-email-templates/index.js).
 
 ## Plugin resolves region in the following order:
 
