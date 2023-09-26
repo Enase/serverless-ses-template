@@ -9,14 +9,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
-## [5.0.0] - 2023-09-12
+## [5.0.2] - 2023-09-12
 
 ### Breaking Changes
-- **Pure ESM Package**: Plugin transitioned to a pure ESM module. If you're unfamiliar with this, please [consult this guide](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) to understand the implications.
+- **Migration to TypeScript**: The project has been refactored using TypeScript. [Learn about our motivation and the detailed changes](https://github.com/Enase/serverless-ses-template/discussions/61).
 - **Serverless Version Requirement**: Ensure you are using `serverless` version [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or above, as this is now the minimum supported version.
-
-### Changed
-- **Migration to TypeScript**: The project has been refactored using TypeScript. [Learn about our motivation and the detailed changes](https://url_here).
 
 
 ## [4.0.7] - 2023-06-27

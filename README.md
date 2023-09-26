@@ -31,7 +31,8 @@ synced with your configuration file.
 
 #### Examples
 
-- [Plugin integration with asset management](examples/asset-management)
+- [Simple Plugin integration](examples/simple-service)
+- [Plugin integration with asset management](examples/cloud-front-service) (not maintained)
 
 #### Installation
 

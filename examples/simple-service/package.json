@@ -2,12 +2,11 @@
   "name": "simple-service",
   "version": "1.0.0",
   "keywords": [],
-  "type": "module",
   "dependencies": {
     "aws-sdk": "^2.1464.0"
   },
   "devDependencies": {
-    "@haftahave/serverless-ses-template": "5.0.0"
+    "@haftahave/serverless-ses-template": "5.0.1"
   },
   "engines": {
     "node": ">= 12.18.4",
