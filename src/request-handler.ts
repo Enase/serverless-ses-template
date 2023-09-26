@@ -1,5 +1,5 @@
-import SesTemplatePluginLogger from "./logger.js"
-import RuntimeUtils from "./runtime-utils.js"
+import SesTemplatePluginLogger from "./logger"
+import RuntimeUtils from "./runtime-utils"
 import type {
   ConfigurationItem,
   LoadTemplatesParams,
@@ -9,7 +9,7 @@ import type {
   SesGetEmailTemplateResponse,
   SesListEmailTemplatesResponse,
   SesTemplateResponseItem,
-} from "./types.js"
+} from "./types"
 
 class RequestHandler {
   private readonly AWS_SES_SERVICE_NAME = "SESV2"
