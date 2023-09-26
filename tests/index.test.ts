@@ -88,7 +88,10 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       } as unknown as ServerlessExtended["service"],
       processedInput: { commands: ["ses-template"] },
       config: {
-        servicePath: path.join(__dirname, "../examples/asset-management"),
+        servicePath: path.join(
+          __dirname,
+          "../examples/cloud-front-service/asset-management",
+        ),
       } as ServerlessExtended["config"],
       getProvider: (_name: string) => undefined,
       utils: {
@@ -133,7 +136,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       },
     ]
     jest.mock(
-      "../examples/asset-management/ses-email-templates",
+      "../examples/cloud-front-service/asset-management/ses-email-templates",
       () => async () => expectedConfig,
     )
     await plugin.loadConfigurationFile()
@@ -145,7 +148,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   it("should throw an error when the configuration file does not have default export", async () => {
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     jest.mock(
-      "../examples/asset-management/ses-email-templates",
+      "../examples/cloud-front-service/asset-management/ses-email-templates",
       () => undefined,
     )
     const error: Error = await getError(
@@ -183,7 +186,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("should throw an error when the configuration file cannot be loaded", async () => {
     jest.mock(
-      "../examples/asset-management/ses-email-templates",
+      "../examples/cloud-front-service/asset-management/ses-email-templates",
       () => async () => {
         throw new Error("cannot load")
       },
@@ -204,7 +207,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("should handle unexpected error type when the configuration file cannot be loaded", async () => {
     jest.mock(
-      "../examples/asset-management/ses-email-templates",
+      "../examples/cloud-front-service/asset-management/ses-email-templates",
       () => async () => {
         throw new Object("cannot load")
       },

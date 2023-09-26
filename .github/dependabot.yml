@@ -12,7 +12,7 @@ updates:
 
   # node packages
   - package-ecosystem: 'npm'
-    directory: '/examples/asset-management'
+    directory: '/examples/cloud-front-service/asset-management'
     schedule:
       interval: 'weekly'
     # Setting the limit of open pull requests to zero is the documented way

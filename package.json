@@ -47,7 +47,6 @@
     },
     "./package.json": "./package.json"
   },
-  "type": "module",
   "types": "index.d.ts",
   "scripts": {
     "build:clean": "shx rm -rf ./dist",
@@ -114,5 +113,6 @@
   ],
   "engines": {
     "node": ">=18.8.0"
-  }
+  },
+  "type": "module"
 }
