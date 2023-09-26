@@ -1,4 +1,4 @@
-import type { ServerlessLogging } from "./types"
+import type { ServerlessLogging } from "./types.js"
 
 class SesTemplatePluginLogger {
   private readonly log: ServerlessLogging["log"]

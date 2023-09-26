@@ -5,7 +5,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.0.2",
+  "version": "6.0.0",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "keywords": [
     "serverless",
@@ -38,16 +38,38 @@
       "email": "mike@cousins.io"
     }
   ],
-  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js",
+      "default": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "types": "index.d.ts",
   "scripts": {
     "build:clean": "shx rm -rf ./dist",
     "build:package": "npm-run-all build:clean compile",
-    "compile": "npm-run-all compile:cjs",
-    "compile:cjs": "tsc -b ./src/tsconfig.cjs.json",
-    "prepublishOnly": "npm-run-all build:package typecheck lint test",
+    "compile": "npm-run-all compile:esm compile:types",
+    "compile:esm": "tsc -b ./src/tsconfig.esm.json",
+    "compile:types": "tsc -b ./src/tsconfig.types.json",
+    "prepublishOnly": "npm-run-all module:set build:package typecheck lint test",
+    "postpublish": "pnpm run module:delete",
     "lint": "eslint .",
     "typecheck": "tsc -noEmit",
-    "test": "jest --runInBand"
+    "module:set": "pnpm pkg set 'type'='module'",
+    "module:delete": "pnpm pkg delete 'type'",
+    "pretest": "pnpm run module:delete",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "posttest": "pnpm pkg set 'type'='module'"
+  },
+  "typesVersions": {
+    ">=4.2": {
+      "*": [
+        "dist/types/*"
+      ]
+    }
   },
   "peerDependencies": {
     "serverless": ">=3.2.0"
@@ -82,12 +104,14 @@
     "typescript": "5.1.6"
   },
   "files": [
-    "dist/cjs/**/!(*.tsbuildinfo|types.js)",
+    "dist/esm/**/!(*.tsbuildinfo|types.js)",
+    "dist/types/**/!(*.tsbuildinfo)",
     "package.json",
     "LICENSE",
     "*.md"
   ],
   "engines": {
     "node": ">=18.8.0"
-  }
+  },
+  "type": "module"
 }
