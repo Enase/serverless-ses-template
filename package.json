@@ -5,7 +5,7 @@
     "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
-  "version": "5.0.0",
+  "version": "5.0.1",
   "description": "Serverless template sync plugin for Amazon Simple Email Service",
   "keywords": [
     "serverless",
