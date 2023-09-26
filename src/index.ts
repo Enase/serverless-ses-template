@@ -1,10 +1,10 @@
 import path from "node:path"
 import chalk from "chalk"
 import Table from "cli-table"
-import commandsConfig from "./commands-config"
-import SesTemplatePluginLogger from "./logger"
-import RequestHandler from "./request-handler"
-import RuntimeUtils from "./runtime-utils"
+import commandsConfig from "./commands-config.js"
+import SesTemplatePluginLogger from "./logger.js"
+import RequestHandler from "./request-handler.js"
+import RuntimeUtils from "./runtime-utils.js"
 import type {
   Configuration,
   ConfigurationItem,
@@ -12,7 +12,7 @@ import type {
   ServerlessExtended,
   ServerlessHooksDefinition,
   ServerlessLogging,
-} from "./types"
+} from "./types.js"
 
 const defaultSesTemplatesDeployHook = "before:deploy:deploy"
 
@@ -125,6 +125,9 @@ class ServerlessSesTemplatePlugin {
 
       try {
         const configFunction = await import(fileFullPath)
+        if (configFunction.default === undefined) {
+          throw new Error('Configuration file should export "default" function')
+        }
         this.configuration = (await configFunction.default(
           this.serverless,
           this.options,

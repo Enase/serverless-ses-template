@@ -142,6 +142,23 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     expect(getConfigFileMock).toHaveBeenCalledTimes(1)
     expect(result).toEqual(expectedConfig)
   })
+  it("should throw an error when the configuration file does not have default export", async () => {
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    jest.mock(
+      "../examples/asset-management/ses-email-templates",
+      () => undefined,
+    )
+    const error: Error = await getError(
+      async () => await plugin.loadConfigurationFile(),
+    )
+    expect(serverless.utils.fileExistsSync).toHaveBeenCalledTimes(1)
+    expect(getConfigFileMock).toHaveBeenCalledTimes(1)
+    expect(serverless.classes.Error).toHaveBeenCalledTimes(1)
+    expect(error).toBeInstanceOf(Error)
+    expect(error.message).toBe(
+      'Configuration file should export "default" function',
+    )
+  })
   it("should throw an error when the configuration file is not found", async () => {
     const plugin = new ServerlessSesTemplatePlugin(
       serverless,
@@ -312,7 +329,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       .mockResolvedValueOnce(null)
     const addStageToTemplateNameMock = jest
       .spyOn(mockedRuntimeUtils.prototype, "addStageToTemplateName")
-      .mockImplementation((name) => `${name}-dev`)
+      .mockImplementation((name: string): string => `${name}-dev`)
 
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     const configuration = [
@@ -379,7 +396,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       .mockResolvedValueOnce(null)
     const addStageToTemplateNameMock = jest
       .spyOn(mockedRuntimeUtils.prototype, "addStageToTemplateName")
-      .mockImplementation((name) => `${name}-dev`)
+      .mockImplementation((name: string): string => `${name}-dev`)
 
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     const configuration = [
@@ -445,7 +462,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       .mockResolvedValueOnce(null)
     const addStageToTemplateNameMock = jest
       .spyOn(mockedRuntimeUtils.prototype, "addStageToTemplateName")
-      .mockImplementation((name) => `${name}-dev`)
+      .mockImplementation((name: string): string => `${name}-dev`)
 
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     plugin.loadConfigurationFile = jest.fn().mockResolvedValueOnce([])
@@ -605,7 +622,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       .mockResolvedValueOnce(currentTemplates)
     const isTemplateFromCurrentStageMock = jest
       .spyOn(mockedRuntimeUtils.prototype, "isTemplateFromCurrentStage")
-      .mockImplementation((_name) => true)
+      .mockImplementation((_name: string): boolean => true)
 
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     const templatesToSync: ReadonlyArray<string> = ["template1", "template2"]
