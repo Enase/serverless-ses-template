@@ -6,7 +6,7 @@
     "aws-sdk": "^2.1464.0"
   },
   "devDependencies": {
-    "@haftahave/serverless-ses-template": "5.0.1"
+    "@haftahave/serverless-ses-template": "5.0.2"
   },
   "engines": {
     "node": ">= 12.18.4",
