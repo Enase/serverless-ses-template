@@ -1,8 +1,4 @@
-import path from "node:path"
-import { fileURLToPath } from "node:url"
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+const path = require("path")
 
 const templateList = [
   {
@@ -27,7 +23,7 @@ templateList.reduce((acc, templateInfo) => {
  * @param {Object} _options - runtime options
  * @returns {Promise<{name: string, subject: string, html: string, text}[]>}
  */
-const templateConfiguration = async (serverless, _options) => {
+module.exports = async (serverless, _options) => {
   // You can load template configuration from filesystem using serverless object + runtime options
   // or from any other source like database or API
 
@@ -48,5 +44,3 @@ const templateConfiguration = async (serverless, _options) => {
   })
   return sesEmailTemplates
 }
-
-export default templateConfiguration
