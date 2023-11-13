@@ -27,7 +27,7 @@ devDependencies:
     version: 18.2.2
   '@types/cli-table':
     specifier: ^0.3.3
-    version: 0.3.3
+    version: 0.3.4
   '@types/jest':
     specifier: ^29.5.7
     version: 29.5.7
@@ -2686,8 +2686,8 @@ packages:
       '@types/responselike': 1.0.0
     dev: true
 
-  /@types/cli-table@0.3.3:
-    resolution: {integrity: sha512-GJPxeQ/McVnizfipKsCuJg3tEXg6GZvoFjLlohJpWHjDcSIwSAjbCJNuHDVQyrHiRiINXspzrFc/Tt9ztvZCoA==}
+  /@types/cli-table@0.3.4:
+    resolution: {integrity: sha512-GsALrTL69mlwbAw/MHF1IPTadSLZQnsxe7a80G8l4inN/iEXCOcVeT/S7aRc6hbhqzL9qZ314kHPDQnQ3ev+HA==}
     dev: true
 
   /@types/graceful-fs@4.1.7:
