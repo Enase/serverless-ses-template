@@ -69,7 +69,7 @@ devDependencies:
     version: 4.1.5
   serverless:
     specifier: ^3.37.0
-    version: 3.37.0
+    version: 3.38.0
   shx:
     specifier: ^0.3.4
     version: 0.3.4
@@ -7116,8 +7116,8 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
-  /serverless@3.37.0:
-    resolution: {integrity: sha512-HRYzduFrJTMRVknmoqdmdfZJ0c945h5jhrUf8rTzdBdCoQ2ETMFd6xlHnrAPqsEreR1apAVb0zFSZLwgO7Tigg==}
+  /serverless@3.38.0:
+    resolution: {integrity: sha512-NJE1vOn8XmQEqfU9UxmVhkUFaCRmx6FhYw/jITN863WlOt4Y3PQbj3hwQyIb5QS1ZrXFq5ojklwewUXH7xGpdA==}
     engines: {node: '>=12.0'}
     hasBin: true
     requiresBuild: true
