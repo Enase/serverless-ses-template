@@ -6,7 +6,11 @@ import ServerlessSesTemplatePlugin from "../src/index"
 import RuntimeUtils from "../src/runtime-utils"
 import RequestHandler from "../src/request-handler"
 import SesTemplatePluginLogger from "../src/logger"
-import type { ServerlessExtended, ServerlessLogging } from "../src/types"
+import type {
+  PluginOptions,
+  ServerlessExtended,
+  ServerlessLogging,
+} from "../src/types"
 
 jest.mock("chalk", () => ({
   green: jest.fn(),
@@ -39,7 +43,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   const options = {
     stage: null,
     region: null,
-  }
+  } as unknown as PluginOptions
   let logger: ServerlessLogging
   let progressUpdateSpy: jest.Mock
   let progressRemoveSpy: jest.Mock
