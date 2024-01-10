@@ -9,7 +9,7 @@ body:
       description: What version of plugin are you running?
       placeholder: v6.0.0
     validations:
-      required: false
+      required: true
   - type: textarea
     attributes:
       label: Serverless version
