@@ -71,14 +71,12 @@ Template configuration file should be an async function that returns array of ob
  * @param {Object} options - runtime options
  * @returns {Promise<{name: string, subject: string, html: string, text}[]>}
  */
-const templateConfiguration = async (serverless, options) => [{
+module.exports = async (serverless, options) => [{
     name: 'example_name',
     subject: 'Your subject',
     html: '<h1>Hello world!</h1>',
     text: 'Hello world!',
 }];
-
-export default templateConfiguration
 ```
 
 Real world example see [here](examples/simple-service/ses-email-templates/index.js).
