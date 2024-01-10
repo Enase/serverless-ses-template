@@ -18,7 +18,7 @@ synced with your configuration file.
 >
 > If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.1.0) plugin series
 >
-> If you need compatibility with `serverless<=3.0.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
+> If you need compatibility with `serverless<3.0.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
 >
 > Read [motivation here](https://github.com/Enase/serverless-ses-template/discussions/61)
 ---
