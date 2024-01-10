@@ -1,0 +1,35 @@
+name: 🐛 Bug report
+description: Create a bug report
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: input
+    attributes:
+      label: Plugin version
+      description: What version of plugin are you running?
+      placeholder: v6.0.0
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Serverless version
+      description: '"serverless --version" output'
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Current behaviour (optional)
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Expected behaviour (optional)
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Issue description
+    validations:
+      required: true
+

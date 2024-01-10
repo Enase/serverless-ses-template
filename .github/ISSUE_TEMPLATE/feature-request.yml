@@ -1,0 +1,14 @@
+name: 🎉 Feature request
+description: Suggest an idea
+body:
+  - type: textarea
+    attributes:
+      label: Use case description
+      description: Describe the problem (use case) that needs to be solved
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed solution (optional)
+      description: |
+        e.g. propose how the configuration of the new feature could look
