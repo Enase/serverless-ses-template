@@ -9,12 +9,44 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [6.1.0] - 2024-01-10
+
+### Breaking Changes
+- **Modified Autodeploy Behavior**: The behavior of auto-deploy has been updated.
+Starting now, when the `disableAutoDeploy` configuration value is set to `false`,
+the plugin will automatically remove templates during the `before:remove:remove` serverless internal event.
+This change enhances stack management and helps prevent unintended template retention
+when executing the `sls remove` command to remove the AWS CloudFormation stack.
+[#147](https://github.com/Enase/serverless-ses-template/pull/147)
+
+### Changed
+- Dependencies updated
+
+## [6.0.0] - 2023-09-26
+
+### Breaking Changes
+- **Migration to TypeScript**: The project has been refactored using TypeScript. [Learn about our motivation and the detailed changes](https://github.com/Enase/serverless-ses-template/discussions/61).
+- **Pure ESM Package**: Plugin transitioned to a pure ESM module. If you're unfamiliar with this, please [consult this guide](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) to understand the implications.
+- **Serverless Version Requirement**: Ensure you are using `serverless` version [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or above, as this is now the minimum supported version.
+
+## [5.1.0] - 2024-01-10
+
+### Breaking Changes
+- **Modified Autodeploy Behavior**: The behavior of auto-deploy has been updated.
+Starting now, when the `disableAutoDeploy` configuration value is set to `false`,
+the plugin will automatically remove templates during the `before:remove:remove` serverless internal event.
+This change enhances stack management and helps prevent unintended template retention
+when executing the `sls remove` command to remove the AWS CloudFormation stack.
+[#147](https://github.com/Enase/serverless-ses-template/pull/147)
+
+### Changed
+- Dependencies updated
+
 ## [5.0.2] - 2023-09-26
 
 ### Breaking Changes
 - **Migration to TypeScript**: The project has been refactored using TypeScript. [Learn about our motivation and the detailed changes](https://github.com/Enase/serverless-ses-template/discussions/61).
 - **Serverless Version Requirement**: Ensure you are using `serverless` version [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or above, as this is now the minimum supported version.
-
 
 ## [4.0.7] - 2023-06-27
 

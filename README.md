@@ -3,7 +3,7 @@
 [![npm][ico-npm-downloads]][link-npm]
 [![Build Status][ico-build]][link-build]
 [![slack][ico-slack]][link-slack]
-
+[![Made in Ukraine](https://img.shields.io/badge/made_in-Ukraine-ffd700.svg?labelColor=0057b7)](https://stand-with-ukraine.pp.ua)
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
 
@@ -13,15 +13,15 @@ Template sync plugin for Amazon Simple Email Service
 A serverless plugin that allows automatically creating, updating and removing
 AWS SES Templates using a configuration file and keeps your AWS SES Templates
 synced with your configuration file.
-
-> 🚨 **Important Notice**: Starting from 6.x version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
+---
+> 🚨 **Important Notice**: Starting from [6.x](https://github.com/Enase/serverless-ses-template) version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
 >
-> If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.0.2) plugin series
+> If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.1.0) plugin series
 >
-> If you need compatibility with `serverless<=3.2.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
+> If you need compatibility with `serverless<=3.0.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
 >
 > Read [motivation here](https://github.com/Enase/serverless-ses-template/discussions/61)
-
+---
 **REQUIRES** nodejs 18+
 
 ---
@@ -56,7 +56,7 @@ custom:
     addStage: true                             # Specifies whether to add stage to template name (default false)
     configFile: './custom-config-file/path.js' # Config file path (default './ses-email-templates/index.js')
     deployHook: 'after:deploy:deploy'          # Specifies serverless lifecycle event plugin use to deploy templates (default 'before:deploy:deploy')
-    disableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy (default false)
+    disableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy and remove (default false)
     region: 'us-west-2'                        # Specifies AWS region for SES templates (not required)
     removeMissed: false                        # Set this flag in order to remove templates those are not present in your configuration file. (not required, default false)
 ```

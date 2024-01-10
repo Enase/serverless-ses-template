@@ -6,7 +6,11 @@ import ServerlessSesTemplatePlugin from "../src/index"
 import RuntimeUtils from "../src/runtime-utils"
 import RequestHandler from "../src/request-handler"
 import SesTemplatePluginLogger from "../src/logger"
-import type { ServerlessExtended, ServerlessLogging } from "../src/types"
+import type {
+  PluginOptions,
+  ServerlessExtended,
+  ServerlessLogging,
+} from "../src/types"
 
 jest.mock("chalk", () => ({
   green: jest.fn(),
@@ -39,7 +43,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   const options = {
     stage: null,
     region: null,
-  }
+  } as unknown as PluginOptions
   let logger: ServerlessLogging
   let progressUpdateSpy: jest.Mock
   let progressRemoveSpy: jest.Mock
@@ -309,7 +313,6 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
         "Updated templates: test-template-dev",
         "Updated templates: test-template-dev",
         "Updated templates: test-template-dev",
-        "----------------------------------------",
       ],
     )
     expect(plugin.info).toHaveBeenCalled()
@@ -343,10 +346,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
         text: "test-text",
       },
     ]
-    const expectedOutputSection = [
-      "Created templates: test-template-dev",
-      "----------------------------------------",
-    ]
+    const expectedOutputSection = ["Created templates: test-template-dev"]
 
     plugin.loadConfigurationFile = jest
       .fn()
@@ -839,6 +839,132 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     expect(error).toBeInstanceOf(Error)
     expect(error.message).toBe(
       "@haftahave/serverless-ses-template plugin supports only AWS",
+    )
+  })
+  it("deleteTemplatesOnRemove should not delete any templates when auto-deploy is disabled", async () => {
+    isAutoDeployDisabledMock = jest
+      .spyOn(mockedRuntimeUtils.prototype, "isAutoDeployDisabled")
+      .mockImplementation(() => true)
+
+    const deleteTemplateSpy = jest
+      .spyOn(mockedRequestHandler.prototype, "deleteTemplate")
+      .mockResolvedValueOnce(true)
+
+    const createProgressSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "createProgress",
+    )
+    const clearProgressSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "clearProgress",
+    )
+    const logSuccessSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "logSuccess",
+    )
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    plugin.loadConfigurationFile = jest.fn().mockResolvedValueOnce([])
+
+    await plugin.deleteTemplatesOnRemove()
+
+    expect(isAutoDeployDisabledMock).toHaveBeenCalledTimes(1)
+    expect(plugin.loadConfigurationFile).not.toHaveBeenCalled()
+    expect(deleteTemplateSpy).not.toHaveBeenCalled()
+    expect(createProgressSpy).not.toHaveBeenCalled()
+    expect(clearProgressSpy).not.toHaveBeenCalled()
+    expect(logSuccessSpy).not.toHaveBeenCalled()
+  })
+  it("deleteTemplatesOnRemove called with valid configuration and all templates are successfully deleted", async () => {
+    const progressName = "sls-ses-template-remove"
+    const deleteTemplateSpy = jest
+      .spyOn(mockedRequestHandler.prototype, "deleteTemplate")
+      .mockResolvedValueOnce(true)
+
+    const createProgressSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "createProgress",
+    )
+    const clearProgressSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "clearProgress",
+    )
+    const logSuccessSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "logSuccess",
+    )
+    const addStageToTemplateNameMock = jest
+      .spyOn(mockedRuntimeUtils.prototype, "addStageToTemplateName")
+      .mockImplementation((name: string): string => `${name}-dev`)
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    const configuration = [
+      {
+        name: "test-template",
+        subject: "test-subject",
+        html: "test-html",
+        text: "test-text",
+      },
+    ]
+    plugin.loadConfigurationFile = jest
+      .fn()
+      .mockResolvedValueOnce(configuration)
+
+    await plugin.deleteTemplatesOnRemove()
+
+    expect(isAutoDeployDisabledMock).toHaveBeenCalledTimes(1)
+    expect(addStageToTemplateNameMock).toHaveBeenCalledTimes(1)
+    expect(plugin.loadConfigurationFile).toHaveBeenCalledTimes(1)
+    expect(deleteTemplateSpy).toHaveBeenCalledWith(
+      "test-template-dev",
+      progressName,
+    )
+    expect(clearProgressSpy).toHaveBeenCalledWith(progressName)
+    expect(logSuccessSpy).toHaveBeenCalledWith(
+      [
+        "AWS SES template remove finished",
+        "Deleted templates:",
+        "test-template-dev",
+      ].join("\n"),
+    )
+    expect(createProgressSpy).toHaveBeenCalledWith(
+      progressName,
+      "AWS SES template remove",
+    )
+  })
+  it("deleteTemplatesOnRemove called with valid configuration and no templates were deleted", async () => {
+    const progressName = "sls-ses-template-remove"
+    const deleteTemplateSpy = jest
+      .spyOn(mockedRequestHandler.prototype, "deleteTemplate")
+      .mockResolvedValueOnce(true)
+
+    const createProgressSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "createProgress",
+    )
+    const clearProgressSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "clearProgress",
+    )
+    const logSuccessSpy = jest.spyOn(
+      mockedSesTemplatePluginLogger.prototype,
+      "logSuccess",
+    )
+    const addStageToTemplateNameMock = jest
+      .spyOn(mockedRuntimeUtils.prototype, "addStageToTemplateName")
+      .mockImplementation((name: string): string => `${name}-dev`)
+    const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
+    plugin.loadConfigurationFile = jest.fn().mockResolvedValueOnce([])
+
+    await plugin.deleteTemplatesOnRemove()
+
+    expect(isAutoDeployDisabledMock).toHaveBeenCalledTimes(1)
+    expect(addStageToTemplateNameMock).not.toHaveBeenCalled()
+    expect(plugin.loadConfigurationFile).toHaveBeenCalledTimes(1)
+    expect(deleteTemplateSpy).not.toHaveBeenCalled()
+    expect(clearProgressSpy).toHaveBeenCalledWith(progressName)
+    expect(logSuccessSpy).not.toHaveBeenCalled()
+    expect(createProgressSpy).toHaveBeenCalledWith(
+      progressName,
+      "AWS SES template remove",
     )
   })
 })
