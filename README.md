@@ -56,7 +56,7 @@ custom:
     addStage: true                             # Specifies whether to add stage to template name (default false)
     configFile: './custom-config-file/path.js' # Config file path (default './ses-email-templates/index.js')
     deployHook: 'after:deploy:deploy'          # Specifies serverless lifecycle event plugin use to deploy templates (default 'before:deploy:deploy')
-    disableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy (default false)
+    disableAutoDeploy: true                    # Specifies whether to sync templates while sls deploy and remove (default false)
     region: 'us-west-2'                        # Specifies AWS region for SES templates (not required)
     removeMissed: false                        # Set this flag in order to remove templates those are not present in your configuration file. (not required, default false)
 ```

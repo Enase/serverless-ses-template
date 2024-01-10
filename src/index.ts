@@ -84,6 +84,7 @@ class ServerlessSesTemplatePlugin {
       "ses-template:delete:deleteGiven": this.deleteGiven.bind(this),
       "ses-template:list:list": this.list.bind(this),
       [deployHook]: this.syncTemplatesOnDeploy.bind(this),
+      "before:remove:remove": this.deleteTemplatesOnRemove.bind(this),
     }
   }
 
@@ -207,7 +208,6 @@ class ServerlessSesTemplatePlugin {
     }
 
     if (isDeploy) {
-      summaryList.push("----------------------------------------")
       this.serverless.addServiceOutputSection(
         "Serverless SES Template",
         summaryList,
@@ -247,6 +247,40 @@ class ServerlessSesTemplatePlugin {
         `AWS SES template "${this.options.template}" deleted`,
       )
     }
+  }
+
+  async deleteTemplatesOnRemove(): Promise<void> {
+    if (this.getRuntimeUtils().isAutoDeployDisabled()) {
+      return Promise.resolve()
+    }
+
+    const progressName = "sls-ses-template-remove"
+    this.logger.createProgress(progressName, "AWS SES template remove")
+
+    const configuration = await this.loadConfigurationFile()
+
+    const templatesToRemove = configuration.map(
+      (templateConfig: ConfigurationItem) =>
+        this.getRuntimeUtils().addStageToTemplateName(templateConfig.name),
+    )
+
+    await Promise.all(
+      templatesToRemove.map((templateName: string) =>
+        this.getRequestHandler().deleteTemplate(templateName, progressName),
+      ),
+    )
+
+    this.logger.clearProgress(progressName)
+    const summaryList = [
+      ...this.createSummary("Deleted templates:", templatesToRemove),
+    ]
+
+    if (!summaryList.length) {
+      return Promise.resolve()
+    }
+    this.logger.logSuccess(
+      `AWS SES template remove finished\n${summaryList.join("\n")}`,
+    )
   }
 
   async getTemplatesToRemove(
