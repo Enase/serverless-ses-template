@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
-## [6.1.0] - 2024-01-xx
+## [6.1.0] - 2024-01-10
 
 ### Breaking Changes
 - **Modified Autodeploy Behavior**: The behavior of auto-deploy has been updated.
@@ -29,7 +29,7 @@ when executing the `sls remove` command to remove the AWS CloudFormation stack.
 - **Pure ESM Package**: Plugin transitioned to a pure ESM module. If you're unfamiliar with this, please [consult this guide](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) to understand the implications.
 - **Serverless Version Requirement**: Ensure you are using `serverless` version [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or above, as this is now the minimum supported version.
 
-## [5.1.0] - 2024-01-xx
+## [5.1.0] - 2024-01-10
 
 ### Breaking Changes
 - **Modified Autodeploy Behavior**: The behavior of auto-deploy has been updated.
