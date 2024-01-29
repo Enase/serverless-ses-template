@@ -36,7 +36,7 @@ devDependencies:
     version: 18.19.8
   '@types/serverless':
     specifier: ^3.12.21
-    version: 3.12.21
+    version: 3.12.22
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.19.1
     version: 6.19.1(@typescript-eslint/parser@6.19.1)(eslint@8.56.0)(typescript@5.1.6)
@@ -2805,8 +2805,8 @@ packages:
     resolution: {integrity: sha512-OxepLK9EuNEIPxWNME+C6WwbRAOOI2o2BaQEGzz5Lu2e4Z5eDnEo+/aVEDMIXywoJitJ7xWd641wrGLZdtwRyw==}
     dev: true
 
-  /@types/serverless@3.12.21:
-    resolution: {integrity: sha512-lS3kzTvkSaPdgkknyHbYGhBP8ZimXL07xlWlxMpIvQXs2H8RgFpWErV37bALsZevRofaRsjvptpEuswCccZEiQ==}
+  /@types/serverless@3.12.22:
+    resolution: {integrity: sha512-h6U8jv22T0N+9mcKBK2p/gVmcrKW7trUdVNhGemm8bct0lx3i/7svt1x0o/q87nMtOJMcqSvqFz63c7jM1X2Ew==}
     dev: true
 
   /@types/stack-utils@2.0.1:
