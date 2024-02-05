@@ -69,7 +69,7 @@ Template configuration file should be an async function that returns array of ob
 /**
  * @param {Object} serverless - Serverless instance
  * @param {Object} options - runtime options
- * @returns {Promise<{name: string, subject: string, html: string, text}[]>}
+ * @returns {Promise<{name: string, subject: string, html: string, text: string}[]>}
  */
 const templateConfiguration = async (serverless, options) => [{
     name: 'example_name',
