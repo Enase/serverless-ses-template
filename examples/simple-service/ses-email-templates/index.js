@@ -25,7 +25,7 @@ templateList.reduce((acc, templateInfo) => {
 /**
  * @param {Object} serverless - Serverless instance
  * @param {Object} _options - runtime options
- * @returns {Promise<{name: string, subject: string, html: string, text}[]>}
+ * @returns {Promise<{name: string, subject: string, html: string, text: string}[]>}
  */
 const templateConfiguration = async (serverless, _options) => {
   // You can load template configuration from filesystem using serverless object + runtime options
