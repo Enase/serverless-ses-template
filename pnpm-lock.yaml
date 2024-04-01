@@ -24,7 +24,7 @@ devDependencies:
     version: 7.24.1(@babel/core@7.24.3)
   '@tsconfig/node18':
     specifier: ^18.2.3
-    version: 18.2.3
+    version: 18.2.4
   '@types/cli-table':
     specifier: ^0.3.4
     version: 0.3.4
@@ -2736,8 +2736,8 @@ packages:
     resolution: {integrity: sha512-vxhUy4J8lyeyinH7Azl1pdd43GJhZH/tP2weN8TntQblOY+A0XbT8DJk1/oCPuOOyg/Ja757rG0CgHcWC8OfMA==}
     dev: true
 
-  /@tsconfig/node18@18.2.3:
-    resolution: {integrity: sha512-5GKTU9bfn4L37G9IdK8wcHfvyMijzw1uKNCd2Rs75V7fZK/l2OjGJ8Aa2myqNnESjekm/udpCnFH9qR9yPCtmw==}
+  /@tsconfig/node18@18.2.4:
+    resolution: {integrity: sha512-5xxU8vVs9/FNcvm3gE07fPbn9tl6tqGGWA9tSlwsUEkBxtRnTsNmwrV8gasZ9F/EobaSv9+nu8AxUKccw77JpQ==}
     dev: true
 
   /@types/babel__core@7.20.2:
