@@ -85,10 +85,10 @@
     "@tsconfig/node18": "^18.2.4",
     "@types/cli-table": "^0.3.4",
     "@types/jest": "^29.5.12",
-    "@types/node": "^18.19.30",
+    "@types/node": "^18.19.31",
     "@types/serverless": "^3.12.22",
-    "@typescript-eslint/eslint-plugin": "^7.6.0",
-    "@typescript-eslint/parser": "^7.6.0",
+    "@typescript-eslint/eslint-plugin": "^7.7.0",
+    "@typescript-eslint/parser": "^7.7.0",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.2.0",
@@ -111,7 +111,7 @@
     "*.md"
   ],
   "engines": {
-    "node": ">=18.8.0"
+    "node": ">=18.18.0"
   },
   "type": "module"
 }
