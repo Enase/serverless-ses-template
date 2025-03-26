@@ -141,7 +141,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
     ]
     jest.mock(
       "../examples/cloud-front-service/asset-management/ses-email-templates",
-      () => async () => expectedConfig,
+      () => () => Promise.resolve(expectedConfig),
     )
     await plugin.loadConfigurationFile()
     const result = await plugin.loadConfigurationFile()
@@ -191,8 +191,8 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   it("should throw an error when the configuration file cannot be loaded", async () => {
     jest.mock(
       "../examples/cloud-front-service/asset-management/ses-email-templates",
-      () => async () => {
-        throw new Error("cannot load")
+      () => () => {
+        return Promise.reject(new Error("cannot load"))
       },
     )
     const plugin = new ServerlessSesTemplatePlugin(
@@ -212,8 +212,8 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   it("should handle unexpected error type when the configuration file cannot be loaded", async () => {
     jest.mock(
       "../examples/cloud-front-service/asset-management/ses-email-templates",
-      () => async () => {
-        throw new Object("cannot load")
+      () => () => {
+        return Promise.reject(new Error("cannot load"))
       },
     )
     const plugin = new ServerlessSesTemplatePlugin(
@@ -251,7 +251,9 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("should update existing templates when they have changed", async () => {
     mockedSesTemplatePluginLogger.mockImplementation(() => {
-      const loggerClass = jest.requireActual("../src/logger").default
+      const loggerClass = jest.requireActual<{
+        default: typeof SesTemplatePluginLogger
+      }>("../src/logger").default
       return new loggerClass(logger.log, logger.writeText, logger.progress)
     })
     const addStageToTemplateNameMock = jest
@@ -263,14 +265,16 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
 
     const getEmailTemplateMock = jest
       .spyOn(mockedRequestHandler.prototype, "getEmailTemplate")
-      .mockImplementation(async (_t: string) => ({
-        TemplateName: "test-template-dev",
-        TemplateContent: {
-          Subject: "old-subject",
-          Html: "old-html",
-          Text: "old-text",
-        },
-      }))
+      .mockImplementation((_t: string) =>
+        Promise.resolve({
+          TemplateName: "test-template-dev",
+          TemplateContent: {
+            Subject: "old-subject",
+            Html: "old-html",
+            Text: "old-text",
+          },
+        }),
+      )
 
     const updateTemplateMock = jest
       .spyOn(mockedRequestHandler.prototype, "updateTemplate")
@@ -319,7 +323,9 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("should create new templates when they don't exist while deploy", async () => {
     mockedSesTemplatePluginLogger.mockImplementation(() => {
-      const loggerClass = jest.requireActual("../src/logger").default
+      const loggerClass = jest.requireActual<{
+        default: typeof SesTemplatePluginLogger
+      }>("../src/logger").default
       return new loggerClass(logger.log, logger.writeText, logger.progress)
     })
 
@@ -383,7 +389,9 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("sync templates should delete templates", async () => {
     mockedSesTemplatePluginLogger.mockImplementation(() => {
-      const loggerClass = jest.requireActual("../src/logger").default
+      const loggerClass = jest.requireActual<{
+        default: typeof SesTemplatePluginLogger
+      }>("../src/logger").default
       return new loggerClass(logger.log, logger.writeText, logger.progress)
     })
 
@@ -449,7 +457,9 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("sync templates should return void if no action done", async () => {
     mockedSesTemplatePluginLogger.mockImplementation(() => {
-      const loggerClass = jest.requireActual("../src/logger").default
+      const loggerClass = jest.requireActual<{
+        default: typeof SesTemplatePluginLogger
+      }>("../src/logger").default
       return new loggerClass(logger.log, logger.writeText, logger.progress)
     })
 
@@ -593,14 +603,14 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   it("should return an empty array when the items array is empty", () => {
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     const title = "Test Title"
-    const items: ReadonlyArray<string> = []
+    const items: readonly string[] = []
     const result = plugin.createSummary(title, items)
     expect(result).toEqual([])
   })
   it("should return an array with title and items when the items array is not empty", () => {
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
     const title = "Test Title"
-    const items: ReadonlyArray<string> = ["Item 1", "Item 2"]
+    const items: readonly string[] = ["Item 1", "Item 2"]
     const result = plugin.createSummary(title, items)
     expect(result).toEqual(["Test Title", "Item 1", "Item 2"])
   })
@@ -609,7 +619,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       .spyOn(mockedRequestHandler.prototype, "loadTemplates")
       .mockResolvedValueOnce([])
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
-    const templatesToSync: ReadonlyArray<string> = []
+    const templatesToSync: readonly string[] = []
     const result = await plugin.getTemplatesToRemove(templatesToSync)
     expect(loadTemplatesMock).toHaveBeenCalledTimes(1)
     expect(result).toEqual([])
@@ -628,7 +638,7 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
       .mockImplementation((_name: string): boolean => true)
 
     const plugin = new ServerlessSesTemplatePlugin(serverless, options, logger)
-    const templatesToSync: ReadonlyArray<string> = ["template1", "template2"]
+    const templatesToSync: readonly string[] = ["template1", "template2"]
     const result = await plugin.getTemplatesToRemove(templatesToSync)
     expect(loadTemplatesMock).toHaveBeenCalledTimes(1)
     expect(isTemplateFromCurrentStageMock).toHaveBeenCalledTimes(1)
@@ -749,7 +759,9 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("should load templates and display them in a table", async () => {
     mockedSesTemplatePluginLogger.mockImplementation(() => {
-      const loggerClass = jest.requireActual("../src/logger").default
+      const loggerClass = jest.requireActual<{
+        default: typeof SesTemplatePluginLogger
+      }>("../src/logger").default
       return new loggerClass(logger.log, logger.writeText, logger.progress)
     })
     const getRegionMock = jest
@@ -788,7 +800,9 @@ describe("The `ServerlessSesTemplatePlugin` plugin", () => {
   })
   it("should print warning if no templates loaded", async () => {
     mockedSesTemplatePluginLogger.mockImplementation(() => {
-      const loggerClass = jest.requireActual("../src/logger").default
+      const loggerClass = jest.requireActual<{
+        default: typeof SesTemplatePluginLogger
+      }>("../src/logger").default
       return new loggerClass(logger.log, logger.writeText, logger.progress)
     })
     const getRegionMock = jest

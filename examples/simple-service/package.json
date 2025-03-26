@@ -10,7 +10,6 @@
     "@haftahave/serverless-ses-template": "6.1.0"
   },
   "engines": {
-    "node": ">= 12.18.4",
-    "npm": ">= 6.13.4"
+    "node": ">= 20.18.1"
   }
 }

@@ -1,7 +1,7 @@
 import nock from "nock"
-import SesTemplatePluginLogger from "../src/logger"
+import type SesTemplatePluginLogger from "../src/logger"
 import RequestHandler from "../src/request-handler"
-import RuntimeUtils from "../src/runtime-utils"
+import type RuntimeUtils from "../src/runtime-utils"
 import type { Provider } from "../src/types"
 
 describe("The `RequestHandler` class", () => {
@@ -17,7 +17,7 @@ describe("The `RequestHandler` class", () => {
   beforeEach(() => {
     jest.clearAllMocks()
     nock.disableNetConnect()
-    addStageToTemplateNameSpy = jest.fn((name) => name)
+    addStageToTemplateNameSpy = jest.fn((name: string) => name)
     getStageSpy = jest.fn(() => "test-stage")
     getRegionSpy = jest.fn(() => "test-region")
     getFilterSpy = jest.fn(() => "")
@@ -88,10 +88,10 @@ describe("The `RequestHandler` class", () => {
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
     const progressName = "test-progress"
-    const result = await requestHandler.deleteTemplate(
+    const result = (await requestHandler.deleteTemplate(
       templateName,
       progressName,
-    )
+    )) as null
     expect(addStageToTemplateNameSpy).toHaveBeenCalledTimes(0)
     expect(getStageSpy).toHaveBeenCalledTimes(1)
     expect(getRegionSpy).toHaveBeenCalledTimes(1)
@@ -111,16 +111,18 @@ describe("The `RequestHandler` class", () => {
   })
   it("should log an error and return false when deletion fails", async () => {
     const provider = {
-      request: jest.fn(() => Promise.reject(new Error("test-error"))),
+      request: jest.fn().mockImplementation(() => {
+        throw new Error("test-error")
+      }),
     } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
     const progressName = "test-progress"
-    const result = await requestHandler.deleteTemplate(
+    const result = (await requestHandler.deleteTemplate(
       templateName,
       progressName,
-    )
+    )) as boolean
     expect(addStageToTemplateNameSpy).toHaveBeenCalledTimes(0)
     expect(getStageSpy).toHaveBeenCalledTimes(1)
     expect(getRegionSpy).toHaveBeenCalledTimes(1)
@@ -140,16 +142,19 @@ describe("The `RequestHandler` class", () => {
   })
   it("should not log an error and return false when deletion fails", async () => {
     const provider = {
-      request: jest.fn(() => Promise.reject(new Object("test-error"))),
+      request: jest.fn().mockImplementation(() => {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error
+        throw new Object("test-error")
+      }),
     } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
     const templateName = "test-template"
     const progressName = "test-progress"
-    const result = await requestHandler.deleteTemplate(
+    const result = (await requestHandler.deleteTemplate(
       templateName,
       progressName,
-    )
+    )) as boolean
     expect(addStageToTemplateNameSpy).toHaveBeenCalledTimes(0)
     expect(getStageSpy).toHaveBeenCalledTimes(1)
     expect(getRegionSpy).toHaveBeenCalledTimes(1)
@@ -229,11 +234,16 @@ describe("The `RequestHandler` class", () => {
     })
   })
   it("should call makeRequest with correct params and return null when the email template does not exist", async () => {
+    class ProviderError extends Error {
+      providerErrorCodeExtension: string
+      constructor(message: string, code: string) {
+        super(message)
+        this.providerErrorCodeExtension = code
+      }
+    }
     const provider = {
       request: jest.fn(() =>
-        Promise.reject({
-          providerErrorCodeExtension: "NOT_FOUND_EXCEPTION",
-        }),
+        Promise.reject(new ProviderError("", "NOT_FOUND_EXCEPTION")),
       ),
     } as unknown as Provider
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
@@ -255,7 +265,9 @@ describe("The `RequestHandler` class", () => {
   })
   it("should throw an error when request fails", async () => {
     const provider = {
-      request: jest.fn(() => Promise.reject(new Error("test-error"))),
+      request: jest.fn().mockImplementation(() => {
+        throw new Error("test-error")
+      }),
     } as unknown as Provider
 
     const requestHandler = new RequestHandler(provider, runtimeUtils, logger)
@@ -278,10 +290,10 @@ describe("The `RequestHandler` class", () => {
       text: "test-text",
     }
     const progressName = "test-progress"
-    const result = await requestHandler.updateTemplate(
+    const result = (await requestHandler.updateTemplate(
       configurationItem,
       progressName,
-    )
+    )) as string
     expect(addStageToTemplateNameSpy).toHaveBeenCalledWith("test-template")
     expect(getStageSpy).toHaveBeenCalledTimes(1)
     expect(getRegionSpy).toHaveBeenCalledTimes(1)

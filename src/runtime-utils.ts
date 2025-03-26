@@ -28,20 +28,21 @@ class RuntimeUtils {
       },
     } = serverless
 
-    this.region =
-      options.sesTemplatesRegion ||
+    this.region = (options.sesTemplatesRegion ||
       sesTemplatesRegion ||
       options.region ||
-      region
-    this.stage = options.stage || stage
+      region) as string
+    this.stage = options.stage ?? stage
 
-    this.removeMissed = commands.includes("deploy")
-      ? options.removeMissed !== undefined
-      : removeMissed
-    this.filter = commands.includes("list") ? options.filter || "" : ""
+    this.removeMissed = (
+      commands.includes("deploy")
+        ? options.removeMissed !== undefined
+        : removeMissed
+    ) as boolean
+    this.filter = commands.includes("list") ? options.filter ?? "" : ""
     this.canAddStage = Boolean(addStage)
-    this.configFile = options.sesTemplateConfig || configFile
-    this.disableAutoDeploy = disableAutoDeploy
+    this.configFile = (options.sesTemplateConfig ?? configFile) as string
+    this.disableAutoDeploy = disableAutoDeploy as boolean
   }
 
   addStageToTemplateName(templateName: string): string {

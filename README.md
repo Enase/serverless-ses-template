@@ -1,4 +1,3 @@
-[![Serverless][ico-serverless]][link-serverless]
 [![NPM][ico-npm]][link-npm]
 [![npm][ico-npm-downloads]][link-npm]
 [![Build Status][ico-build]][link-build]
@@ -19,10 +18,8 @@ synced with your configuration file.
 > If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.1.0) plugin series
 >
 > If you need compatibility with `serverless<3.0.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
->
-> Read [motivation here](https://github.com/Enase/serverless-ses-template/discussions/61)
 ---
-**REQUIRES** nodejs 18+
+**REQUIRES** nodejs 20+
 
 ---
 **:zap: Features**
@@ -140,13 +137,11 @@ CLI options:
 
 MIT
 
-[ico-serverless]: http://public.serverless.com/badges/v3.svg
 [ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
 [ico-npm-downloads]: https://img.shields.io/npm/dt/@haftahave/serverless-ses-template.svg
 [ico-build]: https://app.travis-ci.com/Enase/serverless-ses-template.svg?branch=master
 [ico-slack]: https://img.shields.io/badge/Join%20Our%20Community-Slack-blue
 
-[link-serverless]: http://www.serverless.com/
 [link-npm]: https://www.npmjs.com/package/@haftahave/serverless-ses-template
 [link-build]: https://app.travis-ci.com/Enase/serverless-ses-template
 [link-slack]: https://enasetech.slack.com/archives/C05S2SZNRTM
