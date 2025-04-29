@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unreleased list of features goes here...
 -->
 
+## [6.2.0] - 2025-04-29
+
+### Added
+- Compatibility with Serverless v4.0.0
+- Serverless v4.0.0 implementation example added
+
+### Changed
+- eslint updated to v9
+- Dependencies updated
+
 ## [6.1.0] - 2024-01-10
 
 ### Breaking Changes

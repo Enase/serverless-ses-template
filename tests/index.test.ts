@@ -2,15 +2,15 @@ import fs from "node:fs"
 import path from "node:path"
 import nock from "nock"
 import chalk from "chalk"
-import ServerlessSesTemplatePlugin from "../src/index"
-import RuntimeUtils from "../src/runtime-utils"
-import RequestHandler from "../src/request-handler"
-import SesTemplatePluginLogger from "../src/logger"
+import ServerlessSesTemplatePlugin from "../src/index.js"
+import RuntimeUtils from "../src/runtime-utils.js"
+import RequestHandler from "../src/request-handler.js"
+import SesTemplatePluginLogger from "../src/logger.js"
 import type {
   PluginOptions,
   ServerlessExtended,
   ServerlessLogging,
-} from "../src/types"
+} from "../src/types.js"
 
 jest.mock("chalk", () => ({
   green: jest.fn(),

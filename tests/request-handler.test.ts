@@ -1,8 +1,8 @@
 import nock from "nock"
-import type SesTemplatePluginLogger from "../src/logger"
-import RequestHandler from "../src/request-handler"
-import type RuntimeUtils from "../src/runtime-utils"
-import type { Provider } from "../src/types"
+import type SesTemplatePluginLogger from "../src/logger.js"
+import RequestHandler from "../src/request-handler.js"
+import type RuntimeUtils from "../src/runtime-utils.js"
+import type { Provider } from "../src/types.js"
 
 describe("The `RequestHandler` class", () => {
   let logger: SesTemplatePluginLogger

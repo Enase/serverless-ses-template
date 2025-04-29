@@ -23,7 +23,7 @@ export interface CustomConfig extends Service.Custom {
 }
 
 export interface ServerlessLogging extends Logging {
-  dummy: string
+  _dummy?: string
 }
 
 export declare class ServerlessExtended extends Serverless {

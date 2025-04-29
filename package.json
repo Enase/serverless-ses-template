@@ -62,7 +62,6 @@
     "module:delete": "pnpm pkg delete 'type'",
     "pretest": "pnpm run module:delete",
     "test": "jest --runInBand",
-    "test2": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
     "posttest": "pnpm pkg set 'type'='module'"
   },
   "typesVersions": {
