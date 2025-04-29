@@ -1,8 +1,8 @@
 import type Serverless from "serverless"
 import type { Options } from "serverless"
-import type { Logging } from "serverless/classes/Plugin"
-import type AwsProvider from "serverless/plugins/aws/provider/awsProvider"
-import Service from "serverless/classes/Service"
+import type { Logging } from "serverless/classes/Plugin.js"
+import type AwsProvider from "serverless/plugins/aws/provider/awsProvider.js"
+import type Service from "serverless/classes/Service.js"
 
 export interface PluginOptions extends Options {
   sesTemplatesRegion?: string
@@ -21,7 +21,10 @@ export interface CustomConfig extends Service.Custom {
     disableAutoDeploy?: boolean
   }
 }
-export interface ServerlessLogging extends Logging {}
+
+export interface ServerlessLogging extends Logging {
+  _dummy?: string
+}
 
 export declare class ServerlessExtended extends Serverless {
   custom: CustomConfig
@@ -35,11 +38,9 @@ export declare class ServerlessExtended extends Serverless {
   }
 }
 
-export type ServerlessHooksDefinition = {
-  [key: string]: (arg?: any) => any
-}
+export type ServerlessHooksDefinition = Record<string, (arg?: any) => any>
 
-export type ConfigurationItem = {
+export interface ConfigurationItem {
   name: string
   subject: string
   html: string
@@ -47,15 +48,19 @@ export type ConfigurationItem = {
 }
 export type Configuration = ConfigurationItem[]
 
-export type ProviderError = {
+export interface ProviderError {
   message: string
   providerErrorCodeExtension: string
 }
+
+export type AnyParameters = object
+
 export declare class Provider extends AwsProvider {
-  request(
+  public request(
+    this: void,
     service: string,
     method: string,
-    params?: {},
+    params?: AnyParameters,
     options?: {
       useCache?: boolean | undefined
       region?: string | undefined
@@ -100,4 +105,11 @@ export interface SesGetEmailTemplateResponse {
     Text: string
     Html: string
   }
+}
+
+export interface ConfigFunction {
+  default: (
+    serverless: ServerlessExtended,
+    _options: AnyParameters,
+  ) => Promise<Configuration>
 }

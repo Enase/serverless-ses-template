@@ -1,0 +1,18 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: enase
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: ses-example-v4
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: simple-service-v4
+
+provider:
+  name: aws
+  region: 'us-west-2'
+  runtime: nodejs20.x
+
+plugins:
+  - '@haftahave/serverless-ses-template'
+
+functions:
+  hello:
+    handler: handler.hello

@@ -1,4 +1,3 @@
-[![Serverless][ico-serverless]][link-serverless]
 [![NPM][ico-npm]][link-npm]
 [![npm][ico-npm-downloads]][link-npm]
 [![Build Status][ico-build]][link-build]
@@ -13,16 +12,8 @@ Template sync plugin for Amazon Simple Email Service
 A serverless plugin that allows automatically creating, updating and removing
 AWS SES Templates using a configuration file and keeps your AWS SES Templates
 synced with your configuration file.
----
-> 🚨 **Important Notice**: Starting from [6.x](https://github.com/Enase/serverless-ses-template) version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
->
-> If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.1.0) plugin series
->
-> If you need compatibility with `serverless<3.0.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
->
-> Read [motivation here](https://github.com/Enase/serverless-ses-template/discussions/61)
----
-**REQUIRES** nodejs 18+
+
+**REQUIRES** nodejs 20+
 
 ---
 **:zap: Features**
@@ -34,8 +25,19 @@ synced with your configuration file.
 
 #### Examples
 
-- [Simple plugin integration](examples/simple-service)
+- [Simple plugin integration with serverless v4](examples/simple-service-v4)
+- [Simple plugin integration with serverless v3](examples/simple-service)
 - [Plugin integration with asset management](examples/cloud-front-service) (not maintained)
+
+---
+> 🚨 **Important Notice**:
+>
+> Starting from [6.x](https://github.com/Enase/serverless-ses-template) version, plugin has transitioned to **[pure ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c)** and requires serverless [v3.2.0](https://github.com/serverless/serverless/releases/tag/v3.2.0) or newer.
+>
+> If you need for **CJS package** use [5.x](https://github.com/Enase/serverless-ses-template/tree/5.1.0) plugin series
+>
+> If you need compatibility with `serverless<3.0.0`, please use tag [v4.0.7](https://github.com/Enase/serverless-ses-template/tree/4.0.7).
+---
 
 #### Installation
 
@@ -140,13 +142,11 @@ CLI options:
 
 MIT
 
-[ico-serverless]: http://public.serverless.com/badges/v3.svg
 [ico-npm]: https://img.shields.io/npm/v/@haftahave/serverless-ses-template.svg
 [ico-npm-downloads]: https://img.shields.io/npm/dt/@haftahave/serverless-ses-template.svg
 [ico-build]: https://app.travis-ci.com/Enase/serverless-ses-template.svg?branch=master
 [ico-slack]: https://img.shields.io/badge/Join%20Our%20Community-Slack-blue
 
-[link-serverless]: http://www.serverless.com/
 [link-npm]: https://www.npmjs.com/package/@haftahave/serverless-ses-template
 [link-build]: https://app.travis-ci.com/Enase/serverless-ses-template
 [link-slack]: https://enasetech.slack.com/archives/C05S2SZNRTM

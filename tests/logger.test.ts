@@ -1,5 +1,5 @@
-import SesTemplatePluginLogger from "../src/logger"
-import type { ServerlessLogging } from "../src/types"
+import SesTemplatePluginLogger from "../src/logger.js"
+import type { ServerlessLogging } from "../src/types.js"
 
 describe("The `SesTemplatePluginLogger` class", () => {
   let logger: ServerlessLogging["log"]

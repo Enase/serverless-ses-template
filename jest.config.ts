@@ -5,7 +5,7 @@ const config: Config = {
   preset: "ts-jest/presets/default-esm",
   extensionsToTreatAsEsm: [".ts"],
   transform: {
-    tsconfig: "<rootDir>/tsconfig.test.json",
+    tsconfig: "<rootDir>/tests/tsconfig.json",
     "^.+\\.tsx?$": [
       "ts-jest",
       {

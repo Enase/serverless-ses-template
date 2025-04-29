@@ -2,14 +2,15 @@ sudo: required
 dist: focal
 language: node_js
 node_js:
-  - 18
+  - 20
 cache:
   npm: false
   directories:
     - "~/.pnpm-store"
 before_install:
+  - npm install --global corepack@latest
   - corepack enable
-  - corepack prepare pnpm@latest-8 --activate
+  - corepack prepare pnpm@latest-10 --activate
   - pnpm config set store-dir ~/.pnpm-store
 branches:
   only:

@@ -1,5 +1,5 @@
-import RuntimeUtils from "../src/runtime-utils"
-import type { PluginOptions, ServerlessExtended } from "../src/types"
+import RuntimeUtils from "../src/runtime-utils.js"
+import type { PluginOptions, ServerlessExtended } from "../src/types.js"
 
 describe("The `RuntimeUtils` class", () => {
   it("should return the same template name when canAddStage is false", () => {

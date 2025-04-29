@@ -6,6 +6,7 @@ import SesTemplatePluginLogger from "./logger.js"
 import RequestHandler from "./request-handler.js"
 import RuntimeUtils from "./runtime-utils.js"
 import type {
+  ConfigFunction,
   Configuration,
   ConfigurationItem,
   PluginOptions,
@@ -125,14 +126,14 @@ class ServerlessSesTemplatePlugin {
       }
 
       try {
-        const configFunction = await import(fileFullPath)
+        const configFunction = (await import(fileFullPath)) as ConfigFunction
         if (configFunction.default === undefined) {
           throw new Error('Configuration file should export "default" function')
         }
-        this.configuration = (await configFunction.default(
+        this.configuration = await configFunction.default(
           this.serverless,
           this.options,
-        )) as Configuration
+        )
         return this.configuration
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
@@ -149,7 +150,7 @@ class ServerlessSesTemplatePlugin {
     return this.syncTemplates(true)
   }
 
-  async syncTemplates(isDeploy: boolean = false): Promise<void> {
+  async syncTemplates(isDeploy = false): Promise<void> {
     const progressName = "sls-ses-template-sync"
     this.logger.createProgress(progressName, "AWS SES template synchronization")
 
@@ -175,16 +176,16 @@ class ServerlessSesTemplatePlugin {
           await this.getRequestHandler().getEmailTemplate(templateName)
         if (oldTemplate !== null) {
           updatedTemplates.push(templateName)
-          return this.getRequestHandler().updateTemplate(
+          return (await this.getRequestHandler().updateTemplate(
             templateConfig,
             progressName,
-          )
+          )) as unknown
         }
         createdTemplates.push(templateName)
-        return this.getRequestHandler().createTemplate(
+        return (await this.getRequestHandler().createTemplate(
           templateConfig,
           progressName,
-        )
+        )) as unknown
       },
     )
 
@@ -218,7 +219,7 @@ class ServerlessSesTemplatePlugin {
     }
   }
 
-  createSummary(title: string, items: ReadonlyArray<string>): string[] {
+  createSummary(title: string, items: readonly string[]): string[] {
     const result = []
     if (items.length) {
       result.push(title)
@@ -236,10 +237,10 @@ class ServerlessSesTemplatePlugin {
       return
     }
 
-    const result = await this.getRequestHandler().deleteTemplate(
+    const result = (await this.getRequestHandler().deleteTemplate(
       this.options.template,
       progressName,
-    )
+    )) as unknown
 
     this.logger.clearProgress(progressName)
     if (result) {
@@ -284,7 +285,7 @@ class ServerlessSesTemplatePlugin {
   }
 
   async getTemplatesToRemove(
-    templatesToSync: ReadonlyArray<string>,
+    templatesToSync: readonly string[],
   ): Promise<string[]> {
     const templateList = await this.getRequestHandler().loadTemplates()
     const currentTemplates = templateList.map(

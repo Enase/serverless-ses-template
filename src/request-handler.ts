@@ -1,6 +1,7 @@
-import SesTemplatePluginLogger from "./logger.js"
-import RuntimeUtils from "./runtime-utils.js"
+import type SesTemplatePluginLogger from "./logger.js"
+import type RuntimeUtils from "./runtime-utils.js"
 import type {
+  AnyParameters,
   ConfigurationItem,
   LoadTemplatesParams,
   Provider,
@@ -33,7 +34,7 @@ class RequestHandler {
   createTemplate(
     { name, subject, html, text }: ConfigurationItem,
     progressName: string,
-  ): Promise<null | unknown> {
+  ): Promise<any> {
     const templateName = this.runtimeUtils.addStageToTemplateName(name)
     this.logger.updateProgress(
       progressName,
@@ -54,10 +55,10 @@ class RequestHandler {
   /**
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#deleteEmailTemplate-property
    */
-  deleteTemplate(
+  async deleteTemplate(
     templateName: string,
     progressName: string,
-  ): Promise<null | unknown> {
+  ): Promise<any> {
     this.logger.updateProgress(
       progressName,
       `Template "${templateName}" delete in progress`,
@@ -66,14 +67,13 @@ class RequestHandler {
     const deleteParams = {
       TemplateName: templateName,
     }
-    return this.makeRequest("deleteEmailTemplate", deleteParams).catch(
-      (error): boolean => {
-        if (error instanceof Error) {
-          this.logger.logError(error.message)
-        }
-        return false
-      },
-    )
+    try {
+      return this.makeRequest("deleteEmailTemplate", deleteParams)
+    } catch (error) {
+      if (error instanceof Error) {
+        this.logger.logError(error.message)
+      }
+    }
   }
 
   /**
@@ -86,13 +86,18 @@ class RequestHandler {
   /**
    * @see https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/SESV2.html#getEmailTemplate-property
    */
-  getEmailTemplate(
+  async getEmailTemplate(
     templateName: string,
   ): Promise<SesGetEmailTemplateResponse | null> {
     const params = {
       TemplateName: templateName,
     }
-    return this.makeRequest("getEmailTemplate", params).catch((error): null => {
+    try {
+      return (await this.makeRequest(
+        "getEmailTemplate",
+        params,
+      )) as SesGetEmailTemplateResponse
+    } catch (error) {
       if (
         error &&
         (error as ProviderError).providerErrorCodeExtension ===
@@ -101,7 +106,7 @@ class RequestHandler {
         return null
       }
       throw error
-    })
+    }
   }
 
   /**
@@ -110,7 +115,7 @@ class RequestHandler {
   updateTemplate(
     { name, subject, html, text }: ConfigurationItem,
     progressName: string,
-  ): Promise<null | unknown> {
+  ): Promise<any> {
     const templateName = this.runtimeUtils.addStageToTemplateName(name)
     this.logger.updateProgress(
       progressName,
@@ -152,7 +157,10 @@ class RequestHandler {
     return templates
   }
 
-  private makeRequest(method: string, params: {} = {}): Promise<any> {
+  private makeRequest(
+    method: string,
+    params: AnyParameters = {},
+  ): Promise<any> {
     return this.provider.request(this.AWS_SES_SERVICE_NAME, method, params, {
       stage: this.runtimeUtils.getStage(),
       region: this.runtimeUtils.getRegion(),
