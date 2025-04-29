@@ -31,11 +31,13 @@
   ],
   "contributors": [
     {
-      "name": "Arseny Yankovsky"
+      "name": "Arseny Yankovsky",
+      "url": "https://github.com/ArsenyYankovsky"
     },
     {
-      "name": "Arseny Yankovsky",
-      "email": "mike@cousins.io"
+      "name": "Mike Cousins",
+      "email": "mike@cousins.io",
+      "url": "https://mike.cousins.io"
     }
   ],
   "module": "./dist/esm/index.js",
