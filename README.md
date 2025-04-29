@@ -83,7 +83,7 @@ const templateConfiguration = async (serverless, options) => [{
 export default templateConfiguration
 ```
 
-Real world example see [here](examples/simple-service/ses-email-templates/index.js).
+Real world example see [here](examples/simple-service-v4/ses-email-templates/index.js).
 
 ## Plugin resolves region in the following order:
 
