@@ -7,7 +7,7 @@
     "preserveConstEnums": true,
     "strict": true,
     "noImplicitReturns": true,
-    "moduleResolution": "node",
+    "moduleResolution": "NodeNext",
     "stripInternal": true,
     "noEmit": true,
   },

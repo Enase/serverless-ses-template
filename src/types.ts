@@ -1,8 +1,8 @@
 import type Serverless from "serverless"
 import type { Options } from "serverless"
-import type { Logging } from "serverless/classes/Plugin"
-import type AwsProvider from "serverless/plugins/aws/provider/awsProvider"
-import type Service from "serverless/classes/Service"
+import type { Logging } from "serverless/classes/Plugin.js"
+import type AwsProvider from "serverless/plugins/aws/provider/awsProvider.js"
+import type Service from "serverless/classes/Service.js"
 
 export interface PluginOptions extends Options {
   sesTemplatesRegion?: string
@@ -22,8 +22,9 @@ export interface CustomConfig extends Service.Custom {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface ServerlessLogging extends Logging {}
+export interface ServerlessLogging extends Logging {
+  dummy: string
+}
 
 export declare class ServerlessExtended extends Serverless {
   custom: CustomConfig

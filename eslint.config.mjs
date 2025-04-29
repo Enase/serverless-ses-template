@@ -112,6 +112,14 @@ export default tseslint.config(
       "jest/unbound-method": "error",
     },
   },
+  {
+    files: ["tests/*"],
+    rules: {
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+    },
+  },
   // {
   //   files: ["examples/**/*.js"],
   //   extends: [tseslint.configs.disableTypeChecked],

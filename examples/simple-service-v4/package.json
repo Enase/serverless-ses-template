@@ -1,0 +1,14 @@
+{
+  "name": "simple-service-v4",
+  "version": "1.0.0",
+  "keywords": [],
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "@haftahave/serverless-ses-template": "6.2.0",
+    "serverless": "^4.14.1"
+  },
+  "engines": {
+    "node": ">= 20.18.1"
+  }
+}
