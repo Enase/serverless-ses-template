@@ -1,0 +1,4 @@
+overrides:
+  braces@<3.0.3: '>=3.0.3'
+  micromatch@<4.0.8: '>=4.0.8'
+  cross-spawn@<6.0.6: '>=6.0.6'
