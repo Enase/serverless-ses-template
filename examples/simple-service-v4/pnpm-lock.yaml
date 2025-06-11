@@ -9,19 +9,19 @@ importers:
   .:
     devDependencies:
       '@haftahave/serverless-ses-template':
-        specifier: 6.1.0
-        version: 6.1.0(serverless@4.14.1)
+        specifier: 6.2.0
+        version: 6.2.0(serverless@4.14.1)
       serverless:
         specifier: ^4.14.1
         version: 4.14.1
 
 packages:
 
-  '@haftahave/serverless-ses-template@6.1.0':
-    resolution: {integrity: sha512-oEvQ0Ow8zRH+hCjmvwDSREOlhpX49RiU+l3A42u6CMCfIqcQMrqMcqLf9ypEKC/Xi1Qt2U4eQ2P1FY8en5cUnw==}
-    engines: {node: '>=18.8.0'}
+  '@haftahave/serverless-ses-template@6.2.0':
+    resolution: {integrity: sha512-i3QoOZ84Rxg1CMt6UtMn5qiVetHks4qgZtRH3aEAmsGKNk/l7dfHOh5zSPJc8Ak/xU0LfpxbioWS4vg3UFj2pw==}
+    engines: {node: '>=20.18.1'}
     peerDependencies:
-      serverless: '>=3.2.0'
+      serverless: '>=3.2.0 || >=4.0.0'
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -296,7 +296,7 @@ packages:
 
 snapshots:
 
-  '@haftahave/serverless-ses-template@6.1.0(serverless@4.14.1)':
+  '@haftahave/serverless-ses-template@6.2.0(serverless@4.14.1)':
     dependencies:
       chalk: 4.1.2
       cli-table: 0.3.11
